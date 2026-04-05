@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hexy - Hexagonal Puzzle</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         /* ========================================================
            ADD YOUR BASE64 BACKGROUND HERE
@@ -157,29 +153,6 @@
     <div id="game-container">
         <!-- Home Screen -->
         <div id="home-screen" class="screen-overlay">
-            
-            <!-- Auth User Controls -->
-            <div class="fixed top-4 right-4 flex flex-col items-end gap-2" style="z-index: 201;">
-                
-                <!-- Status & Buttons Row -->
-                <div class="flex items-center gap-3 bg-slate-900/50 px-4 py-2 rounded-full border border-slate-700/50 backdrop-blur-sm">
-                    <p id="user-display" class="text-sm text-slate-300 font-medium">Playing as Guest</p>
-                    <button id="auth-btn" onclick="openAuthModal()" class="btn-purple-small text-xs py-1.5 px-4">Sign In / Register</button>
-                    <button id="logout-btn" onclick="handleLogout()" class="text-xs text-slate-400 hover:text-white hidden">Log Out</button>
-                </div>
-
-                <!-- Auth Modal (Dropdown) -->
-                <div id="auth-modal" class="bg-slate-800 p-5 rounded-xl w-64 flex flex-col gap-3 border border-purple-500/30 shadow-2xl hidden mt-1">
-                    <h2 id="auth-title" class="text-lg font-bold text-center text-purple-400">Log In</h2>
-                    <input type="email" id="auth-email" placeholder="Email" class="p-2 text-sm rounded bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-purple-500">
-                    <input type="password" id="auth-password" placeholder="Password" class="p-2 text-sm rounded bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-purple-500">
-                    <p id="auth-error" class="text-red-400 text-xs text-center hidden"></p>
-                    <button onclick="submitAuth()" class="btn-purple w-full py-1.5 text-sm">Submit</button>
-                    <p class="text-[10px] text-center text-slate-400 cursor-pointer hover:text-purple-300" onclick="toggleAuthMode()" id="auth-toggle-text">Need an account? Sign up</p>
-                    <button onclick="closeAuthModal()" class="text-[10px] text-slate-500 hover:text-white">Cancel</button>
-                </div>
-            </div>
-
             <button onclick="startGame()" class="btn-purple">Start Playing</button>
             <a href="rules.html" class="btn-purple-small mt-6">Rules</a>
         </div>
@@ -219,150 +192,8 @@
 
 <script>
     /**
-     * HEXY - Game Logic & Firebase Integration
+     * HEXY - Game Logic
      */
-
-    // --- Firebase Setup ---
-    let db, auth, appId, currentUser = null;
-    
-    try {
-        const firebaseConfig = JSON.parse(__firebase_config);
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        auth = firebase.auth();
-        appId = typeof __app_id !== 'undefined' ? __app_id : 'hexy-default';
-
-        async function initAuth() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await auth.signInWithCustomToken(__initial_auth_token);
-                } else {
-                    await auth.signInAnonymously();
-                }
-            } catch (err) {
-                console.error("Auth error:", err);
-            }
-        }
-
-        auth.onAuthStateChanged(async (user) => {
-            currentUser = user;
-            
-            const authBtn = document.getElementById('auth-btn');
-            const logoutBtn = document.getElementById('logout-btn');
-            const userDisplay = document.getElementById('user-display');
-
-            if (user && !user.isAnonymous) {
-                authBtn.classList.add('hidden');
-                logoutBtn.classList.remove('hidden');
-                userDisplay.innerText = `Signed in: ${user.email}`;
-                await loadCloudHighScore(user.uid);
-            } else {
-                authBtn.classList.remove('hidden');
-                logoutBtn.classList.add('hidden');
-                userDisplay.innerText = "Playing as Guest";
-            }
-        });
-
-        initAuth();
-    } catch (e) {
-        console.log("Firebase environment not found, skipping auth.");
-    }
-
-    // --- MQTT Setup ---
-    let mqttClient = null;
-    try {
-        // Connect to the requested EMQX broker
-        mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
-        mqttClient.on('connect', () => {
-            console.log('Connected to EMQX MQTT Broker via WebSockets');
-        });
-    } catch (e) {
-        console.log("MQTT connection failed", e);
-    }
-
-    // --- Auth Logic UI ---
-    let isSignUpMode = false;
-
-    function openAuthModal() {
-        document.getElementById('auth-modal').classList.remove('hidden');
-        document.getElementById('auth-error').classList.add('hidden');
-        document.getElementById('auth-email').value = '';
-        document.getElementById('auth-password').value = '';
-    }
-
-    function closeAuthModal() {
-        document.getElementById('auth-modal').classList.add('hidden');
-    }
-
-    function toggleAuthMode() {
-        isSignUpMode = !isSignUpMode;
-        document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Log In";
-        document.getElementById('auth-toggle-text').innerText = isSignUpMode ? "Already have an account? Log in" : "Need an account? Sign up";
-        document.getElementById('auth-error').classList.add('hidden');
-    }
-
-    async function submitAuth() {
-        if (!auth) return;
-        const email = document.getElementById('auth-email').value;
-        const password = document.getElementById('auth-password').value;
-        const errorEl = document.getElementById('auth-error');
-        errorEl.classList.add('hidden');
-
-        try {
-            if (isSignUpMode) {
-                await auth.createUserWithEmailAndPassword(email, password);
-            } else {
-                await auth.signInWithEmailAndPassword(email, password);
-            }
-            closeAuthModal();
-        } catch (error) {
-            errorEl.innerText = error.message;
-            errorEl.classList.remove('hidden');
-        }
-    }
-
-    async function handleLogout() {
-        if (!auth) return;
-        await auth.signOut();
-        await auth.signInAnonymously(); // Fallback to guest mode
-        highScore = parseInt(localStorage.getItem('hexy-highscore')) || 0;
-        highEl.innerText = highScore;
-    }
-
-    // --- Cloud Sync Logic ---
-    async function loadCloudHighScore(uid) {
-        if (!db) return;
-        try {
-            const docRef = db.collection('artifacts').doc(appId).collection('users').doc(uid).collection('gameData').doc('score');
-            const docSnap = await docRef.get();
-            
-            if (docSnap.exists) {
-                const cloudScore = docSnap.data().highScore || 0;
-                if (cloudScore > highScore) {
-                    highScore = cloudScore;
-                    highEl.innerText = highScore;
-                    localStorage.setItem('hexy-highscore', highScore.toString());
-                } else if (highScore > cloudScore) {
-                    saveCloudHighScore(uid, highScore);
-                }
-            } else if (highScore > 0) {
-                saveCloudHighScore(uid, highScore);
-            }
-        } catch (e) {
-            console.error("Error loading cloud score", e);
-        }
-    }
-
-    async function saveCloudHighScore(uid, score) {
-        if (!db) return;
-        try {
-            const docRef = db.collection('artifacts').doc(appId).collection('users').doc(uid).collection('gameData').doc('score');
-            await docRef.set({ highScore: score }, { merge: true });
-        } catch (e) {
-            console.error("Error saving cloud score", e);
-        }
-    }
-
 
     // --- Game Logic ---
     const canvas = document.getElementById('gameCanvas');
@@ -606,17 +437,6 @@
                 localStorage.setItem('hexy-highscore', highScore.toString());
             } catch(e) {
                 console.warn("Local storage is restricted in this browser environment.", e);
-            }
-
-            // Sync with Cloud if logged in
-            if (currentUser && !currentUser.isAnonymous) {
-                saveCloudHighScore(currentUser.uid, highScore);
-                
-                // Publish High Score via MQTT
-                if (mqttClient && mqttClient.connected) {
-                    mqttClient.publish(`hexy/players/${currentUser.uid}/highscore`, JSON.stringify({ score: highScore }));
-                    console.log("Published high score to MQTT!");
-                }
             }
         }
     }
