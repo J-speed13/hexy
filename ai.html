@@ -58,7 +58,6 @@ body{
 
 .bottom{
     display:flex;
-    border-top:1px solid #475569;
 }
 
 input{
@@ -79,15 +78,11 @@ button{
     cursor:pointer;
 }
 
-button:hover{
-    background:#1d4ed8;
-}
-
 .help{
     text-align:center;
-    padding:8px;
     font-size:12px;
     color:#94a3b8;
+    padding:8px;
 }
 
 </style>
@@ -101,13 +96,13 @@ button:hover{
     <div id="chat"></div>
 
     <div class="bottom">
-        <input id="input" type="text" placeholder="Talk to Hexy...">
+        <input type="text" id="input" placeholder="Talk to Hexy...">
         <button onclick="send()">Send</button>
     </div>
 
     <div class="help">
-        Teach Hexy by saying:<br>
-        question is answer
+        Teach Hexy like:<br>
+        learn that the sky is blue
     </div>
 
 </div>
@@ -120,7 +115,7 @@ const input = document.getElementById("input");
 // Load saved memory
 let memory = JSON.parse(localStorage.getItem("hexyMemory")) || {};
 
-function addMessage(text, type){
+function addMessage(text,type){
 
     let div = document.createElement("div");
 
@@ -136,16 +131,20 @@ function saveMemory(){
     localStorage.setItem("hexyMemory", JSON.stringify(memory));
 }
 
-function getResponse(message){
+function ai(message){
 
-    let msg = message.toLowerCase();
+    let msg = message.toLowerCase().trim();
 
     // Learning system
-    if(msg.includes(" is ")){
+    // learn that the sky is blue
 
-        let parts = msg.split(" is ");
+    if(msg.startsWith("learn that ")){
 
-        if(parts.length >= 2){
+        let sentence = msg.replace("learn that ","");
+
+        if(sentence.includes(" is ")){
+
+            let parts = sentence.split(" is ");
 
             let question = parts[0].trim();
             let answer = parts.slice(1).join(" is ").trim();
@@ -158,38 +157,33 @@ function getResponse(message){
         }
     }
 
-    // Learned answers
+    // Learned responses
     if(memory[msg]){
         return memory[msg];
     }
 
-    // Built-in replies
+    // Smart matching
+    for(let key in memory){
+
+        if(msg.includes(key)){
+            return key + " is " + memory[key];
+        }
+    }
+
+    // Built in replies
     if(msg.includes("hello") || msg.includes("hi")){
-        return "Hello! I'm Hexy 👋";
+        return "Hello 👋";
     }
 
     if(msg.includes("your name")){
-        return "My name is Hexy AI!";
+        return "I'm Hexy AI!";
     }
-
-    if(msg.includes("made hexy")){
-        return "J-Coder!";
-    }
-
-    if(msg.includes("made you")){
-        return "J-Coder!";
-    }
-
 
     if(msg.includes("how are you")){
         return "I'm doing good!";
     }
 
-    if(msg.includes("bye")){
-        return "Goodbye!";
-    }
-
-    return "I don't know that yet. Teach me by saying something like: sky is blue";
+    return "I don't know that yet. Teach me something!";
 }
 
 function send(){
@@ -198,13 +192,13 @@ function send(){
 
     if(text === "") return;
 
-    addMessage(text, "user");
+    addMessage(text,"user");
 
-    let response = getResponse(text);
+    let response = ai(text);
 
-    setTimeout(() => {
-        addMessage(response, "bot");
-    }, 300);
+    setTimeout(()=>{
+        addMessage(response,"bot");
+    },300);
 
     input.value = "";
 }
@@ -217,8 +211,8 @@ input.addEventListener("keypress", function(e){
 
 });
 
-addMessage("Hello! I am Hexy AI 🤖", "bot");
-addMessage("Teach me with sentences like: sky is blue", "bot");
+addMessage("Hello! I'm Hexy AI 🤖","bot");
+addMessage("Teach me with sentences like: learn that the sky is blue","bot");
 
 </script>
 
