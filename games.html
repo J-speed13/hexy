@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hexy - Neon Pop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05050A; /* Deep dark background */
+            font-family: 'Montserrat', sans-serif;
+            touch-action: none; /* Prevent default touch actions on mobile */
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* High Quality UI Overlay */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through to canvas */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+            transition: opacity 0.3s ease;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .left-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px #00FFCC;
+        }
+
+        .pause-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            pointer-events: auto;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .pause-btn:hover {
+            background: #00FFCC;
+            color: #000;
+            box-shadow: 0 0 15px #00FFCC;
+            transform: scale(1.05);
+        }
+
+        .score-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: right;
+        }
+
+        .score-label {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            color: #fff;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.8);
+        }
+
+        /* Energy / Time Bar Container */
+        .energy-wrapper {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            text-align: center;
+        }
+
+        .energy-label {
+            font-size: 0.75rem;
+            color: #ff0055;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-weight: 900;
+            text-shadow: 0 0 8px #ff0055;
+        }
+
+        .energy-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .energy-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff0055, #bd00ff);
+            box-shadow: 0 0 10px #ff0055;
+            transition: width 0.1s linear;
+        }
+
+        .instructions {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0.3; }
+        }
+
+        /* Screen Overlays */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(5, 5, 10, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            transition: opacity 0.3s ease;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .menu-title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 3rem;
+            text-shadow: 0 0 20px #FF0055, 0 0 40px #BD00FF;
+            text-align: center;
+        }
+
+        .menu-btn {
+            background: transparent;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 15px 40px;
+            margin: 10px;
+            border: 2px solid #00FFCC;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+
+        .menu-btn:hover {
+            background: #00FFCC;
+            color: #000;
+            box-shadow: 0 0 20px #00FFCC;
+            transform: scale(1.05);
+        }
+
+        .menu-btn.accent-btn {
+            border-color: #ff0055;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
+        }
+
+        .menu-btn.accent-btn:hover {
+            background: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 20px #ff0055;
+        }
+
+        .rules-content {
+            max-width: 600px;
+            color: #ccc;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 20px;
+        }
+
+        .rules-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .rules-content span {
+            color: #FFDD00;
+            font-weight: bold;
+        }
+
+        /* Stat display for Game Over */
+        .final-score-text {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .final-score-text span {
+            color: #00FFCC;
+            font-weight: 900;
+            text-shadow: 0 0 10px #00FFCC;
+        }
+
+        /* Hide game UI initially */
+        #ui-layer.hidden-ui {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 0.5rem; }
+            .title { font-size: 2rem; }
+            .score-container { text-align: center; padding: 5px 20px; }
+            .energy-wrapper { position: relative; transform: none; left: auto; top: auto; margin-top: 10px; width: 100%; max-width: 250px; }
+            .menu-title { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Start Menu Overlay -->
+    <div id="start-screen" class="overlay">
+        <div class="menu-title">HEXY</div>
+        <button id="btn-start" class="menu-btn">Start to Play</button>
+        <button id="btn-rules" class="menu-btn">Rules</button>
+    </div>
+
+    <!-- Rules Menu Overlay -->
+    <div id="rules-screen" class="overlay hidden">
+        <div class="menu-title" style="font-size: 3rem; margin-bottom: 1.5rem;">RULES</div>
+        <div class="rules-content">
+            <p>Welcome to <span>HEXY</span>, the neon puzzle challenge!</p>
+            <p>Tap or click on any group of <span>3 or more</span> connected hexagons of the same color to pop them.</p>
+            <p>Keep your <span>Energy Bar</span> filled! Making matches restores energy, but it drains over time.</p>
+            <p>Watch out for pulsing <span>BOMBS</span>! Popping matches connected to a bomb triggers an explosion that clears everything nearby!</p>
+        </div>
+        <button id="btn-back" class="menu-btn">Back to Menu</button>
+    </div>
+
+    <!-- Pause Menu Overlay -->
+    <div id="pause-screen" class="overlay hidden">
+        <div class="menu-title" style="font-size: 3rem; text-shadow: 0 0 20px #00FFCC;">PAUSED</div>
+        <button id="btn-resume" class="menu-btn">Resume</button>
+        <button id="btn-quit" class="menu-btn accent-btn">Quit Game</button>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameover-screen" class="overlay hidden">
+        <div class="menu-title" style="font-size: 3.5rem; color: #ff0055; text-shadow: 0 0 20px #ff0055;">GAME OVER</div>
+        <div class="final-score-text">Final Score: <span id="finalScoreDisplay">0</span></div>
+        <button id="btn-retry" class="menu-btn">Play Again</button>
+        <button id="btn-gameover-quit" class="menu-btn accent-btn">Quit to Menu</button>
+    </div>
+
+    <div id="ui-layer" class="hidden-ui">
+        <header>
+            <div class="left-header">
+                <div class="title">Hexy</div>
+                <button id="btn-pause" class="pause-btn">Pause</button>
+            </div>
+            
+            <div class="energy-wrapper">
+                <div class="energy-label">Energy Level</div>
+                <div class="energy-bar-bg">
+                    <div id="energyFill" class="energy-bar-fill"></div>
+                </div>
+            </div>
+
+            <div class="score-container">
+                <div class="score-label">Score</div>
+                <div class="score-value" id="scoreDisplay">0</div>
+            </div>
+        </header>
+        <div class="instructions">Match 3 or more colors</div>
+    </div>
+
+    <script>
+        // --- GAME CONFIGURATION ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false }); 
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const finalScoreDisplay = document.getElementById('finalScoreDisplay');
+        const energyFill = document.getElementById('energyFill');
+
+        // High quality neon palette
+        const COLORS = [
+            '#FF0055', // Neon Pink
+            '#00FFCC', // Cyan
+            '#FFDD00', // Yellow
+            '#BD00FF', // Purple
+            '#0088FF'  // Blue
+        ];
+
+        let hexSize = 35; // Base size of hexagon
+        let cols = 0;
+        let rows = 0;
+        let grid = [];
+        
+        // Physics & Animation Entities
+        let particles = [];
+        let floatingTexts = [];
+        let screenShake = 0;
+        
+        // Game State
+        let score = 0;
+        let energy = 100;
+        let baseEnergyDrain = 0.05; // Drains per frame
+        let isPlaying = false; 
+        let isPaused = false;
+        
+        let mouseX = -1000;
+        let mouseY = -1000;
+        let hoveredGroup = [];
+        let boardOffsetX = 0;
+        let boardOffsetY = 0;
+
+        // UI Elements
+        const startScreen = document.getElementById('start-screen');
+        const rulesScreen = document.getElementById('rules-screen');
+        const pauseScreen = document.getElementById('pause-screen');
+        const gameoverScreen = document.getElementById('gameover-screen');
+        const uiLayer = document.getElementById('ui-layer');
+        
+        const btnStart = document.getElementById('btn-start');
+        const btnRules = document.getElementById('btn-rules');
+        const btnBack = document.getElementById('btn-back');
+        const btnPause = document.getElementById('btn-pause');
+        const btnResume = document.getElementById('btn-resume');
+        const btnQuit = document.getElementById('btn-quit');
+        const btnRetry = document.getElementById('btn-retry');
+        const btnGameOverQuit = document.getElementById('btn-gameover-quit');
+
+        // Mathematical constants for pointy-topped hexagons
+        const HEX_WIDTH_RATIO = Math.sqrt(3);
+        const HEX_HEIGHT_RATIO = 2;
+        const ROW_OFFSET_RATIO = 0.75;
+
+        // --- WEB AUDIO API SYNTHESIZER ---
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSynthSound(freqStart, freqEnd, duration, type = 'sine', gainVal = 0.1) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freqStart, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(freqEnd, audioCtx.currentTime + duration);
+
+                gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) { /* Audio contexts fail gracefully if user hasn't interacted */ }
+        }
+
+        function playPopSound(sizeMultiplier = 1) {
+            initAudio();
+            // Pitch scales up with size multiplier
+            const pitch = 250 + (sizeMultiplier * 40);
+            playSynthSound(pitch, pitch * 1.8, 0.15, 'sine', 0.15);
+        }
+
+        function playBombSound() {
+            initAudio();
+            playSynthSound(180, 40, 0.5, 'sawtooth', 0.35);
+        }
+
+        function playGameOverSound() {
+            initAudio();
+            playSynthSound(300, 80, 0.8, 'triangle', 0.25);
+        }
+
+        function playUISelect() {
+            initAudio();
+            playSynthSound(440, 880, 0.08, 'sine', 0.1);
+        }
+
+        // --- NAVIGATION LOGIC ---
+
+        btnStart.addEventListener('click', () => {
+            playUISelect();
+            startScreen.classList.add('hidden');
+            uiLayer.classList.remove('hidden-ui');
+            resetGame();
+        });
+
+        btnRules.addEventListener('click', () => {
+            playUISelect();
+            startScreen.classList.add('hidden');
+            rulesScreen.classList.remove('hidden');
+        });
+
+        btnBack.addEventListener('click', () => {
+            playUISelect();
+            rulesScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        });
+
+        btnPause.addEventListener('click', () => {
+            playUISelect();
+            if (isPlaying) {
+                isPaused = true;
+                pauseScreen.classList.remove('hidden');
+            }
+        });
+
+        btnResume.addEventListener('click', () => {
+            playUISelect();
+            isPaused = false;
+            pauseScreen.classList.add('hidden');
+        });
+
+        btnQuit.addEventListener('click', () => {
+            playUISelect();
+            exitToMenu();
+        });
+
+        btnRetry.addEventListener('click', () => {
+            playUISelect();
+            gameoverScreen.classList.add('hidden');
+            resetGame();
+        });
+
+        btnGameOverQuit.addEventListener('click', () => {
+            playUISelect();
+            gameoverScreen.classList.add('hidden');
+            exitToMenu();
+        });
+
+        function resetGame() {
+            score = 0;
+            energy = 100;
+            scoreDisplay.innerText = score;
+            grid = []; 
+            particles = [];
+            floatingTexts = [];
+            initGrid(); 
+            isPaused = false;
+            isPlaying = true;
+        }
+
+        function exitToMenu() {
+            isPlaying = false;
+            isPaused = false;
+            pauseScreen.classList.add('hidden');
+            uiLayer.classList.add('hidden-ui');
+            startScreen.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            isPlaying = false;
+            playGameOverSound();
+            finalScoreDisplay.innerText = score;
+            gameoverScreen.classList.remove('hidden');
+        }
+
+        // --- CORE CLASSES ---
+
+        class Hexagon {
+            constructor(col, row) {
+                this.col = col;
+                this.row = row;
+                this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                
+                // 8% chance to spawn as a Bomb
+                this.type = Math.random() < 0.08 ? 'bomb' : 'normal';
+                
+                // Animation states
+                const targetPos = this.calculateTargetPosition(col, row);
+                this.x = targetPos.x;
+                this.y = -100 - (row * 50); // Start off-screen (falling in)
+                this.targetY = targetPos.y;
+                
+                this.scale = 0; // Pop-in animation
+                this.targetScale = 1;
+                this.isHovered = false;
+                
+                // Bomb pulsation rotation/angle
+                this.pulseAngle = Math.random() * Math.PI * 2;
+            }
+
+            calculateTargetPosition(col, row) {
+                const w = HEX_WIDTH_RATIO * hexSize;
+                const h = HEX_HEIGHT_RATIO * hexSize;
+                let x = col * w + (row % 2 === 1 ? w / 2 : 0) + boardOffsetX;
+                let y = row * h * ROW_OFFSET_RATIO + boardOffsetY;
+                return { x, y };
+            }
+
+            updatePosition() {
+                const targetPos = this.calculateTargetPosition(this.col, this.row);
+                this.x += (targetPos.x - this.x) * 0.2; 
+                this.targetY = targetPos.y;
+                this.y += (this.targetY - this.y) * 0.15; 
+                this.scale += (this.targetScale - this.scale) * 0.2; 
+                
+                if (this.type === 'bomb') {
+                    this.pulseAngle += 0.08;
+                }
+            }
+
+            draw() {
+                if (this.scale <= 0.01) return;
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.scale, this.scale);
+
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    let angle_deg = 60 * i - 30;
+                    let angle_rad = Math.PI / 180 * angle_deg;
+                    let px = hexSize * Math.cos(angle_rad);
+                    let py = hexSize * Math.sin(angle_rad);
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+
+                ctx.fillStyle = this.color;
+                
+                if (this.isHovered) {
+                    // Hover Glow
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 25;
+                    ctx.fill();
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.fill();
+                } else {
+                    ctx.fill();
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                    ctx.fill();
+                }
+
+                // Crisp border
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = this.isHovered ? '#fff' : 'rgba(255, 255, 255, 0.2)';
+                ctx.stroke();
+
+                // Draw Bomb Indicator overlay
+                if (this.type === 'bomb') {
+                    const pulseRadius = hexSize * (0.35 + Math.sin(this.pulseAngle) * 0.08);
+                    ctx.shadowColor = '#fff';
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, pulseRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.fill();
+                    
+                    // Bomb Inner Core
+                    ctx.beginPath();
+                    ctx.arc(0, 0, pulseRadius * 0.5, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                } else {
+                    // Normal glossy highlight
+                    ctx.beginPath();
+                    ctx.arc(-hexSize*0.3, -hexSize*0.4, hexSize*0.15, 0, Math.PI*2);
+                    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 8 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.02 + 0.015;
+                this.size = Math.random() * 6 + 2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.2; 
+                this.life -= this.decay;
+            }
+
+            draw() {
+                if (this.life <= 0) return;
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.globalCompositeOperation = 'lighter'; 
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class FloatingText {
+            constructor(x, y, text, color) {
+                this.x = x;
+                this.y = y;
+                this.text = text;
+                this.color = color;
+                this.life = 1.0;
+                this.vy = -2;
+            }
+
+            update() {
+                this.y += this.vy;
+                this.life -= 0.02;
+            }
+
+            draw() {
+                if (this.life <= 0) return;
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.font = 'bold 24px Montserrat';
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = '#000';
+                ctx.shadowBlur = 4;
+                ctx.textAlign = 'center';
+                ctx.fillText(this.text, this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        // --- GAME LOGIC ---
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            if (window.innerWidth < 600) hexSize = 25;
+            else hexSize = 35;
+
+            const paddingX = window.innerWidth * 0.1;
+            const paddingY = window.innerHeight * 0.2;
+            
+            const w = HEX_WIDTH_RATIO * hexSize;
+            const h = HEX_HEIGHT_RATIO * hexSize;
+
+            cols = Math.floor((window.innerWidth - paddingX) / w);
+            rows = Math.floor((window.innerHeight - paddingY) / (h * ROW_OFFSET_RATIO));
+
+            cols = Math.max(6, Math.min(cols, 16));
+            rows = Math.max(8, Math.min(rows, 14));
+
+            const boardWidth = cols * w + (w / 2); 
+            const boardHeight = rows * h * ROW_OFFSET_RATIO + (h * 0.25);
+            boardOffsetX = (window.innerWidth - boardWidth) / 2 + (w/2);
+            boardOffsetY = (window.innerHeight - boardHeight) / 2 + (h/2);
+
+            initGrid();
+        }
+
+        function initGrid() {
+            if (grid.length === cols && grid.length > 0 && grid[0].length === rows) return; 
+            
+            grid = new Array(cols).fill(null).map(() => new Array(rows).fill(null));
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    grid[c][r] = new Hexagon(c, r);
+                }
+            }
+        }
+
+        function getNeighbors(col, row) {
+            const odd = row % 2 !== 0;
+            return [
+                {c: col - 1, r: row},     
+                {c: col + 1, r: row},     
+                {c: col, r: row - 1},     
+                {c: odd ? col + 1 : col - 1, r: row - 1},
+                {c: col, r: row + 1},     
+                {c: odd ? col + 1 : col - 1, r: row + 1}
+            ];
+        }
+
+        function getMatches(startCol, startRow) {
+            if (!grid[startCol] || !grid[startCol][startRow]) return [];
+            
+            const targetColor = grid[startCol][startRow].color;
+            let matches = [];
+            let visited = new Set();
+            let queue = [{c: startCol, r: startRow}];
+
+            while (queue.length > 0) {
+                let {c, r} = queue.shift();
+                let key = `${c},${r}`;
+                
+                if (visited.has(key)) continue;
+                visited.add(key);
+                
+                if (grid[c] && grid[c][r] && grid[c][r].color === targetColor) {
+                    matches.push({c, r, hex: grid[c][r]});
+                    
+                    let neighbors = getNeighbors(c, r);
+                    for (let n of neighbors) {
+                        if (n.c >= 0 && n.c < cols && n.r >= 0 && n.r < rows) {
+                            if (!visited.has(`${n.c},${n.r}`)) {
+                                queue.push(n);
+                            }
+                        }
+                    }
+                }
+            }
+            return matches;
+        }
+
+        function getHexAtMouse() {
+            let minDist = hexSize; 
+            let closest = null;
+            
+            for (let c = 0; c < cols; c++) {
+                if (!grid[c]) continue; 
+                for (let r = 0; r < rows; r++) {
+                    let hex = grid[c][r];
+                    if (!hex) continue;
+                    let dist = Math.hypot(mouseX - hex.x, mouseY - hex.y);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = {c, r};
+                    }
+                }
+            }
+            return closest;
+        }
+
+        function applyGravity() {
+            let moved = false;
+            for (let c = 0; c < cols; c++) {
+                if (!grid[c]) continue; 
+                let emptySpaces = 0;
+                for (let r = rows - 1; r >= 0; r--) {
+                    if (!grid[c][r]) {
+                        emptySpaces++;
+                    } else if (emptySpaces > 0) {
+                        grid[c][r + emptySpaces] = grid[c][r];
+                        grid[c][r + emptySpaces].row = r + emptySpaces; 
+                        grid[c][r] = null;
+                        moved = true;
+                    }
+                }
+                
+                for (let r = 0; r < emptySpaces; r++) {
+                    grid[c][r] = new Hexagon(c, r);
+                    moved = true;
+                }
+            }
+            // After gravity, check to make sure there are still possible moves
+            setTimeout(checkValidMovesLeft, 400);
+            return moved;
+        }
+
+        // Auto Shuffle when no moves remain
+        function checkValidMovesLeft() {
+            if (!isPlaying || isPaused) return;
+            
+            let possibleMove = false;
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    if (grid[c] && grid[c][r]) {
+                        const matches = getMatches(c, r);
+                        if (matches.length >= 3) {
+                            possibleMove = true;
+                            break;
+                        }
+                    }
+                }
+                if (possibleMove) break;
+            }
+
+            // Shuffle if locked
+            if (!possibleMove) {
+                floatingTexts.push(new FloatingText(canvas.width / 2, canvas.height / 2, "SHUFFLING BOARD!", "#ffdd00"));
+                screenShake = 15;
+                playPopSound(2);
+                
+                // Shuffle logic
+                for (let c = 0; c < cols; c++) {
+                    for (let r = 0; r < rows; r++) {
+                        if (grid[c] && grid[c][r]) {
+                            grid[c][r].color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                            grid[c][r].scale = 0; // Trigger neat scale-in again
+                        }
+                    }
+                }
+            }
+        }
+
+        function handleInteraction() {
+            if (!isPlaying || isPaused) return; 
+
+            const clickedCoords = getHexAtMouse();
+            if (!clickedCoords) return;
+
+            const matches = getMatches(clickedCoords.c, clickedCoords.r);
+            
+            if (matches.length >= 3) {
+                let pointsEarned = matches.length * 10 * (matches.length - 2); 
+                let energyBonus = matches.length * 4.5;
+                
+                // Identify if a Bomb Hexagon was clicked or is in the group
+                let containsBomb = matches.some(m => m.hex.type === 'bomb');
+                let bombTargets = new Set();
+
+                if (containsBomb) {
+                    playBombSound();
+                    screenShake = 25;
+                    pointsEarned *= 2; // Double points for explosions!
+                    energyBonus += 15;
+
+                    // Locate neighbors for ALL matched bombs
+                    matches.forEach(m => {
+                        if (m.hex.type === 'bomb') {
+                            const neighbors = getNeighbors(m.c, m.r);
+                            neighbors.forEach(n => {
+                                if (n.c >= 0 && n.c < cols && n.r >= 0 && n.r < rows) {
+                                    const key = `${n.c},${n.r}`;
+                                    bombTargets.add(key);
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    playPopSound(matches.length);
+                    screenShake = 5;
+                }
+
+                score += pointsEarned;
+                energy = Math.min(100, energy + energyBonus);
+                
+                // Update Energy Bar
+                energyFill.style.width = `${energy}%`;
+                
+                // Update Score display
+                scoreDisplay.style.transform = 'scale(1.3)';
+                setTimeout(() => scoreDisplay.style.transform = 'scale(1)', 150);
+                scoreDisplay.innerText = score;
+
+                let sumX = 0, sumY = 0;
+
+                matches.forEach(m => {
+                    let h = m.hex;
+                    sumX += h.x;
+                    sumY += h.y;
+                    
+                    // Regular Pop Particles
+                    for(let i=0; i<8; i++) {
+                        particles.push(new Particle(h.x, h.y, h.color));
+                    }
+                    
+                    grid[m.c][m.r] = null;
+                });
+
+                // Clear Bomb targets in second pass
+                bombTargets.forEach(key => {
+                    const [c, r] = key.split(',').map(Number);
+                    if (grid[c] && grid[c][r]) {
+                        const h = grid[c][r];
+                        // Spawn extra explosive particles
+                        for (let i = 0; i < 12; i++) {
+                            particles.push(new Particle(h.x, h.y, '#FFDD00'));
+                            particles.push(new Particle(h.x, h.y, '#FF0055'));
+                        }
+                        grid[c][r] = null;
+                        score += 5; // Flat rate for bomb clears
+                    }
+                });
+
+                // Spawn floating score text
+                floatingTexts.push(new FloatingText(sumX / matches.length, sumY / matches.length, `+${pointsEarned}`, matches[0].hex.color));
+
+                // Trigger falling physics
+                applyGravity();
+                hoveredGroup = []; 
+            }
+        }
+
+        // --- INPUT EVENTS ---
+
+        window.addEventListener('resize', resize);
+        
+        function updateMousePos(e) {
+            if (e.touches && e.touches.length > 0) {
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            } else {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            }
+            
+            const h = getHexAtMouse();
+            if (h) {
+                hoveredGroup = getMatches(h.c, h.r);
+            } else {
+                hoveredGroup = [];
+            }
+        }
+
+        window.addEventListener('mousemove', updateMousePos);
+        window.addEventListener('touchmove', updateMousePos, {passive: false});
+
+        window.addEventListener('click', handleInteraction);
+        window.addEventListener('touchend', (e) => {
+            setTimeout(handleInteraction, 10);
+            mouseX = -1000; 
+            mouseY = -1000;
+        });
+
+        // --- MAIN RENDER LOOP ---
+
+        function drawBackground() {
+            let bgGradient = ctx.createRadialGradient(
+                canvas.width/2, canvas.height/2, 0, 
+                canvas.width/2, canvas.height/2, canvas.width
+            );
+            bgGradient.addColorStop(0, '#10101a');
+            bgGradient.addColorStop(1, '#020205');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Subtle backdrop grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.015)';
+            ctx.lineWidth = 1;
+            const w = HEX_WIDTH_RATIO * hexSize;
+            const h = HEX_HEIGHT_RATIO * hexSize;
+            
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    let x = c * w + (r % 2 === 1 ? w / 2 : 0) + boardOffsetX;
+                    let y = r * h * ROW_OFFSET_RATIO + boardOffsetY;
+                    
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        let angle_deg = 60 * i - 30;
+                        let angle_rad = Math.PI / 180 * angle_deg;
+                        let px = x + hexSize * Math.cos(angle_rad);
+                        let py = y + hexSize * Math.sin(angle_rad);
+                        if (i === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function gameLoop() {
+            // Apply Screen Shake
+            ctx.save();
+            if (screenShake > 0.5) {
+                const dx = (Math.random() - 0.5) * screenShake;
+                const dy = (Math.random() - 0.5) * screenShake;
+                ctx.translate(dx, dy);
+                screenShake *= 0.9; // Decays over time
+            }
+
+            drawBackground();
+
+            // Energy Bar tick down during active play
+            if (isPlaying && !isPaused) {
+                energy -= baseEnergyDrain;
+                if (energy <= 0) {
+                    energy = 0;
+                    triggerGameOver();
+                }
+                energyFill.style.width = `${energy}%`;
+            }
+
+            // Reset all hover states
+            for (let c = 0; c < cols; c++) {
+                if (!grid[c]) continue; 
+                for (let r = 0; r < rows; r++) {
+                    if (grid[c][r]) grid[c][r].isHovered = false;
+                }
+            }
+
+            // Apply hover state to matched group (only if >= 3)
+            if (hoveredGroup.length >= 3) {
+                hoveredGroup.forEach(m => {
+                    if(grid[m.c] && grid[m.c][m.r]) grid[m.c][m.r].isHovered = true;
+                });
+            }
+
+            // Update & Draw Hexagons
+            for (let r = rows-1; r >= 0; r--) { 
+                for (let c = 0; c < cols; c++) {
+                    if (!grid[c]) continue; 
+                    let hex = grid[c][r];
+                    if (hex) {
+                        hex.updatePosition();
+                        hex.draw();
+                    }
+                }
+            }
+
+            // Update & Draw Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.update();
+                p.draw();
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            // Update & Draw Floating Texts
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                let ft = floatingTexts[i];
+                ft.update();
+                ft.draw();
+                if (ft.life <= 0) floatingTexts.splice(i, 1);
+            }
+
+            ctx.restore(); // Stop Screen Shake translation
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Boot
+        resize();
+        gameLoop();
+
+    </script>
+</body>
+</html>
