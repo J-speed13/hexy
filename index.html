@@ -1,82 +1,615 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hexy</title>
-
-<style>
-
-body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#0f172a;
-    font-family:Arial;
-    color:white;
-}
-
-.container{
-    text-align:center;
-}
-
-h1{
-    font-size:50px;
-    margin-bottom:40px;
-}
-
-.buttons{
-    display:flex;
-    gap:20px;
-    justify-content:center;
-}
-
-a{
-    text-decoration:none;
-}
-
-button{
-    width:150px;
-    height:60px;
-    font-size:22px;
-    border:none;
-    border-radius:12px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-button:hover{
-    background:#1d4ed8;
-    transform:scale(1.05);
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J-Labs | Future-Proof Technology</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#05050a',
+                        glass: 'rgba(255, 255, 255, 0.02)',
+                        glassBorder: 'rgba(255, 255, 255, 0.05)',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', filter: 'drop-shadow(0 0 15px rgba(168,85,247,0.4))' },
+                            '50%': { opacity: '1', filter: 'drop-shadow(0 0 35px rgba(234,179,8,0.7))' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030307;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .font-space {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .glow-text {
+            text-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
+        }
+        .glow-yellow {
+            text-shadow: 0 0 25px rgba(234, 179, 8, 0.5);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030307;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f1f2e;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b3b4f;
+        }
+        .grid-bg {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
+            background-size: 30px 30px;
+        }
+    </style>
 </head>
-<body>
+<body class="relative min-h-screen grid-bg">
 
-<div class="container">
+    <!-- Glowing Backdrop Blobs -->
+    <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-yellow-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute top-1/3 right-1/4 w-[700px] h-[700px] bg-purple-600/10 rounded-full blur-[160px] pointer-events-none"></div>
+    <div class="absolute bottom-10 left-10 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-    <h1>Hexy</h1>
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-[#05050a]/80 border-b border-white/5 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo & Brand Name Only -->
+            <a href="#" class="flex items-center gap-3 group">
+                <!-- Conical Flask Logo with Yellow-to-Purple Gradient -->
+                <svg class="w-9 h-9 transition-transform duration-500 group-hover:scale-115" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="flaskGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#EAB308" /> <!-- Yellow -->
+                            <stop offset="100%" stop-color="#A855F7" /> <!-- Purple -->
+                        </linearGradient>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Outer Flask Path -->
+                    <path d="M43 20H57V35L82 80C84.5 84.5 81.2 90 76 90H24C18.8 90 15.5 84.5 18 80L43 35V20Z" 
+                          stroke="url(#flaskGradient)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" filter="url(#glow)"/>
+                    <!-- Liquid inside -->
+                    <path d="M27 75L35 60C38 55 45 55 48 60L55 72C57 75 61 75 63 72L67 66L73 75C75.5 79 72.5 84 68 84H32C27.5 84 24.5 79 27 75Z" 
+                          fill="url(#flaskGradient)" opacity="0.85"/>
+                    <!-- Bubbles -->
+                    <circle cx="50" cy="45" r="3" fill="#EAB308" opacity="0.6"/>
+                    <circle cx="42" cy="52" r="2" fill="#A855F7" opacity="0.8"/>
+                    <circle cx="58" cy="50" r="2.5" fill="#EAB308" opacity="0.7"/>
+                </svg>
+                <span class="font-space font-bold text-2xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-purple-500">
+                    J-LABS
+                </span>
+            </a>
+        </div>
+    </header>
 
-    <div class="buttons">
+    <!-- Hero Section -->
+    <section class="relative min-h-[calc(100vh-80px)] flex items-center pt-12 pb-24 px-6 overflow-hidden">
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Hero Text Content -->
+            <div class="lg:col-span-7 flex flex-col justify-center space-y-8 z-10">
+                <!-- Tech Badge -->
+                <div class="inline-flex items-center gap-2 self-start bg-white/5 border border-white/10 px-4 py-1.5 rounded-full text-xs font-medium text-yellow-400">
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                    </span>
+                    J-Labs Quantum Core v5.0 Active
+                </div>
 
-        <a href="game.html">
-            <button>Game</button>
-        </a>
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold font-space leading-tight tracking-tight text-white">
+                    Catalyzing the <br/>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-amber-400 to-purple-500 glow-text">
+                        Next Synthesis
+                    </span>
+                </h1>
 
-        <a href="ai.html">
-            <button>AI</button>
-        </a>
+                <p class="text-gray-400 text-lg sm:text-xl max-w-xl leading-relaxed">
+                    We engineer advanced interactive grids, secure system logic pipelines, and decentralized systems tailored for futuristic entertainment architectures.
+                </p>
 
-    </div>
+                <!-- Action Button focus purely on the core elements -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                    <a href="#hexy" class="px-8 py-4 font-space font-bold tracking-widest uppercase text-xs rounded-xl bg-gradient-to-r from-yellow-500 to-purple-600 text-black hover:shadow-[0_0_25px_rgba(234,179,8,0.4)] transition-all duration-300 text-center">
+                        Explore Hexy Universe
+                    </a>
+                    <a href="#lab" class="px-8 py-4 font-space font-bold tracking-widest uppercase text-xs rounded-xl border border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300 text-center">
+                        Active Synthesis Lab
+                    </a>
+                </div>
 
-</div>
+                <!-- Stats Panel -->
+                <div class="grid grid-cols-3 gap-6 pt-8 border-t border-white/5 max-w-lg">
+                    <div>
+                        <div class="text-3xl font-bold font-space text-white">99.9%</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Uptime SLA</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold font-space text-white">2.4ms</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Neural Latency</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold font-space text-white">>14B</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Daily Inferences</div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Hero Futuristic Interactive Widget -->
+            <div class="lg:col-span-5 relative flex justify-center items-center z-10 mt-10 lg:mt-0">
+                <div class="relative w-full max-w-[420px] aspect-square rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.01] backdrop-blur-xl p-8 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-float">
+                    
+                    <!-- Decorative Inner Corners -->
+                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-yellow-500/50"></div>
+                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-purple-500/50"></div>
+                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-purple-500/50"></div>
+                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-yellow-500/50"></div>
+
+                    <!-- Hologram Grid Lines -->
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent h-[200%] animate-[pulse_3s_infinite] pointer-events-none"></div>
+
+                    <!-- Top Bar -->
+                    <div class="flex justify-between items-center text-xs font-space text-gray-500 border-b border-white/5 pb-4">
+                        <span class="text-yellow-400 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping"></span>
+                            CORE_SYS: ONLINE
+                        </span>
+                        <span>NODE_ID: JL-909</span>
+                    </div>
+
+                    <!-- Central Flask Display Graphic -->
+                    <div class="flex flex-col items-center justify-center py-6 relative">
+                        <div class="absolute w-48 h-48 bg-gradient-to-tr from-yellow-500/10 to-purple-600/10 rounded-full blur-2xl animate-pulse-slow"></div>
+                        
+                        <!-- Big Conical Flask Floating Animation -->
+                        <svg class="w-36 h-36 drop-shadow-[0_0_25px_rgba(168,85,247,0.3)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M43 20H57V35L82 80C84.5 84.5 81.2 90 76 90H24C18.8 90 15.5 84.5 18 80L43 35V20Z" 
+                                  stroke="url(#flaskGradient)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+                            <path d="M26.5 76L35 60C38 55 45 55 48 60L55 72C57 75 61 75 63 72L67 66L73.5 76C75.8 80 72.8 85 68 85H32C27.2 85 24.2 80 26.5 76Z" 
+                                  fill="url(#flaskGradient)" opacity="0.8"/>
+                            <circle cx="50" cy="48" r="4" fill="#EAB308" class="animate-bounce" style="animation-duration: 2s;"/>
+                            <circle cx="43" cy="58" r="3" fill="#A855F7" class="animate-bounce" style="animation-duration: 3s;"/>
+                            <circle cx="58" cy="55" r="3" fill="#EAB308" class="animate-bounce" style="animation-duration: 2.5s;"/>
+                        </svg>
+                        
+                        <div class="mt-4 font-space font-medium text-sm text-gray-300">CATALYST REACTOR</div>
+                        <div class="text-[10px] text-gray-500 tracking-widest mt-1">PRESSURE: NOMINAL | LIQUID FLOW: 98.4%</div>
+                    </div>
+
+                    <!-- Bottom System Stats Inside Widget -->
+                    <div class="bg-white/[0.02] border border-white/5 rounded-xl p-3.5 space-y-2">
+                        <div class="flex justify-between text-xs text-gray-400">
+                            <span>Synthesis Buffer</span>
+                            <span class="text-yellow-400" id="synthesisPercent">74%</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-yellow-500 to-purple-500 rounded-full transition-all duration-1000" id="synthesisBar" style="width: 74%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Heightened Interactive Lab Section -->
+    <section id="lab" class="py-32 px-6 border-t border-white/5 bg-black/40 relative overflow-hidden">
+        <div class="absolute -right-64 top-1/2 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[150px] pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <div class="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-3.5 py-1.5 rounded-full text-xs font-semibold text-yellow-400 uppercase tracking-widest font-space">
+                    Active System Engine
+                </div>
+                <h2 class="text-4xl sm:text-6xl font-extrabold font-space text-white tracking-tight">
+                    Synthesis Telemetry Lab
+                </h2>
+                <p class="text-gray-400 text-lg">
+                    Calibrate J-Labs virtual conical flask reactors in real-time. Balance the hyper-parameters to initiate grid calculations and observe advanced fluid simulations.
+                </p>
+            </div>
+
+            <div class="bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/10 rounded-3xl p-8 lg:p-14 relative overflow-hidden shadow-2xl">
+                
+                <!-- Background structural matrix lines -->
+                <div class="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+                    
+                    <!-- Lab Synthesizer Dashboard (Left Side) -->
+                    <div class="lg:col-span-7 space-y-8">
+                        <div class="space-y-4">
+                            <h3 class="text-2xl font-bold font-space text-white">Quantum Fluid Controls</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Adjust J-Labs signature reagents. The fluid level, color gradient density, and system output resonance recalculate on-the-fly inside our primary visual vector loop.
+                            </p>
+                        </div>
+
+                        <!-- Real-time Diagnostics Grid -->
+                        <div class="grid grid-cols-2 gap-4 bg-black/40 border border-white/5 rounded-2xl p-5">
+                            <div class="space-y-1">
+                                <span class="text-[10px] text-gray-500 uppercase tracking-widest font-space">Primary Output</span>
+                                <div class="text-lg font-bold text-yellow-400" id="diagnosticFlux">FLUX: 50.0 NQ</div>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="text-[10px] text-gray-500 uppercase tracking-widest font-space">Grid Balance</span>
+                                <div class="text-lg font-bold text-purple-400" id="diagnosticCharge">CHARGE: 50.0 MC</div>
+                            </div>
+                        </div>
+
+                        <!-- Slider Controls -->
+                        <div class="space-y-6">
+                            <!-- Slider 1 -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-space">
+                                    <span class="text-yellow-400 font-bold tracking-wider">NEURAL FLUX MATRIX (YELLOW REAGENT)</span>
+                                    <span id="fluxVal" class="text-gray-300 font-mono text-sm">50%</span>
+                                </div>
+                                <div class="relative flex items-center">
+                                    <input type="range" id="fluxSlider" min="10" max="100" value="50" 
+                                           class="w-full h-2 bg-zinc-900 rounded-lg appearance-none cursor-pointer accent-yellow-400 border border-white/5 focus:outline-none">
+                                </div>
+                            </div>
+
+                            <!-- Slider 2 -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-space">
+                                    <span class="text-purple-400 font-bold tracking-wider">QUANTUM CHARGE PIPELINE (PURPLE REAGENT)</span>
+                                    <span id="chargeVal" class="text-gray-300 font-mono text-sm">50%</span>
+                                </div>
+                                <div class="relative flex items-center">
+                                    <input type="range" id="chargeSlider" min="10" max="100" value="50" 
+                                           class="w-full h-2 bg-zinc-900 rounded-lg appearance-none cursor-pointer accent-purple-500 border border-white/5 focus:outline-none">
+                                </div>
+                            </div>
+
+                            <!-- Catalyst Synthesis Actions -->
+                            <div class="pt-4 flex flex-col sm:flex-row gap-4">
+                                <button onclick="runLabSynthesis()" class="flex-1 px-8 py-4 bg-gradient-to-r from-yellow-500 to-purple-600 text-black font-space font-bold text-xs tracking-widest uppercase rounded-xl hover:shadow-[0_0_25px_rgba(168,85,247,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+                                    Trigger Synthesis Protocol
+                                </button>
+                                <button onclick="resetLab()" class="px-8 py-4 bg-white/5 border border-white/10 text-gray-300 hover:text-white rounded-xl text-xs font-space font-semibold tracking-widest uppercase hover:bg-white/10 transition-all duration-300">
+                                    Reset Reactor Grid
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Flask Synthesizer Visual (Right Side) -->
+                    <div class="lg:col-span-5 flex flex-col items-center justify-center">
+                        <div class="relative p-10 rounded-3xl border border-white/10 bg-black/60 w-full max-w-[380px] shadow-2xl overflow-hidden group">
+                            
+                            <!-- Laser scan overlay line -->
+                            <div class="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent top-0 animate-[bounce_4s_infinite] pointer-events-none"></div>
+
+                            <!-- Glowing background orbs inside dashboard -->
+                            <div class="absolute w-48 h-48 bg-purple-500/10 rounded-full blur-3xl -top-12 -left-12 pointer-events-none"></div>
+
+                            <!-- Ring Systems -->
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div class="w-72 h-72 border border-dashed border-white/5 rounded-full animate-[spin_30s_linear_infinite]"></div>
+                                <div class="w-64 h-64 border border-dashed border-purple-500/10 rounded-full animate-[spin_15s_linear_infinite] direction-reverse absolute"></div>
+                            </div>
+
+                            <!-- Heightened Flask Container -->
+                            <div class="relative flex justify-center py-8">
+                                <svg id="interactiveFlask" class="w-56 h-56 drop-shadow-[0_0_35px_rgba(234,179,8,0.3)] transition-all duration-500" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="interactiveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop id="gradStop1" offset="50%" stop-color="#EAB308" />
+                                            <stop id="gradStop2" offset="100%" stop-color="#A855F7" />
+                                        </linearGradient>
+                                    </defs>
+                                    
+                                    <!-- Flask Outer Skeleton with Glass Reflections -->
+                                    <path d="M43 20H57V35L82 80C84.5 84.5 81.2 90 76 90H24C18.8 90 15.5 84.5 18 80L43 35V20Z" 
+                                          stroke="white" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" opacity="0.65"/>
+                                    <path d="M46 20H54" stroke="white" stroke-width="2" opacity="0.4"/>
+                                    
+                                    <!-- Dynamic Liquid Clip -->
+                                    <g clip-path="url(#liquidClip)">
+                                        <path d="M12 88C15 76 18 60 48 60C78 60 82 76 85 88" fill="url(#interactiveGrad)" opacity="0.85"/>
+                                    </g>
+                                    
+                                    <clipPath id="liquidClip">
+                                        <rect id="liquidHeightRect" x="15" y="55" width="70" height="35" rx="2" />
+                                    </clipPath>
+
+                                    <!-- Bubbling Core Particles -->
+                                    <circle id="bubble1" cx="44" cy="74" r="3.5" fill="#ffffff" opacity="0.7" class="animate-ping" style="animation-duration: 1.2s;"></circle>
+                                    <circle id="bubble2" cx="56" cy="80" r="2.5" fill="#ffffff" opacity="0.9" class="animate-ping" style="animation-duration: 1.8s;"></circle>
+                                    <circle id="bubble3" cx="50" cy="65" r="2" fill="#EAB308" class="animate-bounce" style="animation-duration: 2.2s;"></circle>
+                                </svg>
+                            </div>
+
+                            <!-- Advanced Synthesizer Metrics Log -->
+                            <div class="mt-4 border-t border-white/10 pt-4 space-y-2">
+                                <div class="flex justify-between text-xs text-gray-500 tracking-wider">
+                                    <span class="font-space font-medium">Reactor Telemetry:</span>
+                                    <span id="synthStatusText" class="text-yellow-400 font-bold font-space uppercase animate-pulse-glow">IDLE STATE</span>
+                                </div>
+                                <div class="flex justify-between text-[11px] text-gray-400 font-mono">
+                                    <span>V-Resonance</span>
+                                    <span id="synthResonance" class="text-white font-semibold">1:1 NQ</span>
+                                </div>
+                                <div class="w-full bg-white/5 h-1 rounded-full overflow-hidden mt-2">
+                                    <div id="synthLoadingProgress" class="h-full bg-gradient-to-r from-yellow-500 to-purple-500 transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Heightened Acquisition & Interactive Gaming Section (Hexy Spotlight) -->
+    <section id="hexy" class="py-32 px-6 border-t border-white/5 bg-gradient-to-br from-purple-950/15 via-black/80 to-yellow-500/5 relative overflow-hidden">
+        
+        <!-- Large backdrop glow accents specifically for Hexy -->
+        <div class="absolute -left-64 top-1/4 w-[700px] h-[700px] bg-purple-600/10 rounded-full blur-[160px] pointer-events-none"></div>
+        <div class="absolute -right-64 bottom-1/4 w-[700px] h-[700px] bg-yellow-500/10 rounded-full blur-[160px] pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                
+                <!-- Text / Announcement Column -->
+                <div class="lg:col-span-7 space-y-8">
+                    <div class="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-500/10 to-purple-500/10 border border-yellow-500/30 px-4 py-2 rounded-full text-xs font-semibold text-yellow-400 font-space tracking-wider">
+                        <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-ping"></span>
+                        J-LABS ENTERTAINMENT EXPANSION
+                    </div>
+                    
+                    <h3 class="text-5xl sm:text-7xl font-extrabold font-space text-white leading-tight">
+                        We Now Own <br/>
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-amber-300 to-purple-500 glow-text">
+                            Hexy!
+                        </span>
+                    </h3>
+                    
+                    <p class="text-gray-300 text-lg sm:text-xl leading-relaxed max-w-2xl">
+                        J-Labs has officially acquired the world-class spatial logic engine <strong>Hexy</strong>. By integrating its complex structural matrix directly into our Neural Alchemy Core, we are ready to offer optimized spatial logic play.
+                    </p>
+                    
+                    <!-- Feature Grid inside Hexy Announcement -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4 max-w-xl">
+                        <div class="flex gap-3 items-start">
+                            <div class="text-yellow-400 mt-1">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-space font-bold text-white text-sm">Ultra-Low Latency</h4>
+                                <p class="text-gray-400 text-xs mt-0.5">Optimized dynamically via our local distributed system networks.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 items-start">
+                            <div class="text-purple-400 mt-1">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-space font-bold text-white text-sm">Adaptive Puzzles</h4>
+                                <p class="text-gray-400 text-xs mt-0.5">The hexagonal difficulty indexes continuously scale with your logic paths.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Play Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-5 pt-4 max-w-md">
+                        <a href="game.html" class="flex-1 px-8 py-5 text-center bg-gradient-to-r from-yellow-400 to-purple-600 text-black font-space font-bold text-sm tracking-widest uppercase rounded-xl hover:shadow-[0_0_35px_rgba(234,179,8,0.5)] hover:scale-[1.03] transition-all duration-300">
+                            Play Hexy Now
+                        </a>
+                        <a href="games.html" class="flex-1 px-8 py-5 text-center border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white font-space font-bold text-sm tracking-widest uppercase rounded-xl hover:scale-[1.03] transition-all duration-300">
+                            Games Portal
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Expanded Hexy Graphic Panel (Matrix Grid Visualization) -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-[420px] aspect-square rounded-3xl border border-white/10 bg-black/60 p-10 flex flex-col justify-center items-center overflow-hidden shadow-2xl">
+                        
+                        <!-- Rotating Matrix Orbit Rings -->
+                        <div class="absolute w-72 h-72 rounded-full border border-dashed border-purple-500/20 animate-spin-slow"></div>
+                        <div class="absolute w-60 h-60 rounded-full border border-dashed border-yellow-500/10 animate-[spin_10s_linear_infinite] direction-reverse"></div>
+                        
+                        <!-- Glowing Hexagons representing Hexy Logic Module -->
+                        <div class="relative flex items-center justify-center scale-125">
+                            <svg class="w-48 h-48 drop-shadow-[0_0_35px_rgba(168,85,247,0.4)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <polygon points="50,5 90,28 90,72 50,95 10,72 10,28" stroke="url(#flaskGradient)" stroke-width="4.5" stroke-linejoin="round" class="animate-pulse"/>
+                                <polygon points="50,20 78,36 78,64 50,80 22,64 22,36" stroke="#EAB308" stroke-width="2.5" opacity="0.8" stroke-linejoin="round"/>
+                                <polygon points="50,35 65,44 65,56 50,65 35,56 35,44" fill="url(#flaskGradient)" opacity="0.9"/>
+                            </svg>
+                        </div>
+                        
+                        <div class="mt-8 font-space text-xs tracking-widest uppercase text-yellow-400 font-bold bg-yellow-400/10 border border-yellow-500/20 px-3 py-1.5 rounded-md">
+                            HEXY ENGINE v5.0 ONLINE
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hexy.site Mainframe Launching Portal -->
+    <section id="portal" class="py-24 px-6 border-t border-white/5 bg-gradient-to-b from-transparent to-darkbg relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="max-w-3xl mx-auto text-center space-y-8">
+                <div class="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-4 py-1.5 rounded-full text-xs font-semibold text-yellow-400 font-space tracking-widest uppercase">
+                    Launch Mainframe Portal
+                </div>
+                <h2 class="text-3xl sm:text-5xl font-extrabold font-space text-white tracking-tight">Access Hexy.site</h2>
+                <p class="text-gray-400 text-lg leading-relaxed">
+                    The ultimate spatial logic mainframe is now live under J-Labs. Explore neural-mapped puzzles, customize system algorithms, and challenge global grids directly at our official web terminal.
+                </p>
+                
+                <div class="pt-6">
+                    <a href="https://hexy.site" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-8 py-5 border border-yellow-500/20 bg-yellow-500/5 hover:bg-yellow-500/15 text-yellow-400 hover:text-white font-space font-bold text-xs tracking-widest uppercase rounded-xl transition-all duration-300 shadow-[0_0_25px_rgba(234,179,8,0.1)] hover:shadow-[0_0_35px_rgba(234,179,8,0.2)]">
+                        <!-- Hexagon SVG icon -->
+                        <svg class="w-5 h-5 text-yellow-400 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12,2 22,7.5 22,18.5 12,24 2,18.5 2,7.5" stroke-linejoin="round"/>
+                        </svg>
+                        Launch Game System: hexy.site
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-darkbg py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-gray-500">
+            <!-- Footer Logo -->
+            <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 opacity-80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M43 20H57V35L82 80C84.5 84.5 81.2 90 76 90H24C18.8 90 15.5 84.5 18 80L43 35V20Z" 
+                          stroke="url(#flaskGradient)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+                </svg>
+                <span class="font-space font-bold text-lg tracking-wider text-white">J-LABS</span>
+            </div>
+            <!-- Copy -->
+            <div class="font-space text-xs">
+                &copy; 2026 J-Labs Technologies Inc. Synthesis Matrix Protocol Active.
+            </div>
+            <!-- Privacy / Terms -->
+            <div class="flex gap-6 text-xs">
+                <a href="#" class="hover:text-gray-300">Security Audit</a>
+                <a href="#" class="hover:text-gray-300">Terminal API</a>
+                <a href="#" class="hover:text-gray-300">Sub-Grids</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Logic Scripts -->
+    <script>
+        // Interactive Dashboard Stats Simulation (Hero widget)
+        let percent = 74;
+        const bar = document.getElementById('synthesisBar');
+        const text = document.getElementById('synthesisPercent');
+        
+        setInterval(() => {
+            percent = Math.floor(Math.random() * (94 - 60) + 60);
+            if(bar && text) {
+                bar.style.width = percent + '%';
+                text.innerText = percent + '%';
+            }
+        }, 3500);
+
+        // Lab Synthesizer controls
+        const fluxSlider = document.getElementById('fluxSlider');
+        const chargeSlider = document.getElementById('chargeSlider');
+        const fluxVal = document.getElementById('fluxVal');
+        const chargeVal = document.getElementById('chargeVal');
+        const liquidClipRect = document.getElementById('liquidHeightRect');
+        const synthStatusText = document.getElementById('synthStatusText');
+        const synthResonance = document.getElementById('synthResonance');
+        const interactiveFlask = document.getElementById('interactiveFlask');
+        const diagnosticFlux = document.getElementById('diagnosticFlux');
+        const diagnosticCharge = document.getElementById('diagnosticCharge');
+        const synthLoadingProgress = document.getElementById('synthLoadingProgress');
+
+        function updateLabInterface() {
+            const fValue = parseInt(fluxSlider.value);
+            const cValue = parseInt(chargeSlider.value);
+            
+            fluxVal.innerText = fValue + '%';
+            chargeVal.innerText = cValue + '%';
+
+            // Adapt diagnostics values
+            diagnosticFlux.innerText = `FLUX: ${fValue}.0 NQ`;
+            diagnosticCharge.innerText = `CHARGE: ${cValue}.0 MC`;
+
+            // Adapt the liquid height visually in SVG
+            const mid = (fValue + cValue) / 2;
+            const newY = 90 - (mid * 0.45); // Map 10-100 to appropriate SVG Y coordinate
+            const newHeight = 90 - newY;
+            
+            liquidClipRect.setAttribute('y', newY);
+            liquidClipRect.setAttribute('height', newHeight);
+
+            // Dynamically alter resonance text
+            const resonanceRatio = (fValue / cValue).toFixed(2);
+            synthResonance.innerText = `${resonanceRatio}:1 NQ`;
+        }
+
+        fluxSlider.addEventListener('input', updateLabInterface);
+        chargeSlider.addEventListener('input', updateLabInterface);
+
+        function runLabSynthesis() {
+            synthStatusText.innerText = "SYNTHESIZING MATRIX...";
+            synthStatusText.classList.remove('text-yellow-400', 'text-green-400');
+            synthStatusText.classList.add('text-purple-400', 'animate-pulse');
+            
+            // Visual pulse to flask
+            interactiveFlask.classList.add('scale-110');
+            
+            // Simulate progression
+            let currentProg = 0;
+            const progInterval = setInterval(() => {
+                currentProg += 10;
+                synthLoadingProgress.style.width = currentProg + '%';
+                if (currentProg >= 100) {
+                    clearInterval(progInterval);
+                }
+            }, 150);
+            
+            setTimeout(() => {
+                synthStatusText.classList.remove('animate-pulse', 'text-purple-400');
+                synthStatusText.classList.add('text-green-400');
+                synthStatusText.innerText = "SUCCESSFULLY BONDED";
+                interactiveFlask.classList.remove('scale-110');
+            }, 1800);
+        }
+
+        function resetLab() {
+            fluxSlider.value = 50;
+            chargeSlider.value = 50;
+            synthLoadingProgress.style.width = '0%';
+            updateLabInterface();
+            synthStatusText.innerText = "IDLE STATE";
+            synthStatusText.className = "text-yellow-400 font-semibold font-space uppercase animate-pulse-glow";
+        }
+
+        // Initialize state on first load
+        updateLabInterface();
+    </script>
 </body>
 </html>
