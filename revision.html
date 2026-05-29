@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 7 History End of Year Revision Masterclass</title>
+    <!-- Tailwind CSS for rich, modern design system -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .medieval-title {
+            font-family: 'Cinzel', serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-amber-500/30 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-500 text-slate-900 p-2 rounded-lg font-bold shadow-md">
+                    <i data-lucide="castle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="medieval-title text-xl md:text-2xl font-bold tracking-wide text-amber-400">Y7 HISTORY EXAM PREP</h1>
+                    <p class="text-xs text-slate-400 font-medium">100-Question Revision Masterclass</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <span class="text-xs text-slate-400 block">Overall Progress</span>
+                    <span class="text-sm font-bold text-amber-400" id="header-progress-txt">0 / 100 Completed</span>
+                </div>
+                <div class="w-24 bg-slate-800 h-2.5 rounded-full overflow-hidden border border-slate-700 hidden sm:block">
+                    <div id="header-progress-bar" class="bg-gradient-to-r from-amber-500 to-amber-300 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <button onclick="restartEntireQuiz()" class="bg-slate-800 hover:bg-slate-700 hover:text-amber-400 px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Navigation, Stats & Filter Selection (4 cols on large screens) -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Quick Stats Card -->
+            <div class="bg-white rounded-xl shadow-md border border-slate-200 p-5">
+                <h3 class="font-bold text-slate-900 text-sm tracking-wider uppercase mb-4 flex items-center gap-2">
+                    <i data-lucide="bar-chart-2" class="text-amber-500 w-4 h-4"></i> Revision Dashboard
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
+                        <span class="text-xs text-slate-500 block">Accuracy Rate</span>
+                        <span id="stat-accuracy" class="text-2xl font-extrabold text-slate-800">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
+                        <span class="text-xs text-slate-500 block">Questions Solved</span>
+                        <span id="stat-solved" class="text-2xl font-extrabold text-slate-800">0/100</span>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
+                        <span class="text-xs text-slate-500 block">Correct Answers</span>
+                        <span id="stat-correct" class="text-2xl font-extrabold text-emerald-600">0</span>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-lg text-center border border-slate-100">
+                        <span class="text-xs text-slate-500 block">Flagged for Study</span>
+                        <span id="stat-flagged" class="text-2xl font-extrabold text-amber-600">0</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-500 font-medium">Exam Grade Estimate</span>
+                        <span id="grade-badge" class="font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">N/A</span>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-1" id="grade-description">Complete at least 10 questions to estimate grade!</div>
+                </div>
+            </div>
+
+            <!-- Category Filter Selector -->
+            <div class="bg-white rounded-xl shadow-md border border-slate-200 p-5">
+                <h3 class="font-bold text-slate-900 text-sm tracking-wider uppercase mb-3 flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-amber-500 w-4 h-4"></i> Study Topics
+                </h3>
+                <p class="text-xs text-slate-500 mb-4">Select a specific topic to filter your revision queue, or review everything at once.</p>
+                
+                <div class="flex flex-col gap-2" id="topic-filter-list">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Quiz List Navigation (Quick jump Grid) -->
+            <div class="bg-white rounded-xl shadow-md border border-slate-200 p-5 flex-grow flex flex-col max-h-[400px]">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-slate-900 text-sm tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="grid" class="text-amber-500 w-4 h-4"></i> Progress Matrix
+                    </h3>
+                    <span id="topic-count-tag" class="text-xs bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded">All Questions</span>
+                </div>
+                
+                <!-- Indicators Legend -->
+                <div class="flex flex-wrap gap-3 text-xs text-slate-500 pb-3 mb-3 border-b border-slate-100">
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300"></span> Unseen</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Correct</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Wrong</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Flagged</span>
+                </div>
+
+                <div id="progress-matrix-grid" class="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-10 lg:grid-cols-8 gap-1.5 overflow-y-auto custom-scrollbar pr-1 flex-grow">
+                    <!-- Generated dynamically (100 boxes) -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Question Card & Explanations (8 cols on large screens) -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- Dynamic Alert Message (Custom Popup Replace system alert) -->
+            <div id="custom-message-box" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm transition-all flex items-start gap-3">
+                <i data-lucide="info" class="text-amber-600 w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <h4 class="font-bold text-amber-900 text-sm" id="msg-title">Notification</h4>
+                    <p class="text-xs text-amber-800 mt-0.5" id="msg-body">Message details go here.</p>
+                </div>
+                <button onclick="closeMsgBox()" class="ml-auto text-amber-400 hover:text-amber-700">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Main Card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative" id="quiz-main-card">
+                
+                <!-- Topic Bar & controls -->
+                <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between border-b border-amber-500/20">
+                    <div>
+                        <span id="curr-q-topic" class="text-[10px] bg-amber-500/20 text-amber-300 font-bold tracking-wider uppercase px-2 py-0.5 rounded border border-amber-500/30">MEDIEVAL CHURCH</span>
+                        <h2 class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                            Question <span id="curr-q-num" class="font-bold text-white">1</span> of 100
+                        </h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button id="tts-btn" onclick="speakCurrentQuestion()" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-amber-400 transition" title="Listen to question">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i>
+                        </button>
+                        <button id="flag-btn" onclick="toggleFlagCurrentQuestion()" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-amber-400 transition" title="Flag for later study">
+                            <i data-lucide="bookmark" id="flag-icon" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-100 h-1.5 overflow-hidden">
+                    <div id="card-progress-bar" class="bg-amber-500 h-full w-1% transition-all duration-300"></div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-6 md:p-8">
+                    
+                    <!-- Question Prompt -->
+                    <div class="mb-6">
+                        <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-900 leading-snug">
+                            Which Christian denomination did almost everyone in medieval England belong to, and what language was the Bible written in?
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options Stack -->
+                    <div id="options-stack" class="flex flex-col gap-3">
+                        <!-- Options filled dynamically -->
+                    </div>
+
+                    <!-- Explanations Box (Initially Hidden) -->
+                    <div id="explanation-box" class="hidden mt-6 p-5 bg-slate-50 border border-slate-200 rounded-xl transition-all duration-300">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span id="explanation-badge" class="text-xs font-bold uppercase px-2 py-0.5 rounded">Correct</span>
+                            <h4 class="font-bold text-slate-900 text-sm">Historical Rationale</h4>
+                        </div>
+                        <p id="explanation-text" class="text-sm text-slate-600 leading-relaxed">
+                            Explanation contents...
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Card Actions Footer -->
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex items-center justify-between gap-4">
+                    <button id="prev-btn" onclick="navigateToPrev()" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg border border-slate-200 font-semibold text-sm flex items-center gap-1.5 transition">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Previous
+                    </button>
+
+                    <button id="show-hint-btn" onclick="toggleHint()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 px-4 py-2 rounded-lg border border-amber-200 font-semibold text-xs flex items-center gap-1.5 transition">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i> Hint
+                    </button>
+
+                    <button id="next-btn" onclick="navigateToNext()" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-lg font-semibold text-sm flex items-center gap-1.5 transition">
+                        Next <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Hint overlay card -->
+            <div id="hint-bubble" class="hidden bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl text-xs flex items-start gap-2.5">
+                <i data-lucide="lightbulb" class="text-amber-600 w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <span class="font-bold uppercase tracking-wider block mb-0.5">Revision Clue</span>
+                    <p id="hint-text">Think about the dominant Church based in Rome and the language used by educated priests across Europe during this era.</p>
+                </div>
+            </div>
+
+            <!-- Interactive Study Guide Widget -->
+            <div class="bg-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden border border-amber-500/20">
+                <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-10 translate-y-10">
+                    <i data-lucide="scroll" class="w-72 h-72"></i>
+                </div>
+                
+                <h3 class="medieval-title text-xl font-bold text-amber-400 mb-2 flex items-center gap-2">
+                    <i data-lucide="scroll" class="w-5 h-5"></i> Exam Strategy Check
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed max-w-2xl mb-4">
+                    To achieve a <strong>Distinction (85%+)</strong> on your Year 7 history exam, make sure you can explain the <em>cause and effect</em> of historical milestones, rather than just knowing the dates. Study the structures of castles, the dispute between Crown and Altar (Becket), and the power shift caused by the Black Death.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-center">
+                        <span class="text-amber-400 text-xs font-bold block mb-1">Rule of Law</span>
+                        <p class="text-[11px] text-slate-300">Magna Carta (1215) set the standard that even kings must follow the law.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-center">
+                        <span class="text-amber-400 text-xs font-bold block mb-1">Miasma Fallacy</span>
+                        <p class="text-[11px] text-slate-300">Medieval people blamed "bad air" for the plague, but fleas and bacteria were the true killers.</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 text-center">
+                        <span class="text-amber-400 text-xs font-bold block mb-1">Feudal Decay</span>
+                        <p class="text-[11px] text-slate-300">The 1381 Peasants' Revolt failed at first, but lords could never return to old forced duties.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 text-center py-4 text-xs border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-2">
+            <p>&copy; 2026 Year 7 History Revision Suite. Built for collaborative study.</p>
+            <p class="flex items-center gap-1 text-slate-500">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> Master your History exam with confidence!
+            </p>
+        </div>
+    </footer>
+
+    <!-- JS Logic and 100-Question Database -->
+    <script>
+        // Database of exactly 100 questions representing the whole Year 7 curriculum.
+        const allQuestions = [
+            // ================== CHAPTER 3: RELIGION & MEDIEVAL CHURCH (1-15) ==================
+            {
+                id: 1,
+                topic: "Religion & Beliefs",
+                question: "Which Christian denomination did almost everyone in medieval England belong to, and what language was the Bible written in?",
+                options: [
+                    "Roman Catholic, written in Latin",
+                    "Church of England (Protestant), written in English",
+                    "Eastern Orthodox, written in Greek",
+                    "Methodist, written in French"
+                ],
+                correctIndex: 0,
+                hint: "Think of the dominant church in Western Europe, centered in Rome, using a classical language.",
+                rationale: "In medieval England, the Roman Catholic Church was the sole religious body. Its scriptures, ceremonies, and services were written and spoken entirely in Latin."
+            },
+            {
+                id: 2,
+                topic: "Religion & Beliefs",
+                question: "What was a medieval 'tithe' paid to the Church?",
+                options: [
+                    "A special type of prayer book used during Sunday Mass",
+                    "A tax equal to one-tenth of a person's yearly farm produce or income",
+                    "A penalty paid to the King to buy freedom from prison",
+                    "A weapon used by church guardians to ward off invaders"
+                ],
+                correctIndex: 1,
+                hint: "The Old English root word literally means 'a tenth part'.",
+                rationale: "A tithe was an obligatory annual payment of 10% of agricultural products, livestock, or earnings, paid to support the local parish priest and church maintenance."
+            },
+            {
+                id: 3,
+                topic: "Religion & Beliefs",
+                question: "Why did the medieval Catholic Church use 'Doom Paintings' inside local parish churches?",
+                options: [
+                    "To teach illiterate peasants about the terrifying horrors of Hell and the glories of Heaven",
+                    "To decorate the church walls in honor of the local lord's military victories",
+                    "To keep records of tax payments in visual format",
+                    "To block drafty winds from entering cracks in stone mortar"
+                ],
+                correctIndex: 0,
+                hint: "Most peasants could not read Latin or even English, so visual aids were incredibly powerful.",
+                rationale: "With highly illiterate populations, Doom Paintings served as terrifyingly graphic, visual warnings to steer peasants away from sin and remind them of the final judgement."
+            },
+            {
+                id: 4,
+                topic: "Religion & Beliefs",
+                question: "Where inside a typical medieval parish church would a Doom Painting be physically located?",
+                options: [
+                    "On the underside of the main entry doors",
+                    "Above the chancel arch (facing the congregation)",
+                    "Deep underground inside the crypt chambers",
+                    "Along the exterior roof tiles to ward off birds"
+                ],
+                correctIndex: 1,
+                hint: "It had to be fully visible to every parishioner sitting in the church pews looking at the altar.",
+                rationale: "Doom paintings were painted above the chancel arch, ensuring they were front-and-center, commanding the absolute attention of the peasants throughout long services."
+            },
+            {
+                id: 5,
+                topic: "Religion & Beliefs",
+                question: "According to medieval Catholic teachings, what was 'Purgatory'?",
+                options: [
+                    "A high-altitude paradise reserved solely for saints and martyrs",
+                    "An intermediate realm where souls were purified of sin through fire before entering Heaven",
+                    "The local dungeon where heretics were tortured until they confessed",
+                    "A beautiful forest inside the Vatican grounds"
+                ],
+                correctIndex: 1,
+                hint: "It acts as a temporary cleansing ground, but was feared due to the pain of purgatorial fires.",
+                rationale: "Purgatory was believed to be an in-between state of suffering where souls underwent cleansing of venial sins before they were clean enough to enter Heaven."
+            },
+            {
+                id: 6,
+                topic: "Religion & Beliefs",
+                question: "How could medieval Christians legally speed up a loved one's passage through Purgatory?",
+                options: [
+                    "By purchasing indulgences, funding masses, or doing pilgrimages",
+                    "By petitioning the King of England directly with a letter of appeal",
+                    "By burying the person in gold-plated armor",
+                    "By refusing to pay the Church tithe as a form of protest"
+                ],
+                correctIndex: 0,
+                hint: "The Church monetized or structured ways to fast-track souls, leading to future protests.",
+                rationale: "By buying indulgences (spiritual pardons), requesting chantries, or donating land, families believed they could shorten their relatives' time suffering in Purgatory."
+            },
+            {
+                id: 7,
+                topic: "Religion & Beliefs",
+                question: "What is a 'pilgrimage' in the context of medieval life?",
+                options: [
+                    "A forced military campaign to colonize neighboring counties",
+                    "A sacred journey taken to a holy site to pray, seek miracles, or atone for sin",
+                    "An seasonal escape into the deep woods to hunt game",
+                    "A formal process for electing a new Pope in Rome"
+                ],
+                correctIndex: 1,
+                hint: "The Canterbury Tales by Geoffrey Chaucer is famously set during one of these trips.",
+                rationale: "A pilgrimage was a journey to a holy place (like Canterbury Cathedral, Jerusalem, or Rome) to seek divine intervention, heal illnesses, or show true penance."
+            },
+            {
+                id: 8,
+                topic: "Religion & Beliefs",
+                question: "Which of the following was a primary reason why medieval men chose to enter monasteries to live as monks?",
+                options: [
+                    "To gain massive private wealth, build armies, and marry noblewomen",
+                    "To escape the hardships of peasant life, seek salvation, and devote themselves to God",
+                    "To run for the local mayoral elections in major charter towns",
+                    "To explore foreign continents on trading expeditions"
+                ],
+                correctIndex: 1,
+                hint: "Monasteries offered security, structure, and religious devotion away from the chaotic and dangerous feudal world.",
+                rationale: "Becoming a monk offered a structured, safe lifestyle of prayer, education, and relative comfort compared to farming in poverty on a feudal manor."
+            },
+            {
+                id: 9,
+                topic: "Religion & Beliefs",
+                question: "What was the Benedictine Rule followed by many medieval monks?",
+                options: [
+                    "A set of guidelines mandating extreme luxury, fine banquets, and political office",
+                    "A strict vow of poverty, chastity, and obedience to the Abbot",
+                    "A law forcing monks to defend the country during times of foreign invasion",
+                    "The requirement that all monks learn to read and write in French"
+                ],
+                correctIndex: 1,
+                hint: "Benedictine monks focused heavily on modesty, prayer, physical labor, and complete devotion.",
+                rationale: "The Rule of St. Benedict was a code of conduct stressing humility, silence, and vows of poverty, chastity, and obedience, preventing personal riches."
+            },
+            {
+                id: 10,
+                topic: "Religion & Beliefs",
+                question: "What crucial cultural service did monasteries provide to medieval Europe during this period of high illiteracy?",
+                options: [
+                    "Translating and hand-copying historical manuscripts, holy books, and records",
+                    "Operating factories that produced firearms and armor for the King",
+                    "Hosting secular theatrical performances and musical festivals",
+                    "Training war horses for noble cavalry regiments"
+                ],
+                correctIndex: 0,
+                hint: "Before printing presses, books had to be meticulously made by hand in a room called a scriptorium.",
+                rationale: "Monks in scriptoriums preserved and hand-copied ancient texts, keeping literacy, legal structures, history, and theology alive across centuries."
+            },
+            {
+                id: 11,
+                topic: "Religion & Beliefs",
+                question: "How did the wealth of the Catholic Church compare to that of the King of England in medieval times?",
+                options: [
+                    "The Church was extremely poor and relied entirely on direct food handouts from the King",
+                    "The Church was incredibly rich, owning over a third of the land and collecting massive taxes",
+                    "The Church had exactly the same wealth as the poorest peasants",
+                    "The Church’s wealth was legally controlled and confiscated by the barons every five years"
+                ],
+                correctIndex: 1,
+                hint: "Consider how tithes, land endowments, and pilgrims' donations built grand cathedrals.",
+                rationale: "The Church owned vast territories, was exempt from many taxes, and collected regular payments from everyone, often making it wealthier and more influential than the Crown."
+            },
+            {
+                id: 12,
+                topic: "Religion & Beliefs",
+                question: "What was 'excommunication', the ultimate spiritual penalty used by the Pope?",
+                options: [
+                    "The execution of a heretic by burning at the stake",
+                    "Being expelled from the Church, meaning your soul was guaranteed to go to Hell",
+                    "Forcing a sinner to walk bare-foot to Jerusalem and back",
+                    "The demotion of a bishop to a lowly parish priest"
+                ],
+                correctIndex: 1,
+                hint: "It completely stripped a person of their spiritual rights and severed their relationship with God's Church.",
+                rationale: "Excommunication cut a person off from the sacraments, meaning they were outside the grace of God and, if they died, faced certain eternal damnation."
+            },
+            {
+                id: 13,
+                topic: "Religion & Beliefs",
+                question: "What happened if a Pope placed a whole country under an 'Interdict'?",
+                options: [
+                    "All taxes collected in that country were sent straight to the local poor peasants",
+                    "No church services, baptisms, marriages, or Christian burials could legally take place",
+                    "The country's military was immediately placed under French royal control",
+                    "The King was automatically removed from office and replaced by the nearest Archbishop"
+                ],
+                correctIndex: 1,
+                hint: "An interdict shut down all local church functions, which terrified ordinary citizens.",
+                rationale: "An interdict suspended all public sacraments. This meant babies couldn't be properly baptized and the dead couldn't be buried with Christian rites, causing massive public panic."
+            },
+            {
+                id: 14,
+                topic: "Religion & Beliefs",
+                question: "Which of the following was a holy relic commonly sought by pilgrims in the Middle Ages?",
+                options: [
+                    "A bone fragment, cloth piece, or personal belonging of a holy saint",
+                    "A highly detailed map of physical pathways inside Purgatory",
+                    "A key that could physically unlock the gates of Canterbury",
+                    "An ancient stone tablet containing the original laws of the Anglo-Saxons"
+                ],
+                correctIndex: 0,
+                hint: "Relics were physical items associated with holy figures, believed to hold supernatural healing powers.",
+                rationale: "Relics were physical remains of saints (or items touched by them). Medieval Christians believed praying near these objects brought spiritual favor and physical healing."
+            },
+            {
+                id: 15,
+                topic: "Religion & Beliefs",
+                question: "How did medieval peasants view disease and health in relation to the Church's teachings?",
+                options: [
+                    "They believed illnesses were caused by microscopic germs spread through polluted well water",
+                    "They believed sickness was a direct punishment from God or a test of faith",
+                    "They believed sickness was caused entirely by eating too many root vegetables",
+                    "They believed illnesses did not exist and were merely illusions created by the brain"
+                ],
+                correctIndex: 1,
+                hint: "Before modern biology, spiritual explanations dominated human understanding of suffering.",
+                rationale: "Sickness, pandemics, and injuries were widely viewed as physical signs of God's anger for personal or societal sins, making prayer and confession the first line of defense."
+            },
+
+            // ================== CHAPTER 4: CASTLES: DEVELOPMENT & ARCHITECTURE (16-30) ==================
+            {
+                id: 16,
+                topic: "Castles & Architecture",
+                question: "In a Norman Motte and Bailey castle, what was the 'Motte'?",
+                options: [
+                    "The fenced-in courtyard where the stables, kitchen, and livestock were located",
+                    "A large, man-made defensive mound of earth with a wooden tower built on top",
+                    "The deep, water-filled ditch that surrounded the outer castle walls",
+                    "A highly reinforced gatehouse with iron spikes hanging overhead"
+                ],
+                correctIndex: 1,
+                hint: "Motte comes from a French word meaning mound or hill.",
+                rationale: "The Motte was a large artificial earth hill (often 5 to 10 meters high) that provided a high, secure vantage point for defensive lookouts and the final retreat."
+            },
+            {
+                id: 17,
+                topic: "Castles & Architecture",
+                question: "In a Norman Motte and Bailey castle, what was the 'Bailey'?",
+                options: [
+                    "The specialized siege weapon used to fling diseased cows into enemy fortifications",
+                    "An enclosed, fortified courtyard containing dwellings, workshops, stables, and animal pens",
+                    "The long wooden drawbridge that crossed over the defensive moat",
+                    "The local courtroom where the Norman lord punished rebellious Anglo-Saxon peasants"
+                ],
+                correctIndex: 1,
+                hint: "The Bailey was the lower, wider part of the defensive compound where daily life and work happened.",
+                rationale: "The Bailey was the secure flat area enclosed by a wooden palisade and ditch, housing the garrison, kitchens, stables, and storehouses."
+            },
+            {
+                id: 18,
+                topic: "Castles & Architecture",
+                question: "What was the most significant defensive weakness of early Motte and Bailey castles?",
+                options: [
+                    "They were built entirely of wood, making them highly vulnerable to fire and rot",
+                    "They were far too small to house more than five soldiers at any time",
+                    "They were built on flat ground with no defensive elevation at all",
+                    "They could only be built in areas with deep stone quarries"
+                ],
+                correctIndex: 0,
+                hint: "Timber is easily set alight by flaming arrows and burns down to ashes quickly.",
+                rationale: "Early castles relied on timber which was easily set on fire during a siege and rotted away within decades if not constantly maintained."
+            },
+            {
+                id: 19,
+                topic: "Castles & Architecture",
+                question: "Why did William the Conqueror order his forces to build wooden Motte and Bailey castles immediately after 1066?",
+                options: [
+                    "They were cheap, used easily available materials, and could be constructed in a matter of weeks",
+                    "He believed wood looked much more elegant and imposing than grey limestone blocks",
+                    "He wanted to protect the environment by avoiding mining activities",
+                    "Norman architects did not know how to work with stone blocks"
+                ],
+                correctIndex: 0,
+                hint: "William was an invader facing constant native rebellions; speed and security were his top priorities.",
+                rationale: "Following his victory at Hastings, William needed to establish rapid military strongholds to intimidate and control hostile Anglo-Saxon populations before they could organize."
+            },
+            {
+                id: 20,
+                topic: "Castles & Architecture",
+                question: "As the Normans consolidated their power in England, what did they replace wooden castles with?",
+                options: [
+                    "Vast brick structures with glass window panes",
+                    "Imposing Stone Keeps, built with thick limestone walls",
+                    "Open-air earthen forts with no buildings inside",
+                    "Deep underground bunker systems linked by secret tunnels"
+                ],
+                correctIndex: 1,
+                hint: "Stone is highly fireproof, extremely durable, and incredibly difficult to break through.",
+                rationale: "Once Norman rule was secure, they began upgrading major strongholds to stone to resist fires, decay, and heavy siege engines, building massive keeps like the Tower of London."
+            },
+            {
+                id: 21,
+                topic: "Castles & Architecture",
+                question: "What was the 'Keep' inside a stone castle?",
+                options: [
+                    "The outer ring of walls where archers patrolled",
+                    "The strong, central, self-contained stone tower that served as the lord's residence and last defense",
+                    "The muddy trench filled with spikes that sat beneath the drawbridge",
+                    "The small kennel where hunting hounds were kept safe"
+                ],
+                correctIndex: 1,
+                hint: "It was the ultimate fortress within the fortress, designed to hold out even if outer walls fell.",
+                rationale: "The Keep (or donjon) was the strongest, thickest-walled structure inside the castle, housing the lord's chambers, chapel, and key provisions for long sieges."
+            },
+            {
+                id: 22,
+                topic: "Castles & Architecture",
+                question: "Why did medieval stone keeps often have their main entrance on the first floor rather than the ground floor?",
+                options: [
+                    "To prevent heavy carts and horses from entering the lord's personal living space",
+                    "To make it harder for attackers to use battering rams on the main door",
+                    "Because medieval architects believed ground floor doors brought bad luck",
+                    "To allow servants to easily throw household waste onto the ground below"
+                ],
+                correctIndex: 1,
+                hint: "Ground floor doors are easy targets for rams. First floor doors required a removable staircase.",
+                rationale: "Placing the entrance on the first floor (accessed by a wooden staircase that could be quickly destroyed or drawn up) made it almost impossible for attackers to attack the door with heavy rams."
+            },
+            {
+                id: 23,
+                topic: "Castles & Architecture",
+                question: "What was a 'Portcullis' in medieval castle design?",
+                options: [
+                    "A massive, heavy sliding gate made of thick wood and iron bars",
+                    "A projecting balcony with holes in the floor for dropping stones",
+                    "A long, spear-like weapon used to hook attacking soldiers off scaling ladders",
+                    "The specialized stone spiral staircase that wound clockwise"
+                ],
+                correctIndex: 0,
+                hint: "It moved vertically, sliding up and down in stone grooves inside the gatehouse.",
+                rationale: "The Portcullis was a heavy, gridded gate that could be dropped rapidly in an emergency to seal off the gatehouse entrance and trap intruders."
+            },
+            {
+                id: 24,
+                topic: "Castles & Architecture",
+                question: "What were 'Murder Holes' (meurtrières) and where were they located?",
+                options: [
+                    "Deep pits dug outside the castle walls containing hidden spikes",
+                    "Holes in the ceiling of the gatehouse passage through which defenders could drop oil, water, or stones",
+                    "Narrow windows on the top floor of the keep used for throwing garbage",
+                    "Hidden compartments in the dungeon used for torturing prisoners"
+                ],
+                correctIndex: 1,
+                hint: "If attackers managed to break past the outer gate, they would find themselves trapped in a passage with dangerous ceilings.",
+                rationale: "Murder holes allowed defenders to drop heavy stones, boiling water, hot sand, or arrows directly down on attackers who had managed to force their way into the gatehouse entry tunnel."
+            },
+            {
+                id: 25,
+                topic: "Castles & Architecture",
+                question: "Why were spiral staircases in medieval keeps almost always built winding clockwise as you go up?",
+                options: [
+                    "To make it easier for right-handed defenders to swing their swords down from above",
+                    "Because clockwise staircases were structurally stronger and less likely to collapse",
+                    "To follow the natural movement of the sun across the sky",
+                    "To prevent attacking soldiers from suffering from sudden dizziness"
+                ],
+                correctIndex: 0,
+                hint: "Think about which arm most soldiers used to hold their weapons, and how the central stone pillar would get in an attacker's way.",
+                rationale: "A clockwise spiral staircase gave right-handed defenders fighting from above ample room to swing their swords, while the central pillar severely restricted the sword-arm of right-handed attackers climbing up."
+            },
+            {
+                id: 26,
+                topic: "Castles & Architecture",
+                question: "What was the purpose of 'crenels' and 'merlons' on top of castle walls (known as battlements)?",
+                options: [
+                    "To allow wastewater to drain from the high castle roofs",
+                    "To provide alternating gaps (crenels) to shoot through and solid stone blocks (merlons) to hide behind",
+                    "To hold up heavy flags and banners during royal ceremonies",
+                    "To prevent high winds from blowing defenders off the battlements"
+                ],
+                correctIndex: 1,
+                hint: "These are the characteristic tooth-like shapes seen along the tops of old fortress walls.",
+                rationale: "Battlements used alternating stone blocks (merlons) for complete cover and open spaces (crenels) to let archers fire on the enemy before ducking back into safety."
+            },
+            {
+                id: 27,
+                topic: "Castles & Architecture",
+                question: "How did a 'moat' defend a stone castle keep?",
+                options: [
+                    "It prevented attackers from using mining techniques (undermining) and scaling ladders",
+                    "It provided a breeding ground for attack crocodiles",
+                    "It was used solely for storing clean drinking water during summer droughts",
+                    "It was meant to collect fish to feed the garrison during a long siege"
+                ],
+                correctIndex: 0,
+                hint: "It's a wide, wet (or dry) ditch. Water makes digging tunnels beneath walls impossible, as the tunnels would flood.",
+                rationale: "A moat kept heavy siege towers away from the walls and stopped 'underminers' from digging tunnels to collapse the walls, since the water would flood their tunnels."
+            },
+            {
+                id: 28,
+                topic: "Castles & Architecture",
+                question: "What was the 'outer ward' or 'curtain wall'?",
+                options: [
+                    "The heavy velvet drapes used to decorate the lord's banquet hall",
+                    "The outer protective stone wall that surrounded the entire castle compound",
+                    "The specialized armor worn by castle war-horses",
+                    "The local market that took place right outside the castle gates"
+                ],
+                correctIndex: 1,
+                hint: "This wall hung like a defensive 'curtain' around the inner structures.",
+                rationale: "The curtain wall was the main defensive wall enclosing the inner parts of the castle, often dotted with towers to allow defenders to fire down on anyone approaching."
+            },
+            {
+                id: 29,
+                topic: "Castles & Architecture",
+                question: "What were 'machicolations' on stone castle walls?",
+                options: [
+                    "Stone balconies protruding from the top of the walls with holes in the floor to drop missiles down",
+                    "Heavy iron spikes attached to the base of the walls to stop horses",
+                    "Specialized wooden scaffolds used to repair masonry while under attack",
+                    "Secret escape doors hidden behind fake stones near the moat"
+                ],
+                correctIndex: 0,
+                hint: "They looked like stone brackets supporting a projecting gallery along the top of the wall.",
+                rationale: "Machicolations allowed defenders to safely drop stones, boiling liquids, or shoot arrows straight down at the base of the wall without exposing their heads over the parapet."
+            },
+            {
+                id: 30,
+                topic: "Castles & Architecture",
+                question: "Why did castle builders start changing tower designs from square to round in the late Middle Ages?",
+                options: [
+                    "Round towers were much cheaper and faster to construct than square ones",
+                    "Round towers had no corners, making them much harder for underminers to collapse",
+                    "Square towers were believed to be easily knocked over by high winds",
+                    "To make the castle look more modern and French"
+                ],
+                correctIndex: 1,
+                hint: "Square corners are weak points that can be easily excavated by digging underneath. Round walls distribute pressure evenly.",
+                rationale: "Round towers removed the weak 90-degree corners that miners could dig out to trigger collapses. They also deflected stones launched by trebuchets much better."
+            },
+
+            // ================== ATTACKING & DEFENDING CASTLES (31-40) ==================
+            {
+                id: 31,
+                topic: "Castles & Architecture",
+                question: "What was the primary objective of a 'siege' in medieval warfare?",
+                options: [
+                    "To negotiate a peaceful marriage treaty between the rival lords",
+                    "To surround a castle, cut off all food and water supplies, and force them to surrender",
+                    "To challenge the castle lord to a series of fair one-on-one jousting matches",
+                    "To rebuild the castle's outer defenses after an earthquake"
+                ],
+                correctIndex: 1,
+                hint: "Direct assaults were bloody and dangerous. Starvation was often far more effective.",
+                rationale: "A siege involved encircling the castle to prevent any food, reinforcements, or supplies from entering, literally starving the garrison inside until they were forced to give up."
+            },
+            {
+                id: 32,
+                topic: "Castles & Architecture",
+                question: "What was a 'Battering Ram' used for during a castle siege?",
+                options: [
+                    "To clear away deep mud from the paths leading up to the castle",
+                    "To smash through heavy wooden gates or weak sections of stone wall",
+                    "To launch plague-infested animal bodies over the battlements",
+                    "To pull down scaling ladders placed against the walls"
+                ],
+                correctIndex: 1,
+                hint: "It was a massive log, often tipped with an iron head, suspended in a wooden frame.",
+                rationale: "Suspended within a protective wooden canopy, a battering ram was swung repeatedly against doors or lower walls to splinter and break them open."
+            },
+            {
+                id: 33,
+                topic: "Castles & Architecture",
+                question: "What was a 'siege tower' (also known as a belfry)?",
+                options: [
+                    "A high stone lookout post built inside the castle keep",
+                    "A tall, wooden wheeled tower used by attackers to reach the top of castle walls safely",
+                    "A specialized catapult that fired massive arrows over three miles",
+                    "The tower where prisoners of war were kept and fed bread and water"
+                ],
+                correctIndex: 1,
+                hint: "It was covered in wet animal hides to prevent defenders from setting it on fire.",
+                rationale: "Attackers built tall, covered wooden towers on wheels, pushing them right up to the castle walls so soldiers could walk straight onto the battlements via a small drop-bridge."
+            },
+            {
+                id: 34,
+                topic: "Castles & Architecture",
+                question: "How did attackers perform 'undermining' (mining) during a siege?",
+                options: [
+                    "By offering bribes to the castle guards to unlock the main gates at night",
+                    "By digging tunnels under the castle walls and setting fire to wooden supports to make the walls collapse",
+                    "By cutting off the flow of river water into the castle's kitchen wells",
+                    "By climbing up the waste chutes of the castle latrines (garderobes)"
+                ],
+                correctIndex: 1,
+                hint: "This required tunneling underground, propping the tunnel with wood, filling it with pig fat, and lighting it.",
+                rationale: "Miners dug tunnels underneath the corners of walls or towers, propped them up with timber, and set them on fire. When the wood burned away, the heavy stone walls above collapsed."
+            },
+            {
+                id: 35,
+                topic: "Castles & Architecture",
+                question: "What was a 'Trebuchet'?",
+                options: [
+                    "A specialized knife used to carve castle masonry blocks",
+                    "A powerful counterweight-powered catapult used to launch massive stones and carcasses over castle walls",
+                    "A defensive trap door inside the main gatehouse passage",
+                    "A musical instrument played by castle court jesters"
+                ],
+                correctIndex: 1,
+                hint: "It used a heavy falling weight on a short arm to swing a long arm and throw projectiles at high speeds.",
+                rationale: "The trebuchet was a highly accurate and incredibly powerful siege engine that used a massive counterweight to hurl heavy boulders, fireballs, or even rotting animal bodies into castles."
+            },
+            {
+                id: 36,
+                topic: "Castles & Architecture",
+                question: "Why would attackers launch rotting corpses or heads of prisoners over castle walls?",
+                options: [
+                    "To spread disease (biological warfare) and terrify the defenders",
+                    "Because they ran out of actual stone ammunition for their trebuchets",
+                    "As an offering of peace and friendship to negotiate a treaty",
+                    "To give the castle dogs something to eat so they would stop barking"
+                ],
+                correctIndex: 0,
+                hint: "Consider how clean water and sanitation were critical to surviving a long siege.",
+                rationale: "Launching decomposing bodies over the walls polluted the inner courtyards and water supplies, spreading deadly diseases like dysentery, and destroying the morale of the defenders."
+            },
+            {
+                id: 37,
+                topic: "Castles & Architecture",
+                question: "What did defenders use 'Garderobes' for inside a medieval castle?",
+                options: [
+                    "Storing high-value gold treasures and currency securely",
+                    "As toilets, where waste fell straight down into a pit or the moat below",
+                    "As safe chambers to protect children during an enemy attack",
+                    "A room where knights' armor was cleaned and polished daily"
+                ],
+                correctIndex: 1,
+                hint: "The name sounds a bit like 'wardrobe' because the ammonia from the waste kept moths away from hanging clothes.",
+                rationale: "Garderobes were medieval castle toilets. They were typically small chambers with stone seats where human waste fell down a chute into the castle moat or a collection pit."
+            },
+            {
+                id: 38,
+                topic: "Castles & Architecture",
+                question: "What was 'Greek Fire', and why was it feared during castle sieges?",
+                options: [
+                    "A mysterious, highly flammable liquid mixture that could burn on water and was very hard to put out",
+                    "A tactical maneuver where soldiers ran in a zigzag pattern through flames",
+                    "A special type of fire arrow made of imported olive wood",
+                    "A mythical spell believed to be cast by wizards to protect castle walls"
+                ],
+                correctIndex: 0,
+                hint: "It was a chemical weapon that water could not extinguish; in fact, water often made it spread.",
+                rationale: "Greek Fire was an incendiary chemical weapon. It was feared because it clung to wooden structures and continued to burn furiously, even when doused with water."
+            },
+            {
+                id: 39,
+                topic: "Castles & Architecture",
+                question: "What did castle defenders do if their outer walls were breached by an enemy force?",
+                options: [
+                    "They immediately surrendered and offered all their gold to the enemy",
+                    "They retreated back to the inner ward and the highly fortified Stone Keep",
+                    "They ran out of the castle to fight the enemy in an open field",
+                    "They began tearing down the rest of the walls to prevent them from being used"
+                ],
+                correctIndex: 1,
+                hint: "Castles were built with concentric layers of defense. The strongest part was always in the middle.",
+                rationale: "Stone keeps and inner wards functioned as self-contained fallback positions, allowing defenders to continue resisting even if the outer curtain walls were completely compromised."
+            },
+            {
+                id: 40,
+                topic: "Castles & Architecture",
+                question: "Which of the following describes a 'mangonel'?",
+                options: [
+                    "A type of siege engine that used torsion (twisted ropes) to fling stones in a flat trajectory",
+                    "A highly trained war dog used to track escaped prisoners",
+                    "A long spear with a curved hook on the end",
+                    "A metal helmet worn specifically by Norman crossbowmen"
+                ],
+                correctIndex: 0,
+                hint: "It is a type of catapult that has a giant wooden arm with a bucket on the end, stopped by a crossbar.",
+                rationale: "Mangonels were torsion-powered siege engines that used twisted ropes to snap a throwing arm forward, flinging rocks or burning pitch directly at castle walls."
+            },
+
+            // ================== CHAPTER 5: HENRY II & THOMAS BECKET (41-55) ==================
+            {
+                id: 41,
+                topic: "The Becket Crisis",
+                question: "What was the relationship between Henry II and Thomas Becket BEFORE Becket became Archbishop of Canterbury?",
+                options: [
+                    "They were bitter enemies who had fought several private wars against each other",
+                    "They were incredibly close friends who hunted, drank, and worked together",
+                    "They had never met, as Becket lived in a French monastery",
+                    "Becket was a poor peasant servant who worked in Henry's royal stables"
+                ],
+                correctIndex: 1,
+                hint: "Henry appointed Becket as Chancellor because he trusted him completely.",
+                rationale: "Before his religious appointment, Becket served as King Henry II's loyal Chancellor. They were close companions who shared a love of power, hunting, and high living."
+            },
+            {
+                id: 42,
+                topic: "The Becket Crisis",
+                question: "Why did King Henry II appoint his friend Thomas Becket to be the Archbishop of Canterbury in 1162?",
+                options: [
+                    "He wanted a loyal friend in charge of the Church so he could control church wealth and laws",
+                    "The Pope forced Henry to appoint Becket under the threat of excommunication",
+                    "Becket was the most senior, holy, and experienced monk living in England",
+                    "Becket threatened to start a rebellion if he wasn't given the job"
+                ],
+                correctIndex: 0,
+                hint: "Henry wanted to reduce the power of church courts and needed an ally at the top.",
+                rationale: "Henry believed that by putting his best friend in the highest church office, he could easily influence Church policies and end the special privileges of church courts."
+            },
+            {
+                id: 43,
+                topic: "The Becket Crisis",
+                question: "What surprising change did Thomas Becket undergo shortly after becoming the Archbishop of Canterbury?",
+                options: [
+                    "He abandoned all his wealth, wore rough sackcloth, and dedicated himself entirely to defending the Church",
+                    "He immediately declared war on France and led an army of bishops into battle",
+                    "He sold all of Canterbury Cathedral's relics to buy fine horses and wine",
+                    "He resigned from the job within three days to become a simple farmer"
+                ],
+                correctIndex: 0,
+                hint: "He took his new loyalty to God very seriously, shocking his old friend, the King.",
+                rationale: "Upon his consecration, Becket experienced a major spiritual transformation. He resigned as Chancellor, adopted an ascetic life of prayer, wore itchy hairshirts, and strictly defended Church rights."
+            },
+            {
+                id: 44,
+                topic: "The Becket Crisis",
+                question: "What were 'Criminous Clerks' in medieval England?",
+                options: [
+                    "Priests and monks who had committed serious crimes like murder or theft",
+                    "Tax collectors who stole money from the King's private treasury",
+                    "Scribes who wrote illegal books critical of the Catholic Church",
+                    "Peasants who pretended to be priests to avoid working on the manor"
+                ],
+                correctIndex: 0,
+                hint: "The word 'clerk' refers to members of the clergy (churchmen).",
+                rationale: "Criminous clerks were ordained clergy members who stood accused of committing serious felonies. Because they were churchmen, they claimed the right to be tried in church courts rather than royal courts."
+            },
+            {
+                id: 45,
+                topic: "The Becket Crisis",
+                question: "Why did King Henry II strongly object to Church Courts?",
+                options: [
+                    "Church courts were too slow and took over twenty years to resolve simple crimes",
+                    "Church courts did not hand out physical punishments (like execution) and let guilty priests off with light penances",
+                    "Church courts only allowed rich barons to be tried, leaving peasants out",
+                    "Church courts were operated entirely by French lawyers who spoke no English"
+                ],
+                correctIndex: 1,
+                hint: "Henry wanted equal justice under royal law, whereas the Church could not spill blood or execute people.",
+                rationale: "Church courts operated under Canon Law and could not issue physical punishments like hanging or mutilation. Henry felt it was unfair that a priest who committed murder could avoid death and just be defrocked."
+            },
+            {
+                id: 46,
+                topic: "The Becket Crisis",
+                question: "What were the 'Constitutions of Clarendon' (1164)?",
+                options: [
+                    "A set of royal laws designed to limit the power of the Church and bring criminous clerks into royal courts",
+                    "A peace treaty signed between the English barons and the King of France",
+                    "The original architectural plans for building Canterbury Cathedral",
+                    "A religious text written by Thomas Becket during his studies in Italy"
+                ],
+                correctIndex: 0,
+                hint: "Henry gathered his barons and bishops at a royal hunting lodge in Clarendon to force them to sign these rules.",
+                rationale: "The Constitutions of Clarendon were Henry II's attempt to claw back legal authority. It mandated that clergy accused of crimes must be tried in royal courts."
+            },
+            {
+                id: 47,
+                topic: "The Becket Crisis",
+                question: "What did Becket do after initially refusing to sign the Constitutions of Clarendon?",
+                options: [
+                    "He challenged King Henry II to a duel to the death in London",
+                    "He fled to France in disguise to seek safety and protection from the Pope and King Louis VII",
+                    "He resigned as Archbishop and became a wandering peasant preacher",
+                    "He organized a massive army of monks and attacked the Tower of London"
+                ],
+                correctIndex: 1,
+                hint: "He left England in secret, knowing Henry would arrest or ruin him for treason.",
+                rationale: "Fearing royal wrath, Becket fled to France in 1164, where he spent six years in exile under the protection of King Louis VII of France and Pope Alexander III."
+            },
+            {
+                id: 48,
+                topic: "The Becket Crisis",
+                question: "What event in 1170 finally pushed the conflict between Henry II and Becket to a breaking point after Becket returned to England?",
+                options: [
+                    "Becket excommunicated the Archbishop of York and other bishops who had crowned Henry's son",
+                    "Becket tried to steal the Crown Jewels and ship them to the Pope in Rome",
+                    "Henry II had Becket’s family arrested and exiled to Ireland",
+                    "Becket declared that France was now the rightful ruler of England"
+                ],
+                correctIndex: 0,
+                hint: "Only the Archbishop of Canterbury was legally allowed to crown the next King. Henry had someone else do it.",
+                rationale: "While Becket was away, Henry had the Archbishop of York crown his son. Upon returning, an angry Becket excommunicated the bishops involved, sparking Henry's legendary temper."
+            },
+            {
+                id: 49,
+                topic: "The Becket Crisis",
+                question: "What famous, angry words did King Henry II reportedly shout that inspired his knights to ride to Canterbury?",
+                options: [
+                    "\"Ride to Canterbury and bring me the head of that traitor!\"",
+                    "\"Will no one rid me of this turbulent priest?\"",
+                    "\"The Church is mine, and all its gold shall be melted down!\"",
+                    "\"Let the knights of England show no mercy to the French!\""
+                ],
+                correctIndex: 1,
+                hint: "It was a rhetorical cry of frustration, not a direct command, but his knights took it literally.",
+                rationale: "In a fit of rage at his court in Normandy, Henry cried out: 'Will no one rid me of this turbulent (or troublesome) priest?' Four of his knights overheard and took it as a direct royal order."
+            },
+            {
+                id: 50,
+                topic: "The Becket Crisis",
+                question: "Who were the four knights who traveled to Canterbury to confront Thomas Becket?",
+                options: [
+                    "Reginald FitzUrse, William de Tracy, Hugh de Morville, and Richard le Breton",
+                    "Robin Hood, Little John, Will Scarlet, and Friar Tuck",
+                    "Lancelot, Galahad, Gawain, and Percival",
+                    "William Wallace, Robert the Bruce, Simon de Montfort, and Guy de Lusignan"
+                ],
+                correctIndex: 0,
+                hint: "These four men would go down in history as the infamous murderers of the Archbishop.",
+                rationale: "FitzUrse, Tracy, Morville, and Breton were the four Norman knights who rode from Normandy to Canterbury to confront Becket inside his cathedral."
+            },
+            {
+                id: 51,
+                topic: "The Becket Crisis",
+                question: "On what date was Thomas Becket murdered inside Canterbury Cathedral?",
+                options: [
+                    "October 14, 1066",
+                    "June 15, 1215",
+                    "December 29, 1170",
+                    "September 7, 1381"
+                ],
+                correctIndex: 2,
+                hint: "It happened in the deep winter, just after Christmas Day in the year 1170.",
+                rationale: "Thomas Becket was brutally slain near the altar of Canterbury Cathedral on the afternoon of December 29, 1170."
+            },
+            {
+                id: 52,
+                topic: "The Becket Crisis",
+                question: "How did Becket react when his monks urged him to lock the cathedral doors to protect himself from the armed knights?",
+                options: [
+                    "He refused, saying a house of God should never be turned into a fortress",
+                    "He ran up to the high bell tower and locked himself inside",
+                    "He grabbed a sword and shield and fought the knights single-handedly",
+                    "He disguised himself as a nun and slipped out through a side window"
+                ],
+                correctIndex: 0,
+                hint: "Becket was prepared to die for his beliefs and did not want to show fear.",
+                rationale: "Becket famously declared, 'It is not decent to make a castle of the church,' and ordered the doors to be opened, allowing the knights inside."
+            },
+            {
+                id: 53,
+                topic: "The Becket Crisis",
+                question: "What did the Pope do to Thomas Becket just three years after his brutal murder?",
+                options: [
+                    "He canonized him as a Saint and martyr of the Catholic Church",
+                    "He declared that Becket was a traitor whose body should be dug up and burned",
+                    "He ordered all of Becket’s writings to be banned from Europe",
+                    "He blamed Becket for starting the conflict and apologized to Henry II"
+                ],
+                correctIndex: 0,
+                hint: "Miracles were reported at his tomb almost immediately, drawing thousands of pilgrims.",
+                rationale: "In 1173, Pope Alexander III declared Thomas Becket a Saint. Canterbury Cathedral quickly became one of the most visited pilgrimage sites in all of Europe."
+            },
+            {
+                id: 54,
+                topic: "The Becket Crisis",
+                question: "How did King Henry II show his penance and regret for his role in Becket's death?",
+                options: [
+                    "He abdicated the throne and lived the rest of his life as a poor monk in France",
+                    "He walked barefoot to Canterbury Cathedral and allowed himself to be whipped by monks",
+                    "He built a massive golden statue of himself inside Canterbury Cathedral",
+                    "He ordered all four knights to be executed in public"
+                ],
+                correctIndex: 1,
+                hint: "Henry was horrified by the murder and faced massive outrage across Europe. He had to perform a highly public act of humiliation.",
+                rationale: "In 1174, Henry II performed public penance, walking barefoot through Canterbury, spending the night at Becket’s tomb, and allowing local monks to scourge (whip) him as a sign of true remorse."
+            },
+            {
+                id: 55,
+                topic: "The Becket Crisis",
+                question: "Who won the overall conflict between the Crown and the Church after Becket's death?",
+                options: [
+                    "King Henry II, who gained complete control over all church courts",
+                    "The Church, as Henry had to scrap the Constitutions of Clarendon and allow church courts to remain",
+                    "The French King, who invaded and conquered England during the chaos",
+                    "The poor peasants, who were no longer forced to pay tithes"
+                ],
+                correctIndex: 1,
+                hint: "Because of the public outrage over the murder, Henry had to back down from his legal reforms.",
+                rationale: "Becket's martyrdom was a massive victory for the Church. Henry II was forced to repeal the Constitutions of Clarendon, leaving 'criminous clerks' under the protection of separate Church courts."
+            },
+
+            // ================== CHAPTER 6: FEUDAL LIFE, VILLAGES & TOWNS (56-70) ==================
+            {
+                id: 56,
+                topic: "Feudal Life & Towns",
+                question: "What was the 'Feudal System' introduced to England by William the Conqueror?",
+                options: [
+                    "A system of choosing the King through a fair vote of all citizens",
+                    "A social hierarchy based on land ownership, loyalty, and military service",
+                    "A network of trade routes connecting England to Asia",
+                    "A law requiring every village to build a stone castle"
+                ],
+                correctIndex: 1,
+                hint: "Think of a pyramid: King at the top, Barons, Knights, and Peasants at the bottom.",
+                rationale: "The Feudal System was a pyramid of power where the King owned all the land, leasing it to Barons in exchange for loyalty and knights, who leased it to peasants in exchange for food and labor."
+            },
+            {
+                id: 57,
+                topic: "Feudal Life & Towns",
+                question: "What was a 'Villein' (or serf) in medieval England?",
+                options: [
+                    "A wealthy merchant who traveled across Europe trading silks",
+                    "A peasant who was legally bound to the Lord's land and could not leave without permission",
+                    "A highly respected religious advisor to the King",
+                    "An elite soldier who guarded the inner keep of castles"
+                ],
+                correctIndex: 1,
+                hint: "Serfs were not slaves, but they were definitely not free to move away.",
+                rationale: "Villeins (serfs) were unfree peasants. They farmed their lord’s land and could not marry, travel, or change jobs without the explicit permission of their local lord."
+            },
+            {
+                id: 58,
+                topic: "Feudal Life & Towns",
+                question: "What was the 'Domesday Book' commissioned by William the Conqueror in 1085?",
+                options: [
+                    "A book of religious prayers to be read during a solar eclipse",
+                    "A massive survey of land, livestock, and wealth in England for tax purposes",
+                    "A manual detailing how to defend stone castles from fire attacks",
+                    "A list of all soldiers who died during the Battle of Hastings"
+                ],
+                correctIndex: 1,
+                hint: "It was called 'Domesday' because its judgements on property were final, like the Last Judgement (Doomsday).",
+                rationale: "The Domesday Book was a complete census of England's resources, allowing William to know exactly who owned what, how much it was worth, and how much tax he could collect."
+            },
+            {
+                id: 59,
+                topic: "Feudal Life & Towns",
+                question: "Which farming method was used in medieval villages to ensure the soil did not lose its nutrients?",
+                options: [
+                    "The Three-Field Crop Rotation system (leaving one field fallow each year)",
+                    "Using imported chemical fertilizers from Asia",
+                    "Planting the exact same crop on the same plot of land for fifty years straight",
+                    "Watering fields with boiled spring water"
+                ],
+                correctIndex: 0,
+                hint: "One field was left empty ('fallow') to let the soil rest and recover.",
+                rationale: "Peasants rotated crops across three fields: one for autumn crops, one for spring crops, and one left empty (fallow) to regenerate nutrients naturally."
+            },
+            {
+                id: 60,
+                topic: "Feudal Life & Towns",
+                question: "What did a medieval peasant's house (cottage) look like?",
+                options: [
+                    "A sturdy three-story stone townhouse with glass windows",
+                    "A simple wattle-and-daub cottage with a thatched roof and dirt floor",
+                    "An underground cave system carved into river banks",
+                    "A high-quality wooden cabin with central heating flues"
+                ],
+                correctIndex: 1,
+                hint: "Wattle-and-daub was made of woven twigs covered in mud, clay, and animal dung.",
+                rationale: "Peasant homes were cheap, simple structures. They had single rooms with central open hearths (smoky with no chimneys), shared space with farm animals, and dirt floors covered in straw."
+            },
+            {
+                id: 61,
+                topic: "Feudal Life & Towns",
+                question: "What was the 'year and a day' rule regarding medieval towns?",
+                options: [
+                    "The length of time a knight had to serve the King in battle each year",
+                    "If a runaway serf lived in a charter town for a year and a day without being caught, they became legally free",
+                    "The time it took to construct a typical wooden castle",
+                    "The maximum sentence a prisoner could spend in a castle dungeon"
+                ],
+                correctIndex: 1,
+                hint: "This rule offered hope to serfs wanting to escape the hard labor of the lord's manor.",
+                rationale: "Under medieval town charters, any runaway serf who eluded capture in a free town for 366 days was legally declared a freeman, breaking their feudal ties."
+            },
+            {
+                id: 62,
+                topic: "Feudal Life & Towns",
+                question: "What were medieval 'Guilds'?",
+                options: [
+                    "Specialized units of archers who defended town gates",
+                    "Associations of craftspeople and merchants that controlled trade, prices, and quality",
+                    "Secret religious cults that gathered to pray in the woods",
+                    "Tax collection agencies operated directly by the Barons"
+                ],
+                correctIndex: 1,
+                hint: "To work as a blacksmith, baker, or weaver, you had to belong to one of these groups.",
+                rationale: "Guilds regulated specific trades. They set high standards of production, controlled local prices, and decided who could open a shop within the town."
+            },
+            {
+                id: 63,
+                topic: "Feudal Life & Towns",
+                question: "How did hygiene and sanitation in a medieval town compare to a modern city?",
+                options: [
+                    "Medieval towns were spotlessly clean due to strict public bathhouse laws",
+                    "Medieval towns were highly unsanitary, with open drains, waste thrown in streets, and roaming pigs",
+                    "Towns were cleaner than villages because they had advanced water filtration systems",
+                    "Sewer systems were built deep underground to process all waste with chemicals"
+                ],
+                correctIndex: 1,
+                hint: "There was no indoor plumbing, and rubbish was simply thrown out the window.",
+                rationale: "Medieval towns were notoriously filthy. People dumped human waste, butcher scraps, and garbage directly into unpaved streets, which washed into local rivers used for drinking water."
+            },
+            {
+                id: 64,
+                topic: "Feudal Life & Towns",
+                question: "What was a 'Charter' in the context of medieval towns?",
+                options: [
+                    "A legal document granted by the King allowing a town to govern itself and run its own courts",
+                    "A map showing the location of secret escape tunnels inside the keep",
+                    "A specialized boat used to transport coal down rivers",
+                    "A list of sins that could be forgiven by paying the bishop"
+                ],
+                correctIndex: 0,
+                hint: "Towns paid the King large sums of gold to buy their independence from the local feudal lord.",
+                rationale: "A town charter was a royal document giving a town the right to self-govern, collect its own taxes, run its own markets, and operate its own court, bypassing the feudal lord."
+            },
+            {
+                id: 65,
+                topic: "Feudal Life & Towns",
+                question: "Why was fire such an extreme danger inside medieval towns?",
+                options: [
+                    "Town houses were built very close together out of flammable wood and straw",
+                    "Medieval people loved to play with fireworks in the town square",
+                    "The King ordered towns to be burned down whenever taxes were paid late",
+                    "There was no access to water anywhere near medieval towns"
+                ],
+                correctIndex: 0,
+                hint: "Think about narrow streets where upper stories of wooden houses almost touched across the lane.",
+                rationale: "With timber-framed, thatched houses packed tightly along narrow lanes, a single kitchen spark could rapidly ignite an entire town, as there were no modern fire departments."
+            },
+            {
+                id: 66,
+                topic: "Feudal Life & Towns",
+                question: "What was the main food staple of the medieval peasant's diet?",
+                options: [
+                    "Fine cuts of beef, venison, and imported white bread",
+                    "A thick, dark pottage (vegetable stew) served with coarse rye bread",
+                    "A diet consisting entirely of fresh fruit and stream fish",
+                    "Spicy rice dishes with imported oranges"
+                ],
+                correctIndex: 1,
+                hint: "Peasants rarely got to eat fresh meat, as hunting in the Lord's forests was illegal.",
+                rationale: "Peasants relied on 'pottage'—a slow-cooked stew made of oats, beans, peas, and whatever vegetables they could grow, eaten with dense, dark rye or barley bread."
+            },
+            {
+                id: 67,
+                topic: "Feudal Life & Towns",
+                question: "What was the penalty for a peasant caught hunting deer in the Lord's private forest?",
+                options: [
+                    "A light warning and a small fine equal to one day's labor",
+                    "Severe punishments like hanging, blinding, or cutting off fingers",
+                    "They were forced to eat the rest of the deer as punishment",
+                    "There was no penalty, as forests were open to everyone"
+                ],
+                correctIndex: 1,
+                hint: "The Forest Laws were designed to protect the Lord's hunting stock with extreme brutality.",
+                rationale: "Under Norman Forest Laws, deer and wild boars belonged exclusively to the King and nobility. Poaching was a serious crime punished with physical mutilation or execution."
+            },
+            {
+                id: 68,
+                topic: "Feudal Life & Towns",
+                question: "What did medieval people drink instead of water, and why?",
+                options: [
+                    "Weak ale or cider, because water was often polluted and made people sick",
+                    "Imported red wine shipped from the Americas",
+                    "Hot chocolate imported from Asia",
+                    "Boiled milk mixed with honey and crushed mint leaves"
+                ],
+                correctIndex: 0,
+                hint: "The fermentation process killed off many harmful bacteria, though they didn't know the science behind it.",
+                rationale: "Because rivers and wells in populated areas were heavily contaminated with sewage, everyone—from children to lords—drank low-alcohol ale or cider, which was far safer."
+            },
+            {
+                id: 69,
+                topic: "Feudal Life & Towns",
+                question: "What did it mean to leave a field 'fallow'?",
+                options: [
+                    "To flood the field with water to grow rice crops",
+                    "To leave the field unplanted for a year so the soil could recover its nutrients",
+                    "To sell the field to the local Catholic monastery",
+                    "To plant only poisonous weeds to keep rival peasants away"
+                ],
+                correctIndex: 1,
+                hint: "Resting the soil was vital before the invention of modern crop fertilizers.",
+                rationale: "Leaving a field fallow allowed it to rest. Wild plants grew, sheep grazed on it (providing natural manure), and the soil recovered the nitrogen needed to grow healthy wheat the following year."
+            },
+            {
+                id: 70,
+                topic: "Feudal Life & Towns",
+                question: "Who were the 'Gentry' in medieval social hierarchy?",
+                options: [
+                    "The poorest group of slaves who worked inside the castle kitchens",
+                    "Wealthy landowners below the nobility, such as knights and local squires",
+                    "A special order of priests who traveled to baptize babies",
+                    "Foreign merchants who operated ships in the Mediterranean"
+                ],
+                correctIndex: 1,
+                hint: "They were gentlemen who owned land but did not hold high titles like Earl, Duke, or Baron.",
+                rationale: "The gentry were comfortable, influential landowners who held significant local power, served as sheriffs or judges, but sat just beneath the titled peerage (barons and lords)."
+            },
+
+            // ================== CHAPTER 7: KING JOHN & THE MAGNA CARTA (71-80) ==================
+            {
+                id: 71,
+                topic: "King John & Magna Carta",
+                question: "Why did the English barons rebel against King John in the years leading up to 1215?",
+                options: [
+                    "He refused to fight any wars and spent all his time praying in church",
+                    "He raised taxes (scutage) to extreme levels, lost English lands in France, and ignored the law",
+                    "He tried to move the capital of England from London to York",
+                    "He wanted to abolish the feudal system and free all the serfs"
+                ],
+                correctIndex: 1,
+                hint: "He earned the nicknames 'Softsword' for losing battles, and 'Lackland' for losing territories like Normandy.",
+                rationale: "John demanded excessive taxes (scutage) to pay for failed military campaigns in France. He seized baron's lands, abused royal justice, and angered the Church, provoking a massive rebellion."
+            },
+            {
+                id: 72,
+                topic: "King John & Magna Carta",
+                question: "What is the meaning of 'scutage'?",
+                options: [
+                    "A tax paid by barons to the King to avoid personal military service in a war",
+                    "The heavy armor worn by the King's personal bodyguard",
+                    "A formal trial held inside Canterbury Cathedral",
+                    "A tool used to dig castle moats quickly"
+                ],
+                correctIndex: 0,
+                hint: "It is often called 'shield money' because it was paid instead of providing knights to fight.",
+                rationale: "Scutage was a feudal payment allowing barons to buy their way out of military service. King John abused this tax by demanding it repeatedly, even during times of peace."
+            },
+            {
+                id: 73,
+                topic: "King John & Magna Carta",
+                question: "What does the Latin name 'Magna Carta' translate to in English?",
+                options: [
+                    "The Great Charter",
+                    "The King's Decree",
+                    "The Law of the Land",
+                    "The Freedom of the Peasants"
+                ],
+                correctIndex: 0,
+                hint: "Magna means Great (like magnificent) and Carta means paper/charter.",
+                rationale: "Magna Carta translates directly to 'The Great Charter'. It is one of the most famous legal documents in world history."
+            },
+            {
+                id: 74,
+                topic: "King John & Magna Carta",
+                question: "Where and when did King John meet the rebellious barons to sign the Magna Carta?",
+                options: [
+                    "The Tower of London, October 1066",
+                    "Runnymede (near Windsor), June 15, 1215",
+                    "Canterbury Cathedral, December 1170",
+                    "Smithfield (London), June 1381"
+                ],
+                correctIndex: 1,
+                hint: "It was a neutral meadow along the River Thames where both sides could gather without fear of ambush.",
+                rationale: "King John met the barons at the meadow of Runnymede on June 15, 1215, to sign the document and temporarily avert a full-scale civil war."
+            },
+            {
+                id: 75,
+                topic: "King John & Magna Carta",
+                question: "What did Clause 12 of the Magna Carta state regarding taxes?",
+                options: [
+                    "The King could raise taxes whenever he wanted without asking anyone",
+                    "The King could not raise taxes (scutage or aid) without the common consent of the kingdom's barons",
+                    "Taxation was completely illegal, and all government money had to be donated voluntarily",
+                    "Only the poorest peasants had to pay taxes to the King"
+                ],
+                correctIndex: 1,
+                hint: "This established the fundamental basis for modern parliament and consultation before taxation.",
+                rationale: "Clause 12 limited absolute royal power by stating the King must obtain the consent of his Great Council (barons and bishops) before demanding new taxes."
+            },
+            {
+                id: 76,
+                topic: "King John & Magna Carta",
+                question: "What crucial right did Clause 39 of the Magna Carta grant to all 'free men'?",
+                options: [
+                    "The right to a fair trial by a jury of their peers before being imprisoned or stripped of land",
+                    "The right to hunt deer in the King's forests without penalty",
+                    "The right to choose their own local parish priest",
+                    "The right to avoid paying any taxes to the Catholic Church"
+                ],
+                alwaysCorrect: false,
+                correctIndex: 0,
+                hint: "This clause is the origin of 'habeas corpus' and the rule of law.",
+                rationale: "Clause 39 declared that no free man could be arrested, outlawed, or ruined 'except by the lawful judgment of his equals or by the law of the land.'"
+            },
+            {
+                id: 77,
+                topic: "King John & Magna Carta",
+                question: "How did the Magna Carta affect the absolute power of the King of England?",
+                options: [
+                    "It made the King completely powerless, giving all ruling authority to the Pope",
+                    "It established that even the King was subject to the law of the land, limiting his absolute power",
+                    "It had no effect, as the King signed a document written in a language he could not read",
+                    "It increased the King's power, letting him arrest barons without trials"
+                ],
+                correctIndex: 1,
+                hint: "It was a major shift from 'The King is the Law' to 'The Law is King'.",
+                rationale: "By signing the Magna Carta, John accepted that the monarch was not above the law. It established a vital constitutional check on royal tyranny."
+            },
+            {
+                id: 78,
+                topic: "King John & Magna Carta",
+                question: "Did the Magna Carta immediately bring peace and freedom to all the ordinary peasants of England?",
+                options: [
+                    "Yes, it freed all serfs and made everyone completely equal overnight",
+                    "No, it was written by wealthy barons to protect their own interests, and only applied to 'free men' (a minority)",
+                    "No, because the peasants rebelled and burned all copies of the document",
+                    "Yes, it ordered the immediate dismantling of all stone castles"
+                ],
+                correctIndex: 1,
+                hint: "Most people in 1215 were unfree serfs, who were largely ignored by the high-ranking barons.",
+                rationale: "While historically crucial, the Magna Carta primarily benefited barons and wealthy merchants. Unfree peasants (over 75% of the population) remained under the harsh feudal control of their lords."
+            },
+            {
+                id: 79,
+                topic: "King John & Magna Carta",
+                question: "What did King John do shortly after signing the Magna Carta at Runnymede?",
+                options: [
+                    "He immediately retired and went to live in a French monastery",
+                    "He contacted the Pope to have the document declared void, sparking the First Barons' War",
+                    "He kept his promises perfectly and ruled peacefully for forty more years",
+                    "He ordered all the barons who signed it to be hanged immediately"
+                ],
+                correctIndex: 1,
+                hint: "John only signed because he was forced to. He immediately looked for a way to break his word.",
+                rationale: "As soon as the barons dispersed, John appealed to Pope Innocent III, who declared the Magna Carta void and illegal. This plunged England straight into a brutal civil war."
+            },
+            {
+                id: 80,
+                topic: "King John & Magna Carta",
+                question: "How did King John famously die in 1216, bringing an end to the First Barons' War?",
+                options: [
+                    "He was killed in a sword duel with the French Prince Louis",
+                    "He died of dysentery (and possibly poison/gorging on peaches and cider) after losing his baggage train in the Wash",
+                    "He was crushed by a falling portcullis during a castle siege",
+                    "He lived to the age of 95 and died peacefully in his sleep"
+                ],
+                correctIndex: 1,
+                hint: "He fell ill while retreating across a dangerous, muddy tidal estuary where his treasures were lost.",
+                rationale: "John fell ill with dysentery in October 1216 after his royal baggage train, containing his crown jewels and gold, was swallowed up by rising tides in the Wash."
+            },
+
+            // ================== CHAPTER 8: THE BLACK DEATH (81-90) ==================
+            {
+                id: 81,
+                topic: "The Black Death",
+                question: "In what year did the devastating pandemic known as the Black Death first arrive in England?",
+                options: [
+                    "1066",
+                    "1215",
+                    "1348",
+                    "1381"
+                ],
+                correctIndex: 2,
+                hint: "It arrived via a port in Dorset (Melcombe Regis) in the middle of the 14th century.",
+                rationale: "The Black Death landed on the south coast of England in the summer of 1348, rapidly spreading across the country and killing up to half the population."
+            },
+            {
+                id: 82,
+                topic: "The Black Death",
+                question: "What was the most obvious physical symptom of the Bubonic Plague?",
+                options: [
+                    "Painful, pus-filled swellings called buboes in the armpits and groin",
+                    "Losing all your hair and teeth within twelve hours",
+                    "The skin turning completely green and growing thick scales",
+                    "Sudden, uncontrollable fits of laughter and dancing"
+                ],
+                correctIndex: 0,
+                hint: "The name 'Bubonic' comes from these swollen lymph glands.",
+                rationale: "Buboes were agony-inducing, egg-sized swellings of the lymph nodes that turned black and oozed pus and blood before bursting."
+            },
+            {
+                id: 83,
+                topic: "The Black Death",
+                question: "What did medieval people believe caused the Black Death?",
+                options: [
+                    "Fleas jumping from rats to humans",
+                    "God's anger at human sin, bad air (miasma), and the alignment of the planets",
+                    "Eating contaminated potatoes and tomatoes",
+                    "A chemical leak from underground mines"
+                ],
+                correctIndex: 1,
+                hint: "They lacked microscopes and relied on spiritual, astrological, or environmental explanations.",
+                rationale: "With no knowledge of bacteria, medieval people blamed spiritual causes (divine wrath), corrupt environmental air (miasma), or astrological movements of Saturn and Jupiter."
+            },
+            {
+                id: 84,
+                topic: "The Black Death",
+                question: "Who were the 'Flagellants' during the Black Death?",
+                options: [
+                    "Doctors who wore leather masks filled with sweet-smelling flowers",
+                    "Religious extremists who whipped themselves publicly to show penance and beg God to stop the plague",
+                    "Soldiers who burned down villages to stop the disease from spreading",
+                    "Priests who fled to France to escape the dying"
+                ],
+                correctIndex: 1,
+                hint: "To flagellate means to whip or scourge.",
+                rationale: "Flagellants walked from town to town, chanting and whipping their own backs until they bled, hoping their self-punishment would appease God's anger and cure the plague."
+            },
+            {
+                id: 85,
+                topic: "The Black Death",
+                question: "What was the actual, scientific biological cause of the Black Death?",
+                options: [
+                    "The Yersinia pestis bacterium, carried by fleas living on black rats",
+                    "A airborne respiratory virus spread through dirty straw",
+                    "Heavy lead poisoning from medieval pewter plates",
+                    "A mutation in the wheat crops caused by excessive rain"
+                ],
+                correctIndex: 0,
+                hint: "The host rodent was very common on trading ships, and the insect vector jumped to humans.",
+                rationale: "Modern science proved that the plague was caused by the Yersinia pestis bacterium. Fleas fed on infected black rats; when the rats died, the fleas jumped to humans, biting and infecting them."
+            },
+            {
+                id: 86,
+                topic: "The Black Death",
+                question: "How did the massive labor shortage caused by the Black Death affect surviving peasants?",
+                options: [
+                    "They were forced to work double hours for absolutely no pay at all",
+                    "They could demand much higher wages and lower rents because lords were desperate for workers",
+                    "They all lost their farms and had to move to France to find food",
+                    "They were made completely equal to the barons and lords"
+                ],
+                correctIndex: 1,
+                hint: "Think about supply and demand. If workers are scarce, their labor becomes highly valuable.",
+                rationale: "With nearly half the workforce dead, surviving peasants held massive leverage. They could refuse to work unless lords paid them higher wages and reduced their feudal duties."
+            },
+            {
+                id: 87,
+                topic: "The Black Death",
+                question: "What was the 'Statute of Labourers' passed by the furious lords in 1351?",
+                options: [
+                    "A law that forced lords to give all their land to the peasants",
+                    "A law capping peasants' wages at pre-plague levels and making it a crime to demand more",
+                    "A health guide telling peasants to wash their hands in clean vinegar",
+                    "A tax requiring everyone to buy a new shovel for digging graves"
+                ],
+                correctIndex: 1,
+                hint: "Lords wanted to protect their profits and stop peasants from climbing the social ladder.",
+                rationale: "To stop peasants from demanding higher pay, the ruling class passed this law in 1351. It made it illegal to pay or receive wages higher than those in 1346, causing deep peasant anger."
+            },
+            {
+                id: 88,
+                topic: "The Black Death",
+                question: "How did the Black Death affect the power and reputation of the Catholic Church?",
+                options: [
+                    "It increased trust in the Church, as priests successfully cured almost everyone",
+                    "It weakened the Church's authority because priests died in huge numbers and could not stop the plague",
+                    "It had no impact, as churches remained completely closed for eighty years",
+                    "The Church was abolished and replaced by local assemblies of elders"
+                ],
+                correctIndex: 1,
+                hint: "Priests were supposed to have a direct line to God, yet they died just as fast as sinners.",
+                rationale: "Because the clergy suffered high death rates and prayers failed to stop the dying, many people began to doubt the absolute power and spiritual authority of the Church."
+            },
+            {
+                id: 89,
+                topic: "The Black Death",
+                question: "Which of the following was a common medieval 'cure' recommended for the plague?",
+                options: [
+                    "Strap a shaved chicken's bottom to the buboes, or drink crushed emeralds",
+                    "Administering doses of modern penicillin antibiotics",
+                    "Taking hot showers and drinking filtered tap water",
+                    "Quarantining inside sterile, pressurized glass rooms"
+                ],
+                correctIndex: 0,
+                hint: "These treatments were bizarre, dangerous, and completely ineffective.",
+                rationale: "Desperate doctors tried strange cures like placing live, shaved chickens on buboes to 'draw out the poison,' bloodletting, or drinking mixtures of arsenic, mercury, or crushed gemstones."
+            },
+            {
+                id: 90,
+                topic: "The Black Death",
+                question: "Approximately what proportion of England's population died during the Black Death?",
+                options: [
+                    "Less than 1%",
+                    "About 5% to 10%",
+                    "Between 30% and 50%",
+                    "Exactly 100% of all peasants"
+                ],
+                correctIndex: 2,
+                hint: "It was a demographic catastrophe that completely reshaped European society.",
+                rationale: "Historical estimates suggest that between 30% and 50% (and in some areas even up to 60%) of England’s population perished between 1348 and 1350."
+            },
+
+            // ================== CHAPTER 9: THE PEASANTS' REVOLT OF 1381 (91-100) ==================
+            {
+                id: 91,
+                topic: "The Peasants' Revolt",
+                question: "What was the primary trigger for the outbreak of the Peasants' Revolt in 1381?",
+                options: [
+                    "The introduction of a highly unfair Poll Tax that everyone had to pay, regardless of wealth",
+                    "The King's refusal to let peasants build their own stone castles",
+                    "An invasion by the French army on the beaches of Kent",
+                    "The banning of weak ale in local village taverns"
+                ],
+                correctIndex: 0,
+                hint: "This was a flat-rate tax demanded three times in a few years to fund expensive wars in France.",
+                rationale: "The Poll Tax of 1377-1381 was a flat-rate tax where a poor peasant paid exactly the same amount as a wealthy merchant. This caused widespread tax evasion and sparked rebellion."
+            },
+            {
+                id: 92,
+                topic: "The Peasants' Revolt",
+                question: "Who was the young King of England during the Peasants' Revolt of 1381?",
+                options: [
+                    "William the Conqueror",
+                    "Henry II",
+                    "Richard II",
+                    "King John"
+                ],
+                correctIndex: 2,
+                hint: "He was only 14 years old when he was forced to confront the angry rebels.",
+                rationale: "Richard II was a boy king, only 14 years old when the revolt reached London. His advisors, like John of Gaunt, were highly unpopular and blamed for the heavy taxes."
+            },
+            {
+                id: 93,
+                topic: "The Peasants' Revolt",
+                question: "Who was the main military leader of the peasants during the 1381 revolt?",
+                options: [
+                    "Wat Tyler",
+                    "John Ball",
+                    "Thomas Becket",
+                    "Robin Hood"
+                ],
+                correctIndex: 0,
+                hint: "He was a roofer or tiler from Kent who showed great charisma and organization.",
+                rationale: "Wat Tyler was the chosen military leader of the Kentish rebels. He led the march to London, coordinated their demands, and negotiated directly with the King."
+            },
+            {
+                id: 94,
+                topic: "The Peasants' Revolt",
+                question: "Who was John Ball, and what was his role in the Peasants' Revolt?",
+                options: [
+                    "A wealthy baron who funded the King's personal knights",
+                    "A radical priest who preached that God created all humans equal, famously asking: 'When Adam delved and Eve span, who was then the gentleman?'",
+                    "The French general who tried to assist the rebels in overthrowing the King",
+                    "A local sheriff who executed peasants who refused to pay taxes"
+                ],
+                correctIndex: 1,
+                hint: "He used religious arguments to attack the very foundations of the feudal system.",
+                rationale: "John Ball was a radical priest who preached social equality. His sermons argued that class distinctions and serfdom had no biblical basis since God made all humans equal."
+            },
+            {
+                id: 95,
+                topic: "The Peasants' Revolt",
+                question: "What did the angry peasant rebels do when they stormed London in June 1381?",
+                options: [
+                    "They burned down tax records, opened prisons, and executed the Archbishop of Canterbury",
+                    "They quietly sat in the town square and prayed for a peaceful solution",
+                    "They immediately loaded onto boats and sailed to France",
+                    "They began building a massive wooden motte in the middle of London"
+                ],
+                correctIndex: 0,
+                hint: "They targeted symbols of royal tax authority and unpopular leaders.",
+                rationale: "The rebels targeted the nobility, burning the Savoy Palace, destroying tax registers, and executing Simon Sudbury (the Archbishop of Canterbury who had introduced the Poll Tax)."
+            },
+            {
+                id: 96,
+                topic: "The Peasants' Revolt",
+                question: "Where did young King Richard II first meet the peasant leaders to listen to their demands?",
+                options: [
+                    "Runnymede, under a massive oak tree",
+                    "Mile End, on June 14, 1381",
+                    "Canterbury Cathedral, near the altar",
+                    "Deep inside the dungeons of the Tower of London"
+                ],
+                correctIndex: 1,
+                hint: "It was an open field outside the city walls where Richard promised to grant their demands.",
+                rationale: "Richard II met the rebels at Mile End, courageously agreeing to their key demands, which included the total abolition of serfdom and low rents."
+            },
+            {
+                id: 97,
+                topic: "The Peasants' Revolt",
+                question: "What shocking event happened to Wat Tyler during the second meeting with the King at Smithfield?",
+                options: [
+                    "He was crowned as the new King of England by his followers",
+                    "He was struck down and killed by the Mayor of London, William Walworth",
+                    "He voluntarily apologized to the King and went back to his village",
+                    "He was given a massive estate and joined the nobility"
+                ],
+                correctIndex: 1,
+                hint: "The Mayor thought Tyler was acting insolently and threatening the young King.",
+                rationale: "During a tense standoff at Smithfield, Mayor William Walworth drew his sword and wounded Wat Tyler, who was then dragged away and executed, leaving the leaderless peasants in shock."
+            },
+            {
+                id: 98,
+                topic: "The Peasants' Revolt",
+                question: "How did 14-year-old Richard II cleverly stop the angry peasants from attacking after Wat Tyler was killed?",
+                options: [
+                    "He rode out to them and shouted: 'I am your leader, follow me!' promising to grant their demands",
+                    "He ordered his hidden archers to shoot everyone in the field immediately",
+                    "He broke down in tears and ran away back to the Tower of London",
+                    "He offered them free silver coins to leave peacefully"
+                ],
+                correctIndex: 0,
+                hint: "He showed immense bravery, defusing a highly explosive situation with a calm lie.",
+                rationale: "Richard defused the panic by riding directly toward the armed rebels, declaring himself their true captain, and leading them away from the city while promising them freedom."
+            },
+            {
+                id: 99,
+                topic: "The Peasants' Revolt",
+                question: "Did King Richard II keep his promises to abolish serfdom and pardon the rebels?",
+                options: [
+                    "Yes, he immediately signed a law freeing all serfs across England",
+                    "No, as soon as the peasants dispersed, he revoked his promises and executed the ringleaders",
+                    "Yes, but only for the peasants who lived in Kent and Essex",
+                    "No, because the Pope ordered him to keep the feudal system intact"
+                ],
+                correctIndex: 1,
+                hint: "He famously told the remaining peasants: 'Rustics you were, and rustics you are; you will remain in bondage.'",
+                rationale: "Once the military threat passed, Richard went back on his word. He sent royal judges across the country to round up, try, and hang hundreds of rebels, including John Ball."
+            },
+            {
+                id: 100,
+                topic: "The Peasants' Revolt",
+                question: "Despite its immediate military defeat, what was the long-term impact of the Peasants' Revolt?",
+                options: [
+                    "Lords never dared to collect the Poll Tax again, and serfdom gradually died out over the next century",
+                    "The peasants were forced into total slavery and lost all right to earn wages",
+                    "England became a republic ruled by a council of village farmers",
+                    "Castles were banned, and all kings were forced to live in simple cottages"
+                ],
+                correctIndex: 0,
+                hint: "The ruling class realized that pushing the peasants too far would lead to bloody, uncontrollable revolutions.",
+                rationale: "Although crushed in the short term, the revolt proved that peasants could organize and fight back. Fearing further uprisings, lords stopped demanding the Poll Tax, wages rose, and serfdom faded away."
+            }
+        ];
+
+        // State Management
+        let currentTopic = "all";
+        let activeIndex = 0; // Index in the currently filtered list
+        let filteredQuestions = [...allQuestions];
+        
+        // Track progress per question ID
+        // status: 'unseen', 'correct', 'wrong', 'flagged' (or combination)
+        let progress = {};
+        allQuestions.forEach(q => {
+            progress[q.id] = {
+                status: 'unseen',
+                flagged: false,
+                userAnswer: null
+            };
+        });
+
+        // Load data from LocalStorage if exists (Premium optional storage)
+        function loadSavedState() {
+            const saved = localStorage.getItem('y7_history_quiz_state');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    progress = parsed.progress || progress;
+                    currentTopic = parsed.currentTopic || "all";
+                    activeIndex = parsed.activeIndex || 0;
+                } catch(e) {
+                    console.error("Could not load saved progress", e);
+                }
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('y7_history_quiz_state', JSON.stringify({
+                progress,
+                currentTopic,
+                activeIndex
+            }));
+        }
+
+        // Initialize application on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedState();
+            lucide.createIcons();
+            renderTopicFilters();
+            applyTopicFilter(currentTopic, false); // Don't reset active index yet
+            updateDashboard();
+            renderProgressMatrix();
+            renderQuestion();
+        });
+
+        // Render the filter list on the left panel
+        function renderTopicFilters() {
+            const container = document.getElementById('topic-filter-list');
+            const topics = [
+                { id: "all", name: "All 100 Questions", count: 100 },
+                { id: "Religion & Beliefs", name: "1. Medieval Church", count: 15 },
+                { id: "Castles & Architecture", name: "2. Castles & Warfare", count: 25 },
+                { id: "The Becket Crisis", name: "3. The Becket Crisis", count: 15 },
+                { id: "Feudal Life & Towns", name: "4. Feudal Life & Towns", count: 15 },
+                { id: "King John & Magna Carta", name: "5. Magna Carta (1215)", count: 10 },
+                { id: "The Black Death", name: "6. The Black Death", count: 10 },
+                { id: "The Peasants' Revolt", name: "7. Peasants' Revolt (1381)", count: 10 }
+            ];
+
+            container.innerHTML = topics.map(t => {
+                const isActive = t.id === currentTopic;
+                const activeClass = isActive 
+                    ? 'bg-amber-500 text-slate-900 font-bold border-amber-600' 
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200';
+                return `
+                    <button onclick="applyTopicFilter('${t.id}')" class="w-full text-left px-3.5 py-2.5 rounded-lg border text-xs flex justify-between items-center transition font-semibold ${activeClass}">
+                        <span>${t.name}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] ${isActive ? 'bg-slate-900 text-amber-400' : 'bg-slate-200 text-slate-600'}">${t.count} Qs</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Apply a topic filter
+        function applyTopicFilter(topicId, resetIndex = true) {
+            currentTopic = topicId;
+            if (topicId === "all") {
+                filteredQuestions = [...allQuestions];
+            } else {
+                filteredQuestions = allQuestions.filter(q => q.topic === topicId);
+            }
+
+            if (resetIndex || activeIndex >= filteredQuestions.length) {
+                activeIndex = 0;
+            }
+
+            // Update UI tags
+            const tag = document.getElementById('topic-count-tag');
+            const topicMap = {
+                all: "All Questions",
+                "Religion & Beliefs": "Medieval Church",
+                "Castles & Architecture": "Castles & Warfare",
+                "The Becket Crisis": "Becket Crisis",
+                "Feudal Life & Towns": "Feudal Life & Towns",
+                "King John & Magna Carta": "Magna Carta",
+                "The Black Death": "Black Death",
+                "The Peasants' Revolt": "Peasants' Revolt"
+            };
+            tag.innerText = topicMap[topicId] || "Filtered List";
+
+            renderTopicFilters();
+            renderProgressMatrix();
+            renderQuestion();
+            saveState();
+        }
+
+        // Render the clickable jump grid
+        function renderProgressMatrix() {
+            const container = document.getElementById('progress-matrix-grid');
+            container.innerHTML = filteredQuestions.map((q, localIdx) => {
+                const state = progress[q.id];
+                let bgClass = "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200";
+                
+                if (state.status === 'correct') {
+                    bgClass = "bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600";
+                } else if (state.status === 'wrong') {
+                    bgClass = "bg-red-500 text-white border-red-600 hover:bg-red-600";
+                }
+
+                const isCurrent = localIdx === activeIndex;
+                const borderClass = isCurrent ? "ring-2 ring-amber-500 ring-offset-2 scale-110 font-black" : "";
+                
+                const flagIndicator = state.flagged 
+                    ? `<span class="absolute top-0 right-0 w-2 h-2 bg-amber-400 rounded-full border border-white"></span>` 
+                    : '';
+
+                return `
+                    <button onclick="jumpToQuestion(${localIdx})" class="aspect-square flex items-center justify-center text-xs font-bold rounded-lg border relative transition duration-150 ${bgClass} ${borderClass}">
+                        ${q.id}
+                        ${flagIndicator}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Update Stats, estimate a Grade Boundary
+        function updateDashboard() {
+            let solved = 0;
+            let correct = 0;
+            let flagged = 0;
+
+            allQuestions.forEach(q => {
+                const state = progress[q.id];
+                if (state.status !== 'unseen') solved++;
+                if (state.status === 'correct') correct++;
+                if (state.flagged) flagged++;
+            });
+
+            const accuracy = solved > 0 ? Math.round((correct / solved) * 100) : 0;
+
+            document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('stat-solved').innerText = `${solved}/100`;
+            document.getElementById('stat-correct').innerText = correct;
+            document.getElementById('stat-flagged').innerText = flagged;
+
+            // Header progress update
+            document.getElementById('header-progress-txt').innerText = `${solved} / 100 Completed`;
+            document.getElementById('header-progress-bar').style.width = `${solved}%`;
+
+            // Grade Estimator (Standard UK Secondary School grading boundaries)
+            const gradeBadge = document.getElementById('grade-badge');
+            const gradeDesc = document.getElementById('grade-description');
+
+            if (solved < 10) {
+                gradeBadge.innerText = "N/A";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600";
+                gradeDesc.innerText = "Complete at least 10 questions to estimate your grade!";
+                return;
+            }
+
+            // Standard scale: Distinction 85%+, Merit 70%+, Pass 50%+, Working Towards 35%+
+            if (accuracy >= 85) {
+                gradeBadge.innerText = "Distinction";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs";
+                gradeDesc.innerHTML = "🎯 <strong>Superb!</strong> You are on track for a top grade in your history exam.";
+            } else if (accuracy >= 70) {
+                gradeBadge.innerText = "Merit";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs";
+                gradeDesc.innerHTML = "👍 <strong>Great work!</strong> Solid historical understanding. Review wrong answers for a Distinction.";
+            } else if (accuracy >= 50) {
+                gradeBadge.innerText = "Pass";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs";
+                gradeDesc.innerHTML = "📖 <strong>On Track.</strong> You've passed! Try flagging hard topics to bolster weak areas.";
+            } else {
+                gradeBadge.innerText = "Working Towards";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-red-100 text-red-800 text-[10px]";
+                gradeDesc.innerHTML = "⚠️ <strong>Revision Needed.</strong> Read the rationale explanations thoroughly after answering.";
+            }
+        }
+
+        // Render current question to screen
+        function renderQuestion() {
+            if (filteredQuestions.length === 0) {
+                showMsgBox("No questions found!", "Please adjust your study topic filter.");
+                return;
+            }
+
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+
+            // Update card metadata
+            document.getElementById('curr-q-topic').innerText = q.topic;
+            document.getElementById('curr-q-num').innerText = activeIndex + 1;
+            document.getElementById('question-text').innerText = q.question;
+            
+            // Progress inside card
+            const percentage = ((activeIndex + 1) / filteredQuestions.length) * 100;
+            document.getElementById('card-progress-bar').style.width = `${percentage}%`;
+
+            // Clear dynamic elements
+            const optionsStack = document.getElementById('options-stack');
+            optionsStack.innerHTML = '';
+            
+            const expBox = document.getElementById('explanation-box');
+            expBox.className = "hidden mt-6 p-5 bg-slate-50 border border-slate-200 rounded-xl transition-all";
+            
+            const hintBubble = document.getElementById('hint-bubble');
+            hintBubble.classList.add('hidden');
+            document.getElementById('hint-text').innerText = q.hint;
+
+            // Setup flag button UI
+            const flagBtn = document.getElementById('flag-btn');
+            const flagIcon = document.getElementById('flag-icon');
+            if (state.flagged) {
+                flagBtn.classList.add('text-amber-500');
+                flagIcon.setAttribute('data-lucide', 'bookmark-check');
+            } else {
+                flagBtn.classList.remove('text-amber-500');
+                flagIcon.setAttribute('data-lucide', 'bookmark');
+            }
+
+            // Create answer choices
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition flex items-center gap-3 text-sm md:text-base font-medium";
+                btn.setAttribute('onclick', `selectAnswer(${idx})`);
+                
+                // If question is already answered
+                if (state.status !== 'unseen') {
+                    btn.disabled = true;
+                    if (idx === q.correctIndex) {
+                        // Mark correct option
+                        btn.className = "w-full text-left p-4 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-900 transition flex items-center gap-3 text-sm md:text-base font-bold";
+                        btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs flex-shrink-0">✓</span> <span>${opt}</span>`;
+                    } else if (state.userAnswer === idx) {
+                        // Mark wrong user answer
+                        btn.className = "w-full text-left p-4 rounded-xl border border-red-500 bg-red-50 text-red-900 transition flex items-center gap-3 text-sm md:text-base font-bold";
+                        btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs flex-shrink-0">✗</span> <span>${opt}</span>`;
+                    } else {
+                        btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-white opacity-60 text-slate-500 transition flex items-center gap-3 text-sm md:text-base font-medium";
+                        btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center text-xs flex-shrink-0">${String.fromCharCode(65 + idx)}</span> <span>${opt}</span>`;
+                    }
+                } else {
+                    btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center text-xs flex-shrink-0 group-hover:bg-amber-100 group-hover:text-amber-700 transition">${String.fromCharCode(65 + idx)}</span> <span>${opt}</span>`;
+                }
+
+                optionsStack.appendChild(btn);
+            });
+
+            // Reveal explanation box if answered
+            if (state.status !== 'unseen') {
+                expBox.classList.remove('hidden');
+                document.getElementById('explanation-text').innerText = q.rationale;
+                const badge = document.getElementById('explanation-badge');
+                if (state.status === 'correct') {
+                    badge.innerText = "Correct";
+                    badge.className = "text-xs font-bold uppercase px-2 py-0.5 rounded bg-emerald-500 text-white";
+                } else {
+                    badge.innerText = "Incorrect";
+                    badge.className = "text-xs font-bold uppercase px-2 py-0.5 rounded bg-red-500 text-white";
+                }
+            }
+
+            // Sync prev / next buttons disabled states
+            document.getElementById('prev-btn').disabled = activeIndex === 0;
+            document.getElementById('next-btn').disabled = activeIndex === filteredQuestions.length - 1;
+
+            lucide.createIcons();
+        }
+
+        // Action when user clicks an answer option
+        function selectAnswer(index) {
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+
+            if (state.status !== 'unseen') return; // Protect against double clicking
+
+            state.userAnswer = index;
+            if (index === q.correctIndex) {
+                state.status = 'correct';
+            } else {
+                state.status = 'wrong';
+            }
+
+            // Render, save state & refresh views
+            renderQuestion();
+            updateDashboard();
+            renderProgressMatrix();
+            saveState();
+        }
+
+        // Toggle hint overlay box
+        function toggleHint() {
+            const hintBubble = document.getElementById('hint-bubble');
+            hintBubble.classList.toggle('hidden');
+        }
+
+        // Toggle bookmarking flag
+        function toggleFlagCurrentQuestion() {
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+            state.flagged = !state.flagged;
+            
+            renderQuestion();
+            updateDashboard();
+            renderProgressMatrix();
+            saveState();
+
+            if (state.flagged) {
+                showMsgBox("Question Flagged", `Question ${q.id} has been saved for study in the matrix!`);
+            }
+        }
+
+        // Jump to specific index from click matrix
+        function jumpToQuestion(localIdx) {
+            activeIndex = localIdx;
+            renderQuestion();
+            renderProgressMatrix();
+            saveState();
+        }
+
+        // Nav controls
+        function navigateToPrev() {
+            if (activeIndex > 0) {
+                activeIndex--;
+                renderQuestion();
+                renderProgressMatrix();
+                saveState();
+            }
+        }
+
+        function navigateToNext() {
+            if (activeIndex < filteredQuestions.length - 1) {
+                activeIndex++;
+                renderQuestion();
+                renderProgressMatrix();
+                saveState();
+            }
+        }
+
+        // Reset all score tracking
+        function restartEntireQuiz() {
+            if (confirm("Are you sure you want to reset all your answers and progress?")) {
+                allQuestions.forEach(q => {
+                    progress[q.id] = {
+                        status: 'unseen',
+                        flagged: false,
+                        userAnswer: null
+                    };
+                });
+                activeIndex = 0;
+                applyTopicFilter("all");
+                updateDashboard();
+                renderProgressMatrix();
+                renderQuestion();
+                saveState();
+                showMsgBox("Quiz Reset", "All historical records cleared. Ready for revision!");
+            }
+        }
+
+        // High-fidelity Browser TTS utility
+        function speakCurrentQuestion() {
+            const q = filteredQuestions[activeIndex];
+            if ('speechSynthesis' in window) {
+                // Cancel ongoing speak requests
+                window.speechSynthesis.cancel();
+                
+                const prompt = `Question ${q.id}. ${q.question}. Option A. ${q.options[0]}. Option B. ${q.options[1]}. Option C. ${q.options[2]}. Option D. ${q.options[3]}.`;
+                const utterance = new SpeechSynthesisUtterance(prompt);
+                
+                // Find a decent english voice
+                const voices = window.speechSynthesis.getVoices();
+                const engVoice = voices.find(v => v.lang.startsWith('en-GB') || v.lang.startsWith('en-US'));
+                if (engVoice) {
+                    utterance.voice = engVoice;
+                }
+                
+                utterance.rate = 0.95; // Slightly slower for comprehension
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showMsgBox("Speech Synthesis Not Supported", "This browser does not support the Web Speech API.");
+            }
+        }
+
+        // Helper components for warning/notification alerts (replaces window.alert)
+        function showMsgBox(title, body) {
+            const box = document.getElementById('custom-message-box');
+            document.getElementById('msg-title').innerText = title;
+            document.getElementById('msg-body').innerText = body;
+            box.classList.remove('hidden');
+            // Auto-hide after 5 seconds
+            setTimeout(closeMsgBox, 6000);
+        }
+
+        function closeMsgBox() {
+            document.getElementById('custom-message-box').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
