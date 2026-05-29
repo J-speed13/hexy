@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 7 Science End of Year Revision Masterclass</title>
+    <!-- Tailwind CSS for modern responsive layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; /* Light green science feel */
+        }
+        .science-title {
+            font-family: 'Comfortaa', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #dcfce7;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased">
+
+    <!-- Header -->
+    <header class="bg-emerald-900 border-b-4 border-amber-400 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-400 text-emerald-950 p-2 rounded-xl font-bold shadow-md">
+                    <i data-lucide="beaker" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="science-title text-xl md:text-2xl font-bold tracking-wide text-white">SCIENCE EXAM PREP</h1>
+                    <p class="text-xs text-emerald-200 font-medium">Interactive 100-Question Revision Masterclass</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <span class="text-xs text-emerald-200 block">Overall Progress</span>
+                    <span class="text-sm font-bold text-amber-300" id="header-progress-txt">0 / 100 Completed</span>
+                </div>
+                <div class="w-24 bg-emerald-950 h-2.5 rounded-full overflow-hidden border border-emerald-800 hidden sm:block">
+                    <div id="header-progress-bar" class="bg-gradient-to-r from-amber-400 to-amber-300 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <button onclick="restartEntireQuiz()" class="bg-emerald-950 hover:bg-emerald-800 hover:text-amber-300 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-emerald-800 transition">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Workspace -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Stats Panel & Topic Filters -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Quick Dashboard Stats -->
+            <div class="bg-white rounded-2xl shadow-md border border-emerald-100 p-5">
+                <h3 class="font-bold text-slate-900 text-xs tracking-wider uppercase mb-4 flex items-center gap-2">
+                    <i data-lucide="gauge" class="text-emerald-600 w-4 h-4"></i> Revision Dashboard
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+                        <span class="text-[10px] text-slate-500 block uppercase font-semibold">Accuracy Rate</span>
+                        <span id="stat-accuracy" class="text-xl font-extrabold text-emerald-900">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+                        <span class="text-[10px] text-slate-500 block uppercase font-semibold">Solved Questions</span>
+                        <span id="stat-solved" class="text-xl font-extrabold text-slate-800">0/100</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+                        <span class="text-[10px] text-slate-500 block uppercase font-semibold">Correct Answers</span>
+                        <span id="stat-correct" class="text-xl font-extrabold text-emerald-600">0</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+                        <span class="text-[10px] text-slate-500 block uppercase font-semibold">Bookmarked Qs</span>
+                        <span id="stat-flagged" class="text-xl font-extrabold text-amber-600">0</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-500 font-medium">Estimated GCSE Grade</span>
+                        <span id="grade-badge" class="font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">Working Towards</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1" id="grade-description">Solve 10 questions to unlock an accurate estimate of your Year 7 Science exam grade.</p>
+                </div>
+            </div>
+
+            <!-- Vocabulary & Grammar Topics Filter -->
+            <div class="bg-white rounded-2xl shadow-md border border-emerald-100 p-5">
+                <h3 class="font-bold text-slate-900 text-xs tracking-wider uppercase mb-3 flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-emerald-600 w-4 h-4"></i> Revision Units
+                </h3>
+                <p class="text-xs text-slate-500 mb-4">Select a specific module to narrow down your focus:</p>
+                
+                <div class="flex flex-col gap-2" id="topic-filter-list">
+                    <!-- Categories rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- Fast-Jump Matrix Grid -->
+            <div class="bg-white rounded-2xl shadow-md border border-emerald-100 p-5 flex-grow flex flex-col max-h-[400px]">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-slate-900 text-xs tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="grid" class="text-emerald-600 w-4 h-4"></i> Progress Matrix
+                    </h3>
+                    <span id="topic-count-tag" class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded">All Questions</span>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 text-[10px] text-slate-500 pb-3 mb-3 border-b border-slate-100">
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-slate-200 border"></span> Unseen</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-emerald-500"></span> Correct</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-rose-500"></span> Wrong</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-400"></span> Flagged</span>
+                </div>
+
+                <div id="progress-matrix-grid" class="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-10 lg:grid-cols-8 gap-1.5 overflow-y-auto custom-scrollbar pr-1 flex-grow">
+                    <!-- 100 boxes populated dynamically -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Interactive Quiz Engine -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- Context Alerts replacement for alert() window -->
+            <div id="custom-message-box" class="hidden bg-emerald-50 border-l-4 border-emerald-600 p-4 rounded-r-2xl shadow-sm transition-all flex items-start gap-3">
+                <i data-lucide="info" class="text-emerald-600 w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                <div class="flex-grow">
+                    <h4 class="font-bold text-emerald-950 text-sm" id="msg-title">Notification</h4>
+                    <p class="text-xs text-emerald-800 mt-0.5" id="msg-body">Alert details.</p>
+                </div>
+                <button onclick="closeMsgBox()" class="text-emerald-400 hover:text-emerald-900">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Core Study Card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-emerald-100 overflow-hidden relative" id="quiz-main-card">
+                
+                <!-- Topic Bar & Auxiliary Functions -->
+                <div class="bg-emerald-950 text-white px-6 py-4 flex items-center justify-between border-b border-emerald-900">
+                    <div>
+                        <span id="curr-q-topic" class="text-[9px] bg-emerald-800 text-amber-300 font-extrabold tracking-wider uppercase px-2 py-0.5 rounded-md border border-emerald-700">CELLS</span>
+                        <h2 class="text-xs text-slate-300 mt-1 flex items-center gap-1">
+                            Question <span id="curr-q-num" class="font-bold text-white">1</span> of 100
+                        </h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button id="tts-btn" onclick="speakCurrentQuestion()" class="p-2 hover:bg-emerald-900 rounded-lg text-slate-300 hover:text-amber-300 transition" title="Listen to Question">
+                            <i data-lucide="volume-2" class="w-4.5 h-4.5"></i>
+                        </button>
+                        <button id="flag-btn" onclick="toggleFlagCurrentQuestion()" class="p-2 hover:bg-emerald-900 rounded-lg text-slate-300 hover:text-amber-300 transition" title="Bookmark for revision">
+                            <i data-lucide="bookmark" id="flag-icon" class="w-4.5 h-4.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simple Card Progress Indicator -->
+                <div class="w-full bg-slate-100 h-1">
+                    <div id="card-progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Active Area -->
+                <div class="p-6 md:p-8">
+                    
+                    <!-- Question Prompt -->
+                    <div class="mb-6">
+                        <span class="text-xs text-slate-400 font-semibold block mb-1">Scientific Challenge:</span>
+                        <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-950 leading-snug">
+                            Loading scientific inquiry...
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options stack -->
+                    <div id="options-stack" class="flex flex-col gap-3">
+                        <!-- Filled dynamically -->
+                    </div>
+
+                    <!-- Explanations Box -->
+                    <div id="explanation-box" class="hidden mt-6 p-5 bg-emerald-50/50 border border-emerald-100 rounded-xl transition-all duration-300">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span id="explanation-badge" class="text-[10px] font-bold uppercase px-2 py-0.5 rounded">Correct</span>
+                            <h4 class="font-bold text-slate-900 text-xs font-mono">Scientific Explanation</h4>
+                        </div>
+                        <p id="explanation-text" class="text-xs md:text-sm text-slate-700 leading-relaxed">
+                            Explanation contents...
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Action Controls Footer -->
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-200/60 flex items-center justify-between gap-4">
+                    <button id="prev-btn" onclick="navigateToPrev()" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg border border-slate-200 font-semibold text-xs flex items-center gap-1.5 transition">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Prev
+                    </button>
+
+                    <button id="show-hint-btn" onclick="toggleHint()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 px-4 py-2 rounded-lg border border-amber-200 font-bold text-xs flex items-center gap-1.5 transition">
+                        <i data-lucide="lightbulb" class="w-4 h-4"></i> Hint
+                    </button>
+
+                    <button id="next-btn" onclick="navigateToNext()" class="bg-emerald-900 hover:bg-emerald-800 text-white px-5 py-2 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition">
+                        Next <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Hint overlay card -->
+            <div id="hint-bubble" class="hidden bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl text-xs flex items-start gap-2.5">
+                <i data-lucide="help-circle" class="text-amber-600 w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <span class="font-bold uppercase tracking-wider text-[10px] text-amber-800 block mb-0.5">Revision Hint</span>
+                    <p id="hint-text" class="text-amber-900">Hint text content.</p>
+                </div>
+            </div>
+
+            <!-- Science Learning Tips -->
+            <div class="bg-gradient-to-r from-emerald-950 to-emerald-900 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden border border-emerald-950">
+                <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-12 translate-y-12">
+                    <i data-lucide="dna" class="w-72 h-72"></i>
+                </div>
+                
+                <h3 class="science-title text-lg font-bold text-amber-300 mb-2 flex items-center gap-2">
+                    <i data-lucide="microscope" class="w-5 h-5"></i> Science Exam Insights
+                </h3>
+                <p class="text-xs text-emerald-100 leading-relaxed max-w-2xl mb-4">
+                    To excel in your Year 7 Science Exam, pay close attention to structure-function relationships in biology (e.g. <strong>how cell structures match their duties</strong>) and quantitative properties in chemistry (e.g. <strong>interpreting pH values and color indicators precisely</strong>).
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800 text-center">
+                        <span class="text-amber-300 text-xs font-bold block mb-1">Litmus Memory Trick</span>
+                        <p class="text-[10px] text-emerald-200">Remember: <strong>A</strong>cid turns Litmus <strong>R</strong>ed (AR), and <strong>B</strong>ase/Alkali turns it <strong>B</strong>lue (BB).</p>
+                    </div>
+                    <div class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800 text-center">
+                        <span class="text-amber-300 text-xs font-bold block mb-1">Cellulose Wall</span>
+                        <p class="text-[10px] text-emerald-200">Only plant cells have a cell wall made of <strong>cellulose</strong> to maintain stiff structure.</p>
+                    </div>
+                    <div class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800 text-center">
+                        <span class="text-amber-300 text-xs font-bold block mb-1">Indicator pH</span>
+                        <p class="text-[10px] text-emerald-200">pH 1 is a <strong>strong acid</strong>, pH 7 is <strong>neutral</strong>, and pH 14 is a <strong>strong alkali</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-emerald-950 text-emerald-300 text-center py-4 text-xs border-t border-emerald-900">
+        <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-2">
+            <p>&copy; 2026 Year 7 Science Revision Platform. Guided by "All power points science" curriculum.</p>
+            <p class="flex items-center gap-1 text-emerald-400">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> Active Diagnostics & Progress Tracking
+            </p>
+        </div>
+    </footer>
+
+    <!-- System JavaScript and Question Repository -->
+    <script>
+        const allQuestions = [
+            // ================== TOPIC 1: CELLS & MICROSCOPES (1-30) ==================
+            {
+                id: 1,
+                topic: "Cells & Microscopes",
+                question: "What basic building blocks are all living organisms made of?",
+                options: ["Tissues", "Organs", "Cells", "Chemicals"],
+                correctIndex: 2,
+                hint: "They are so small that you need a microscope to see them.",
+                rationale: "All living organisms are made of cells. Cells are the fundamental structural and functional units of life."
+            },
+            {
+                id: 2,
+                topic: "Cells & Microscopes",
+                question: "Why do we have to use a microscope to look at plant or animal cells?",
+                options: ["Cells are too small to be seen with our eyes alone", "Cells only exist inside microscopes", "Cells are invisible without polarized laser light", "Microscopes prevent the cells from flying away"],
+                correctIndex: 0,
+                hint: "Consider how small cells are in comparison to a millimeter.",
+                rationale: "Cells are microscopic, which means they are far too tiny to be detected by the naked human eye alone; a light microscope is required to magnify them."
+            },
+            {
+                id: 3,
+                topic: "Cells & Microscopes",
+                question: "Which of the following parts is found in ALL plant cells but NEVER in animal cells?",
+                options: ["Cytoplasm", "Cell wall", "Cell membrane", "Nucleus"],
+                correctIndex: 1,
+                hint: "This part is stiff and strong, made of cellulose, keeping the plant cell in shape.",
+                rationale: "A cellulose cell wall is found in plant cells to give them support, but animal cells never have a cell wall."
+            },
+            {
+                id: 4,
+                topic: "Cells & Microscopes",
+                question: "What is the stiff, strong substance that makes up the cell wall of a plant cell?",
+                options: ["Glycogen", "Starch", "Cellulose", "Chlorophyll"],
+                correctIndex: 2,
+                hint: "Starts with 'Cell-'. It is a complex carbohydrate.",
+                rationale: "The plant cell wall is composed of cellulose, a tough chemical fiber that provides rigidity and structural support to the cell."
+            },
+            {
+                id: 5,
+                topic: "Cells & Microscopes",
+                question: "What is the clear, jelly-like substance inside all cells where chemical reactions occur?",
+                options: ["Cytoplasm", "Sap vacuole", "Nucleus", "Mitochondrion"],
+                correctIndex: 0,
+                hint: "It fills up most of the cell's volume and keeps it alive.",
+                rationale: "The cytoplasm is a clear jelly-like fluid where critical chemical reactions take place to keep the cell alive."
+            },
+            {
+                id: 6,
+                topic: "Cells & Microscopes",
+                question: "Which cell organelle acts as the control center, directing all activities of the cell?",
+                options: ["Mitochondrion", "Cell membrane", "Nucleus", "Chloroplast"],
+                correctIndex: 2,
+                hint: "Most cells have one, and it holds genetic information.",
+                rationale: "The nucleus is the control center of the cell, managing cell division and general cellular activities."
+            },
+            {
+                id: 7,
+                topic: "Cells & Microscopes",
+                question: "What is the function of the thin, flexible cell membrane in both plant and animal cells?",
+                options: ["It keeps the cell warm", "It controls what goes in and out of the cell", "It prevents all chemicals from leaving the cell", "It makes food using sunlight"],
+                correctIndex: 1,
+                hint: "Think of it as a gatekeeper lying along the inner edge of the plant's cell wall.",
+                rationale: "The cell membrane is a semi-permeable barrier that controls the movement of substances (like nutrients and waste) into and out of the cell."
+            },
+            {
+                id: 8,
+                topic: "Cells & Microscopes",
+                question: "Which plant cell organelle is filled with cell sap (fluid containing sugars and other dissolved substances)?",
+                options: ["Cytoplasm", "Mitochondrion", "Sap vacuole", "Nucleus"],
+                correctIndex: 2,
+                hint: "It is a large, fluid-filled space taking up much of the center of a plant cell.",
+                rationale: "The sap vacuole (or permanent vacuole) is a large chamber filled with cell sap, keeping the cell turgid (stiff)."
+            },
+            {
+                id: 9,
+                topic: "Cells & Microscopes",
+                question: "What is 'cell sap' made of?",
+                options: ["Pure oil and fats", "A solution of sugars and other substances dissolved in water", "Melted green chlorophyll", "Gastric acids"],
+                correctIndex: 1,
+                hint: "It's the watery fluid found inside the permanent vacuole of a plant cell.",
+                rationale: "Cell sap is composed of water containing dissolved sugars, mineral salts, and other essential nutrients."
+            },
+            {
+                id: 10,
+                topic: "Cells & Microscopes",
+                question: "Which organelle is the site where energy is released from food during cellular respiration?",
+                options: ["Mitochondrion", "Chloroplast", "Nucleus", "Cell wall"],
+                correctIndex: 0,
+                hint: "Often called the powerhouse of the cell. Plural is mitochondria.",
+                rationale: "Mitochondria are organelles where aerobic respiration takes place, releasing energy from food for the cell to use."
+            },
+            {
+                id: 11,
+                topic: "Cells & Microscopes",
+                question: "Why do chloroplasts in a plant cell look green?",
+                options: ["Because they are filled with green cell sap", "Because they contain the green pigment chlorophyll", "Because they reflect green light from the vacuole", "Because they are made of green cellulose"],
+                correctIndex: 1,
+                hint: "This pigment is essential for absorbing light to perform photosynthesis.",
+                rationale: "Chloroplasts contain the green chemical chlorophyll, which traps sunlight for the process of photosynthesis."
+            },
+            {
+                id: 12,
+                topic: "Cells & Microscopes",
+                question: "What is the primary function of chloroplasts in plant cells?",
+                options: ["To release energy from food", "To make food (glucose) by photosynthesis", "To store waste products", "To control the shape of the cell"],
+                correctIndex: 1,
+                hint: "Think about where plants capture solar energy.",
+                rationale: "Chloroplasts are the food producers of the cell, using light energy to combine carbon dioxide and water into sugars."
+            },
+            {
+                id: 13,
+                topic: "Cells & Microscopes",
+                question: "Which of the following structures is present in a typical animal cell?",
+                options: ["Cellulose cell wall", "Chloroplasts", "Large sap vacuole", "Cell membrane"],
+                correctIndex: 3,
+                hint: "Animal cells are flexible, round, and lack stiff outer boundaries.",
+                rationale: "Unlike plant cells, animal cells lack cell walls, chloroplasts, and large permanent vacuoles; they only have a cell membrane, cytoplasm, nucleus, and mitochondria."
+            },
+            {
+                id: 14,
+                topic: "Cells & Microscopes",
+                question: "What is a main difference between the shape of a typical plant cell and an animal cell?",
+                options: ["Plant cells are always round, animal cells are square", "Plant cells have a regular, fixed shape, while animal cells have irregular, flexible shapes", "Animal cells never have a three-dimensional shape", "Plant cells are invisible, animal cells are colored"],
+                correctIndex: 1,
+                hint: "The plant's rigid cell wall determines its shape.",
+                rationale: "The cell wall keeps the plant cell in a regular, rectangular, or fixed shape. Because animal cells lack this wall, they have flexible, irregular shapes."
+            },
+            {
+                id: 15,
+                topic: "Cells & Microscopes",
+                question: "Under a microscope, you observe a cell containing chloroplasts and a vacuole. Which type of cell is it?",
+                options: ["An animal cell", "A human cheek cell", "A plant cell", "A bacterial cell"],
+                correctIndex: 2,
+                hint: "Animal cells never contain chloroplasts.",
+                rationale: "Only plant cells possess chloroplasts (for photosynthesis) and large permanent vacuoles."
+            },
+            {
+                id: 16,
+                topic: "Cells & Microscopes",
+                question: "When using a light microscope, what is the purpose of the 'eyepiece lens'?",
+                options: ["It holds the glass slide in place", "It is the lens you look directly through to view the specimen", "It shines light up through the specimen", "It adjusts the sharpness of the focus"],
+                correctIndex: 1,
+                hint: "It is positioned at the very top of the microscope tube.",
+                rationale: "The eyepiece lens is the lens located at the top of the microscope that you look through. It typically magnifies the image by 10x."
+            },
+            {
+                id: 17,
+                topic: "Cells & Microscopes",
+                question: "What are the adjustable lenses near the bottom of a microscope tube called?",
+                options: ["Focusing knobs", "Eyepiece lenses", "Objective lenses", "Stage clips"],
+                correctIndex: 2,
+                hint: "They can be rotated to change the magnification power (e.g., 4x, 10x, 40x).",
+                rationale: "Objective lenses are located on a rotating nosepiece above the stage. They gather light from the specimen and project the magnified image."
+            },
+            {
+                id: 18,
+                topic: "Cells & Microscopes",
+                question: "If a microscope has a 10x eyepiece lens and a 40x objective lens, what is the total magnification of the specimen?",
+                options: ["30x", "50x", "400x", "4000x"],
+                correctIndex: 2,
+                hint: "To find total magnification, multiply the magnifying power of both lenses together.",
+                rationale: "Total Magnification = Eyepiece Magnification × Objective Magnification. Here, 10 × 40 = 400x."
+            },
+            {
+                id: 19,
+                topic: "Cells & Microscopes",
+                question: "What is the flat platform where you place the glass slide with the specimen called?",
+                options: ["The base", "The stage", "The mirror", "The barrel"],
+                correctIndex: 1,
+                hint: "Actors perform on this. It has clips to hold the slide steady.",
+                rationale: "The stage is the flat surface where you place slides for observation. It has a hole in the center to let light shine through."
+            },
+            {
+                id: 20,
+                topic: "Cells & Microscopes",
+                question: "Why do we add a thin drop of stain (like iodine or methylene blue) to cells before viewing them under a microscope?",
+                options: ["To feed the cells so they do not die", "To color specific structures (like the nucleus) so they are easier to see", "To glue the cell firmly to the glass slide", "To kill any harmful bacteria on the microscope stage"],
+                correctIndex: 1,
+                hint: "Most cells are clear and transparent without coloring agents.",
+                rationale: "Stains bind to specific parts of cells (e.g. iodine stains starch in plant cells; methylene blue colors animal cell nuclei), making them clearly visible."
+            },
+            {
+                id: 21,
+                topic: "Cells & Microscopes",
+                question: "What is a 'specialized cell'?",
+                options: ["A cell that can change into any other cell at any time", "A cell that has a specific structure to help it carry out a particular job", "A cell that only exists inside test tubes in laboratories", "A dead plant cell used as soil fertilizer"],
+                correctIndex: 1,
+                hint: "Examples include root hair cells or red blood cells.",
+                rationale: "Specialized cells have adapted unique structures and shapes to perform specific roles within a multicellular organism."
+            },
+            {
+                id: 22,
+                topic: "Cells & Microscopes",
+                question: "How is a 'red blood cell' specialized to carry out its job of transporting oxygen?",
+                options: ["It has a long tail to swim through blood vessels", "It contains chloroplasts to absorb oxygen", "It has a biconcave shape and no nucleus to maximize space for hemoglobin", "It has a thick cellulose cell wall to resist high pressure"],
+                correctIndex: 2,
+                hint: "It lacks a control center to make room for oxygen-carrying chemicals.",
+                rationale: "Red blood cells lack a nucleus and have a biconcave disc shape, providing a larger surface area to bind and transport oxygen."
+            },
+            {
+                id: 23,
+                topic: "Cells & Microscopes",
+                question: "How is a 'root hair cell' in a plant specialized to absorb water?",
+                options: ["It has a long, thin extension that increases the surface area for water absorption", "It is packed with chloroplasts to carry out photosynthesis underground", "It has no cell wall, allowing water to rush in freely", "It has a muscular pump to pull water up"],
+                correctIndex: 0,
+                hint: "It looks like it has a long finger reaching into the soil.",
+                rationale: "The root hair cell has a long, hair-like extension that greatly increases its surface area to maximize water and mineral absorption from the soil."
+            },
+            {
+                id: 24,
+                topic: "Cells & Microscopes",
+                question: "Which specialized animal cell has a long tail (flagellum) to swim toward an egg?",
+                options: ["Nerve cell", "Sperm cell", "Muscle cell", "Ciliated cell"],
+                correctIndex: 1,
+                hint: "It is the male gamete involved in reproduction.",
+                rationale: "Sperm cells are specialized with a tail for motility and lots of mitochondria near the tail to generate energy for swimming."
+            },
+            {
+                id: 25,
+                topic: "Cells & Microscopes",
+                question: "What is the function of the tiny hair-like structures on 'ciliated cells' in our windpipe (trachea)?",
+                options: ["To absorb oxygen into the lungs", "To sweep mucus containing dust and microbes away from the lungs", "To digest food particles inside the windpipe", "To hold the windpipe stiff and open"],
+                correctIndex: 1,
+                hint: "They beat in wave-like motions to clear the airway.",
+                rationale: "Ciliated cells have tiny hairs (cilia) that sweep mucus, dust, and pathogens upwards away from the lungs toward the throat where they can be swallowed."
+            },
+            {
+                id: 26,
+                topic: "Cells & Microscopes",
+                question: "Which of these is a plant cell specialized to carry out maximum photosynthesis?",
+                options: ["Root hair cell", "Guard cell", "Palisade mesophyll cell", "Xylem cell"],
+                correctIndex: 2,
+                hint: "They are located in the upper layer of leaves and are packed with chloroplasts.",
+                rationale: "Palisade cells are situated near the top of the leaf and contain numerous chloroplasts to absorb as much sunlight as possible."
+            },
+            {
+                id: 27,
+                topic: "Cells & Microscopes",
+                question: "Which specialized cell is designed to conduct electrical impulses rapidly around the body?",
+                options: ["Nerve cell (neurone)", "Red blood cell", "Muscle cell", "Root hair cell"],
+                correctIndex: 0,
+                hint: "They are long, thin, and have branched connections.",
+                rationale: "Nerve cells (neurones) are extremely long and have branched endings to transmit electrical signals across the body quickly."
+            },
+            {
+                id: 28,
+                topic: "Cells & Microscopes",
+                question: "What specialized cells control the opening and closing of stomata (pores) on a leaf?",
+                options: ["Root hair cells", "Guard cells", "Palisade cells", "Xylem cells"],
+                correctIndex: 1,
+                hint: "They act as 'gatekeepers' surrounding the leaf pores.",
+                rationale: "Guard cells are pairs of cells that swell and shrink to open or close the stomatal pores, regulating gas exchange and water loss."
+            },
+            {
+                id: 29,
+                topic: "Cells & Microscopes",
+                question: "Which instrument is used to study cellular structures too small to be seen under a standard light microscope?",
+                options: ["The magnifying glass", "The telescope", "The electron microscope", "The stethoscope"],
+                correctIndex: 2,
+                hint: "It uses beams of electrons instead of light to get massive magnification.",
+                rationale: "Electron microscopes offer much higher resolution and magnification than light microscopes, revealing tiny organelles like mitochondria in detail."
+            },
+            {
+                id: 30,
+                topic: "Cells & Microscopes",
+                question: "Why do root hair cells completely lack chloroplasts?",
+                options: ["Because they are dead", "Because they are underground in the dark and cannot do photosynthesis", "Because chloroplasts would block the absorption of water", "Because they have a cell wall instead"],
+                correctIndex: 1,
+                hint: "Chloroplasts need light to function.",
+                rationale: "Root hair cells are located in the soil underground where there is no light. Since photosynthesis is impossible there, they do not waste energy growing chloroplasts."
+            },
+
+            // ================== TOPIC 2: ORGANS & ORGAN SYSTEMS (31-50) ==================
+            {
+                id: 31,
+                topic: "Organs & Organ Systems",
+                question: "In biology, what is an 'organ'?",
+                options: ["A type of musical instrument with pipes", "A group of different tissues working together to do a specific job", "A single microscopic cell organelle", "The clear liquid inside a cell's vacuole"],
+                correctIndex: 1,
+                hint: "Examples in humans include the heart, brain, and kidneys.",
+                rationale: "An organ is a collection of different tissues (like muscle, nerve, and connective tissue) structured to perform a major bodily function."
+            },
+            {
+                id: 32,
+                topic: "Organs & Organ Systems",
+                question: "Which of the following is a major human organ responsible for pumping blood around the body?",
+                options: ["The brain", "The heart", "The stomach", "The kidney"],
+                correctIndex: 1,
+                hint: "It is a muscular organ located in the chest cavity.",
+                rationale: "The heart is the key pump of the circulatory system, contracting rhythmically to pump blood through vessels."
+            },
+            {
+                id: 33,
+                topic: "Organs & Organ Systems",
+                question: "What is the function of the human 'kidney' organ?",
+                options: ["To control our thoughts and movements", "To filter wastes from the blood and produce urine", "To digest proteins using hydrochloric acid", "To absorb oxygen from the air"],
+                correctIndex: 1,
+                hint: "Humans typically have a pair of these bean-shaped organs in their lower back.",
+                rationale: "The kidneys are vital organs that filter toxins, urea, and excess water out of the bloodstream to form urine."
+            },
+            {
+                id: 34,
+                topic: "Organs & Organ Systems",
+                question: "Which human organ digests food by churning it and mixing it with acid?",
+                options: ["The lung", "The brain", "The stomach", "The liver"],
+                correctIndex: 2,
+                hint: "It is a muscular bag connected to the esophagus.",
+                rationale: "The stomach churns food mechanically and secretes strong acid and enzymes to chemically digest proteins."
+            },
+            {
+                id: 35,
+                topic: "Organs & Organ Systems",
+                question: "Which of the following is an example of an organ found in plants?",
+                options: ["A chloroplast", "A leaf", "Cytoplasm", "A palisade cell"],
+                correctIndex: 1,
+                hint: "It has a large surface area to absorb sunlight.",
+                rationale: "Leaves, roots, stems, and flowers are organs in plants, as they consist of tissues working together."
+            },
+            {
+                id: 36,
+                topic: "Organs & Organ Systems",
+                question: "What is the primary function of the 'root' organ in plants?",
+                options: ["To perform maximum photosynthesis", "To anchor the plant and absorb water and minerals from soil", "To produce seeds and attract insects", "To transport sugars down to the soil"],
+                correctIndex: 1,
+                hint: "It is located underground.",
+                rationale: "Plant roots anchor the plant securely in the soil and absorb essential water and dissolved mineral ions."
+            },
+            {
+                id: 37,
+                topic: "Organs & Organ Systems",
+                question: "What is an 'organ system'?",
+                options: ["A collection of different organs working together to perform a major body function", "A single organ working completely alone", "A microscopic network of plant cell walls", "A system for classifying chemical reactions"],
+                correctIndex: 0,
+                hint: "Examples include the digestive system and circulatory system.",
+                rationale: "An organ system is a group of organs that cooperate to perform complex, interrelated functions (e.g. the stomach, liver, and intestines in digestion)."
+            },
+            {
+                id: 38,
+                topic: "Organs & Organ Systems",
+                question: "Which organ system contains the mouth, esophagus, stomach, liver, and intestines?",
+                options: ["The respiratory system", "The circulatory system", "The digestive system", "The nervous system"],
+                correctIndex: 2,
+                hint: "Its job is to break down food and absorb nutrients.",
+                rationale: "The digestive system is made up of digestive organs that mechanically and chemically break down food for absorption."
+            },
+            {
+                id: 39,
+                topic: "Organs & Organ Systems",
+                question: "What is the main role of the 'circulatory system' (heart, blood, and blood vessels)?",
+                options: ["To digest food and remove solid waste", "To transport oxygen, nutrients, and waste materials around the body", "To help the body move and support its weight", "To fight off viruses using antibodies"],
+                correctIndex: 1,
+                hint: "Think about the continuous flow of blood through arteries and veins.",
+                rationale: "The circulatory system functions as a transport network, distributing oxygen and nutrients to cells and carrying wastes like carbon dioxide away."
+            },
+            {
+                id: 40,
+                topic: "Organs & Organ Systems",
+                question: "Which organs are part of the 'respiratory system' where gas exchange takes place?",
+                options: ["The kidneys", "The lungs", "The stomach and intestines", "The brain and spinal cord"],
+                correctIndex: 1,
+                hint: "They expand and contract as you breathe.",
+                rationale: "The respiratory system includes the trachea, bronchi, and lungs, facilitating oxygen intake and carbon dioxide release."
+            },
+            {
+                id: 41,
+                topic: "Organs & Organ Systems",
+                question: "What organ system controls our body's actions, processes sensory details, and includes the brain?",
+                options: ["The endocrine system", "The skeletal system", "The nervous system", "The urinary system"],
+                correctIndex: 2,
+                hint: "It uses electrical impulses to send signals along nerves.",
+                rationale: "The nervous system, composed of the brain, spinal cord, and nerves, coordinates rapid responses to internal and external stimuli."
+            },
+            {
+                id: 42,
+                topic: "Organs & Organ Systems",
+                question: "Which of the following describes the correct order of levels of organization in living organisms, from simplest to most complex?",
+                options: ["Cells → Organs → Tissues → Organ Systems", "Cells → Tissues → Organs → Organ Systems", "Organ Systems → Organs → Tissues → Cells", "Tissues → Cells → Organs → Organ Systems"],
+                correctIndex: 1,
+                hint: "Tissues are made of cells; organs are made of tissues.",
+                rationale: "Living structures organize as: Cells (simplest), which form Tissues, which build Organs, which cooperate in Organ Systems (most complex)."
+            },
+            {
+                id: 43,
+                topic: "Organs & Organ Systems",
+                question: "What is a 'tissue' in biology?",
+                options: ["A paper wipe used for clearing dust from microscope lenses", "A group of similar cells working together to perform a specific function", "A collection of different organ systems in the body", "A chemical compound used to stain plant cells"],
+                correctIndex: 1,
+                hint: "Examples include muscle tissue, nerve tissue, or palisade tissue.",
+                rationale: "A tissue is a layer or group of similar specialized cells that cooperate to execute a specific task (e.g. muscle tissue contracts to produce movement)."
+            },
+            {
+                id: 44,
+                topic: "Organs & Organ Systems",
+                question: "Which human organ system is responsible for removing toxic urea and excess water from the body as waste?",
+                options: ["The digestive system", "The nervous system", "The excretory (urinary) system", "The reproductive system"],
+                correctIndex: 2,
+                hint: "This system contains the kidneys and bladder.",
+                rationale: "The urinary or excretory system filters wastes (like urea) from the blood and eliminates them from the body via urine."
+            },
+            {
+                id: 45,
+                topic: "Organs & Organ Systems",
+                question: "What is the purpose of the 'stem' organ in plants?",
+                options: ["To absorb water directly from air", "To support the leaves and flowers, and transport water, minerals, and sugars", "To produce pollen grains for reproduction", "To manufacture cellulose from starch"],
+                correctIndex: 1,
+                hint: "It links the roots to the leaves.",
+                rationale: "The stem provides structural support to keep leaves upright to capture sunlight and acts as a transport conduit containing xylem and phloem vessels."
+            },
+            {
+                id: 46,
+                topic: "Organs & Organ Systems",
+                question: "Which tissue in plant stems and roots transports water and dissolved mineral ions upwards?",
+                options: ["Phloem tissue", "Xylem tissue", "Palisade tissue", "Epidermis"],
+                correctIndex: 1,
+                hint: "Starts with X. Think of continuous hollow tubes.",
+                rationale: "Xylem tissue consists of dead, hollow, reinforced tubes that conduct water and dissolved minerals from the roots up to the leaves."
+            },
+            {
+                id: 47,
+                topic: "Organs & Organ Systems",
+                question: "What tissue in plants transports dissolved food substances (sugars) made during photosynthesis?",
+                options: ["Xylem tissue", "Phloem tissue", "Cortex", "Root cap"],
+                correctIndex: 1,
+                hint: "Starts with Ph (pronounced 'F').",
+                rationale: "Phloem tissue transports synthesized sugars and amino acids up and down the plant in a process called translocation."
+            },
+            {
+                id: 48,
+                topic: "Organs & Organ Systems",
+                question: "Which human organ is responsible for detoxifying chemicals, producing bile, and storing glycogen?",
+                options: ["The heart", "The lung", "The liver", "The kidney"],
+                correctIndex: 2,
+                hint: "It is the largest internal solid organ, located on the right side of the abdomen.",
+                rationale: "The liver is a multi-functional organ critical for metabolism, detoxification, and the production of bile to help digest fats."
+            },
+            {
+                id: 49,
+                topic: "Organs & Organ Systems",
+                question: "What is the skeletal system's main function?",
+                options: ["To pump blood through vessels", "To provide support, protect vital organs, and allow movement with muscles", "To absorb carbon dioxide from tissues", "To digest complex proteins"],
+                correctIndex: 1,
+                hint: "It is made of 206 bones in adult humans.",
+                rationale: "The skeletal system provides structural framework, protects soft internal organs (e.g. ribs protect the heart), and forms leverage joints with skeletal muscles."
+            },
+            {
+                id: 50,
+                topic: "Organs & Organ Systems",
+                question: "Which plant organ is responsible for sexual reproduction?",
+                options: ["The root", "The leaf", "The flower", "The stem"],
+                correctIndex: 2,
+                hint: "They are often brightly colored to attract insects.",
+                rationale: "Flowers contain the reproductive organs of angiosperm plants, housing male stamens (pollen) and female carpels (ovules)."
+            },
+
+            // ================== TOPIC 3: ACIDS, ALKALIS, & INDICATORS (51-80) ==================
+            {
+                id: 51,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What chemical property do substances like vinegar, lemon juice, and battery fluid share?",
+                options: ["They are all neutral", "They are all acidic", "They are all alkaline", "They are all solid fats"],
+                correctIndex: 1,
+                hint: "They taste sour and have pH values lower than 7.",
+                rationale: "Vinegar (ethanoic acid), lemon juice (citric acid), and battery fluid (sulfuric acid) are all chemically classified as acids."
+            },
+            {
+                id: 52,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What chemical property do bleach, oven cleaner, and soap share?",
+                options: ["They are all neutral", "They are all acidic", "They are all alkaline", "They are all explosive gases"],
+                correctIndex: 2,
+                hint: "They feel soapy to touch, taste bitter, and have pH values higher than 7.",
+                rationale: "These cleaning agents are alkalis (soluble bases), which are chemical opposites of acids."
+            },
+            {
+                id: 53,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What is an 'indicator' in chemistry?",
+                options: ["A gauge that displays the temperature of a reaction", "A chemical dye that changes color depending on whether a substance is acidic or alkaline", "A gas that bubbles out when metal reacts with water", "An acid that cannot be neutralized"],
+                correctIndex: 1,
+                hint: "Litmus and red cabbage extract are common examples.",
+                rationale: "Indicators are substances that undergo distinct color changes when exposed to acidic or alkaline environments, indicating their pH range."
+            },
+            {
+                id: 54,
+                topic: "Acids, Alkalis & Indicators",
+                question: "If you add drops of red cabbage indicator to vinegar (an acid), what color will it turn?",
+                options: ["Yellow", "Red", "Blue", "Green"],
+                correctIndex: 1,
+                hint: "Matches the color of the word 'acid' in most classic diagrams.",
+                rationale: "Red cabbage juice is a natural indicator that turns red/pink when mixed with acidic solutions like vinegar."
+            },
+            {
+                id: 55,
+                topic: "Acids, Alkalis & Indicators",
+                question: "If you add drops of red cabbage indicator to bleach (an alkali), what color will it turn?",
+                options: ["Red", "Purple", "Yellow", "Blue"],
+                correctIndex: 2,
+                hint: "This color represents extremely strong alkaline bleaching reactions.",
+                rationale: "In highly alkaline solutions like bleach, red cabbage indicator turns yellow due to chemical alteration."
+            },
+            {
+                id: 56,
+                topic: "Acids, Alkalis & Indicators",
+                question: "If you add drops of red cabbage indicator to pure water, what color will it turn?",
+                options: ["Yellow", "Red", "Blue / Purple", "Bright green"],
+                correctIndex: 2,
+                hint: "Pure water is neutral.",
+                rationale: "Red cabbage indicator turns blue/purple in neutral substances like pure water."
+            },
+            {
+                id: 57,
+                topic: "Acids, Alkalis & Indicators",
+                question: "Name two other fruits/vegetables besides red cabbage that can act as natural indicators:",
+                options: ["Potato and carrot", "Apple and banana", "Blackcurrant and beetroot", "Orange and lemon"],
+                correctIndex: 2,
+                hint: "They have deep purple/red colors that bleed easily.",
+                rationale: "Blackcurrants and beetroots contain anthocyanin pigments, allowing them to function as natural indicators by changing color at different pH levels."
+            },
+            {
+                id: 58,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What is 'Litmus'?",
+                options: ["A type of strong liquid alkali", "A very common indicator dye obtained from lichens", "A device used to measure chemical mass", "An acid found in the human stomach"],
+                correctIndex: 1,
+                hint: "It is often dried onto test paper strips.",
+                rationale: "Litmus is a water-soluble mixture of different dyes extracted from lichens, used as a classic chemical indicator."
+            },
+            {
+                id: 59,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What color does litmus turn in an acid?",
+                options: ["Blue", "Purple", "Green", "Red"],
+                correctIndex: 3,
+                hint: "Memory aid: Acid Red.",
+                rationale: "Litmus turns red in the presence of acidic substances."
+            },
+            {
+                id: 60,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What color does litmus turn in an alkali?",
+                options: ["Red", "Purple", "Blue", "Yellow"],
+                correctIndex: 2,
+                hint: "Memory aid: Base/Alkali Blue.",
+                rationale: "Litmus turns blue in the presence of alkaline substances."
+            },
+            {
+                id: 61,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What color does litmus turn in pure water?",
+                options: ["Red", "Blue", "Purple", "Yellow"],
+                correctIndex: 2,
+                hint: "Pure water is neutral, which is between acid red and alkali blue.",
+                rationale: "In neutral water, litmus is purple."
+            },
+            {
+                id: 62,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What does it mean if a substance is described as 'neutral'?",
+                options: ["It is extremely dangerous to touch", "It is both a strong acid and a strong alkali at the same time", "It is neither an acid nor an alkali", "It does not have any weight"],
+                correctIndex: 2,
+                hint: "Water is a classic example of this.",
+                rationale: "A neutral substance has balanced hydrogen and hydroxide ions, meaning it is neither acidic nor alkaline."
+            },
+            {
+                id: 63,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What is 'Universal Indicator'?",
+                options: ["A scale that measures the temperature of chemical reactions worldwide", "An indicator that shows how acidic or alkaline a substance is by changing through a spectrum of colors", "A machine used to crush chemical solids into powders", "A type of safety glass worn during chemistry experiments"],
+                correctIndex: 1,
+                hint: "It matches its colors directly to the pH scale.",
+                rationale: "Universal Indicator is a blend of several indicators that exhibits a wide range of colors across different pH values from 1 to 14."
+            },
+            {
+                id: 64,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What is acidity or alkalinity of a substance classified as?",
+                options: ["A physical property", "A chemical property", "A biological property", "A nuclear property"],
+                correctIndex: 1,
+                hint: "It describes how the substance behaves and reacts chemically.",
+                rationale: "The pH, acidity, or alkalinity represents a fundamental chemical property of a substance."
+            },
+            {
+                id: 65,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What range of pH values represents an ACIDIC substance?",
+                options: ["pH 1 - 6", "pH 7", "pH 8 - 14", "pH 1 - 14"],
+                correctIndex: 0,
+                hint: "Values below the neutral midpoint.",
+                rationale: "Any substance with a pH value between 1 and 6 is acidic. Lower pH means higher acidity."
+            },
+            {
+                id: 66,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What pH value represents a perfectly NEUTRAL substance like pure water?",
+                options: ["pH 0", "pH 1", "pH 7", "pH 14"],
+                correctIndex: 2,
+                hint: "The exact midpoint of the 1 to 14 scale.",
+                rationale: "A pH of 7 represents a completely neutral solution."
+            },
+            {
+                id: 67,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What range of pH values represents an ALKALINE substance?",
+                options: ["pH 1 - 6", "pH 7", "pH 8 - 14", "pH 0 - 5"],
+                correctIndex: 2,
+                hint: "Values above the neutral midpoint.",
+                rationale: "Any substance with a pH value between 8 and 14 is alkaline. Higher pH means stronger alkalinity."
+            },
+            {
+                id: 68,
+                topic: "Acids, Alkalis & Indicators",
+                question: "Which of the following pH values represents a STRONG acid?",
+                options: ["pH 1", "pH 6", "pH 8", "pH 14"],
+                correctIndex: 0,
+                hint: "The lower the number, the stronger the acid.",
+                rationale: "pH 1 represents a very strong acid, whereas pH 6 is a very weak acid."
+            },
+            {
+                id: 69,
+                topic: "Acids, Alkalis & Indicators",
+                question: "Which of the following pH values represents a VERY WEAK acid?",
+                options: ["pH 1", "pH 6", "pH 7", "pH 13"],
+                correctIndex: 1,
+                hint: "Just slightly below neutral pH 7.",
+                rationale: "pH 6 is a very weak acid, bordering on neutral."
+            },
+            {
+                id: 70,
+                topic: "Acids, Alkalis & Indicators",
+                question: "Which of the following pH values represents a STRONGLY alkaline substance?",
+                options: ["pH 2", "pH 6", "pH 8", "pH 14"],
+                correctIndex: 3,
+                hint: "The maximum value on the standard pH scale.",
+                rationale: "pH 14 represents an extremely strong alkali, whereas pH 8 is a very weak alkali."
+            },
+            {
+                id: 71,
+                topic: "Acids, Alkalis & Indicators",
+                question: "Which of the following pH values represents a VERY WEAK alkali?",
+                options: ["pH 2", "pH 8", "pH 12", "pH 14"],
+                correctIndex: 1,
+                hint: "Just slightly above the neutral midpoint.",
+                rationale: "pH 8 is a very weak alkali, close to neutral."
+            },
+            {
+                id: 72,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What chemical reaction occurs when an acid is mixed with an alkali in correct proportions?",
+                options: ["Photosynthesis", "Neutralisation", "Combustion", "Evaporation"],
+                correctIndex: 1,
+                hint: "The resulting solution moves toward pH 7.",
+                rationale: "When an acid reacts with an alkali, they cancel each other out to produce a salt and water in a neutralisation reaction."
+            },
+            {
+                id: 73,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What products are formed during a standard acid-alkali neutralisation reaction?",
+                options: ["Oxygen and glucose", "A salt and water", "Carbon dioxide and hydrogen", "Metals and oxides"],
+                correctIndex: 1,
+                hint: "Think about mixing hydrochloric acid and sodium hydroxide.",
+                rationale: "Acid + Alkali → Salt + Water. Water is formed from H+ and OH- ions, rendering the solution neutral."
+            },
+            {
+                id: 74,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What color does Universal Indicator turn in a strong acid (like stomach acid)?",
+                options: ["Green", "Blue", "Red", "Purple"],
+                correctIndex: 2,
+                hint: "The color of danger or extreme acidity.",
+                rationale: "Universal Indicator turns bright red in strong acids (pH 1-2)."
+            },
+            {
+                id: 75,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What color does Universal Indicator turn in a neutral solution?",
+                options: ["Red", "Yellow", "Green", "Purple"],
+                correctIndex: 1,
+                hint: "Think of healthy plants or safety.",
+                rationale: "Universal Indicator turns green in neutral solutions (pH 7)."
+            },
+            {
+                id: 76,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What color does Universal Indicator turn in a strong alkali?",
+                options: ["Red", "Green", "Orange", "Purple / Dark Blue"],
+                correctIndex: 3,
+                hint: "The color of strong alkaline cleaning solutions at the far end of the pH spectrum.",
+                rationale: "Universal indicator turns dark purple or deep violet in strong alkalis (pH 13-14)."
+            },
+            {
+                id: 77,
+                topic: "Acids, Alkalis & Indicators",
+                question: "Which of the following acids is produced naturally inside the human stomach to help digestion?",
+                options: ["Sulfuric acid", "Citric acid", "Hydrochloric acid", "Nitric acid"],
+                correctIndex: 2,
+                hint: "It helps break down proteins and kill harmful bacteria.",
+                rationale: "The stomach produces Hydrochloric Acid (pH 1-2) to optimize conditions for digestive enzymes."
+            },
+            {
+                id: 78,
+                topic: "Acids, Alkalis & Indicators",
+                question: "What hazard symbol would you expect to see on a bottle of concentrated strong acid or strong alkali?",
+                options: ["Explosive", "Corrosive (skin damage and dissolving materials)", "Flammable", "Biohazard"],
+                correctIndex: 1,
+                hint: "They can eat away at clothes, skin, and metals.",
+                rationale: "Strong acids and alkalis are highly corrosive and can cause severe skin burns and tissue damage."
+            },
+            {
+                id: 79,
+                topic: "Acids, Alkalis & Indicators",
+                question: "How can you treat an bee sting (which is acidic)?",
+                options: ["By adding a strong acid like battery fluid", "By applying a mild, weak alkali like baking soda", "By scrubbing it with pure bleach", "By wrapping it in dry ice"],
+                correctIndex: 1,
+                hint: "You want to neutralize the acid without harming your skin.",
+                rationale: "A bee sting is acidic, so treating it with a weak alkali like sodium bicarbonate (baking soda) helps neutralize the toxin and relieve pain."
+            },
+            {
+                id: 80,
+                topic: "Acids, Alkalis & Indicators",
+                question: "How can you treat an wasp sting (which is alkaline)?",
+                options: ["By applying a weak acid like vinegar", "By applying a strong alkali", "By washing it with soap", "By heating it with a flame"],
+                correctIndex: 0,
+                hint: "You need a gentle acid to neutralize the alkaline sting.",
+                rationale: "Since wasp venom is alkaline, applying a weak acid like vinegar (ethanoic acid) neutralizes the sting, reducing irritation."
+            },
+
+            // ================== TOPIC 4: ECOSYSTEMS, REPRODUCTION & FORCES (81-100) ==================
+            {
+                id: 81,
+                topic: "Forces, Matter & Energy",
+                question: "Which of the following is a unit used to measure force?",
+                options: ["Grams (g)", "Newtons (N)", "Degrees Celsius (°C)", "Liters (L)"],
+                correctIndex: 1,
+                hint: "Named after Sir Isaac Newton.",
+                rationale: "Forces are measured in Newtons (N) using a force meter (newtonmeter)."
+            },
+            {
+                id: 82,
+                topic: "Forces, Matter & Energy",
+                question: "Which state of matter has a fixed volume but takes the shape of its container?",
+                options: ["Solid", "Liquid", "Gas", "Plasma"],
+                correctIndex: 1,
+                hint: "Particles can move past each other but are still touching.",
+                rationale: "Liquids have fixed volumes but fluid shapes, allowing them to flow and match containers."
+            },
+            {
+                id: 83,
+                topic: "Forces, Matter & Energy",
+                question: "What is the process called when a liquid turns into a gas below its boiling point?",
+                options: ["Condensation", "Freezing", "Evaporation", "Sublimation"],
+                correctIndex: 2,
+                hint: "Puddles disappearing on a sunny day.",
+                rationale: "Evaporation is the transition of liquid surface particles into a gas at temperatures below boiling."
+            },
+            {
+                id: 84,
+                topic: "Forces, Matter & Energy",
+                question: "What force opposes motion between two surfaces sliding past each other?",
+                options: ["Gravity", "Friction", "Magnetism", "Electrostatic"],
+                correctIndex: 1,
+                hint: "It creates heat when you rub your hands together.",
+                rationale: "Friction is a contact force that acts in the opposite direction to sliding movement, slowing things down."
+            },
+            {
+                id: 85,
+                topic: "Forces, Matter & Energy",
+                question: "Which of these is a non-contact force?",
+                options: ["Friction", "Air resistance", "Gravitational force", "Tension in a rope"],
+                correctIndex: 2,
+                hint: "It acts across a distance without touching.",
+                rationale: "Gravity is a non-contact attractive force exerted by mass, pulling objects down without physical contact."
+            },
+            {
+                id: 86,
+                topic: "Forces, Matter & Energy",
+                question: "What is the primary source of energy for almost all food chains on Earth?",
+                options: ["Coal and gas", "The Sun", "Volcanoes", "Nutrient fertilizers"],
+                correctIndex: 1,
+                hint: "Plants need it to drive photosynthesis.",
+                rationale: "The Sun provides solar radiation, which plants capture during photosynthesis to introduce energy into food chains."
+            },
+            {
+                id: 87,
+                topic: "Forces, Matter & Energy",
+                question: "What type of chemical change is represented by burning wood?",
+                options: ["Melting", "Combustion", "Neutralisation", "Condensation"],
+                correctIndex: 1,
+                hint: "Reacting a fuel with oxygen to release heat.",
+                rationale: "Burning is combustion, a chemical reaction that releases thermal energy and forms new substances."
+            },
+            {
+                id: 88,
+                topic: "Forces, Matter & Energy",
+                question: "What is the temperature at which pure water freezes under standard conditions?",
+                options: ["-10°C", "0°C", "10°C", "100°C"],
+                correctIndex: 1,
+                hint: "It is also the melting point of ice.",
+                rationale: "Water freezes into ice at exactly 0°C (32°F)."
+            },
+            {
+                id: 89,
+                topic: "Forces, Matter & Energy",
+                question: "Which of the following is a magnetic metal?",
+                options: ["Gold", "Aluminum", "Iron", "Copper"],
+                correctIndex: 2,
+                hint: "Cobalt, nickel, and this metal are the common magnetic elements.",
+                rationale: "Iron is ferromagnetic, meaning it is attracted to magnets and can be magnetized."
+            },
+            {
+                id: 90,
+                topic: "Forces, Matter & Energy",
+                question: "What is the mass of an object?",
+                options: ["The force of gravity acting on it", "The amount of matter or 'stuff' in the object", "The space the object occupies", "The density of the object"],
+                correctIndex: 1,
+                hint: "It is measured in kilograms and does not change on the Moon.",
+                rationale: "Mass measures the quantity of matter in an object, remaining constant regardless of gravity."
+            },
+            {
+                id: 91,
+                topic: "Forces, Matter & Energy",
+                question: "What is weight?",
+                options: ["The amount of matter in an object", "The gravitational pull acting on an object's mass", "The volume of a liquid", "The speed of travel"],
+                correctIndex: 1,
+                hint: "It is a force and is measured in Newtons.",
+                rationale: "Weight is the force exerted on a mass by gravity (Weight = Mass × Gravitational field strength)."
+            },
+            {
+                id: 92,
+                topic: "Forces, Matter & Energy",
+                question: "Why would an astronaut weigh less on the Moon than on Earth?",
+                options: ["The astronaut loses mass in space", "The Moon has a weaker gravitational field than Earth", "The Moon has no atmosphere", "The astronaut shrinks on the Moon"],
+                correctIndex: 1,
+                hint: "The Moon is much smaller than Earth.",
+                rationale: "The Moon's gravity is only about 1/6th of Earth's because it has less mass, so the weight force pulling down is reduced."
+            },
+            {
+                id: 93,
+                topic: "Forces, Matter & Energy",
+                question: "Which energy transfer occurs when a battery-powered torch is switched on?",
+                options: ["Chemical → Electrical → Light + Heat", "Kinetic → Sound → Electrical", "Gravitational → Chemical → Elastic", "Thermal → Nuclear → Gravitational"],
+                correctIndex: 0,
+                hint: "Batteries contain stored chemicals.",
+                rationale: "Chemical energy in the battery converts to electrical current, which then transfers to light and heat energy in the bulb."
+            },
+            {
+                id: 94,
+                topic: "Forces, Matter & Energy",
+                question: "What is the law of conservation of energy?",
+                options: ["Energy can be created but never destroyed", "Energy can be destroyed but never created", "Energy cannot be created or destroyed, only transferred from one form to another", "Energy is slowly lost from the universe as cold air"],
+                correctIndex: 2,
+                hint: "Energy quantity is always conserved.",
+                rationale: "Energy cannot be made or eliminated; it can only shift from one store/form to another."
+            },
+            {
+                id: 95,
+                topic: "Forces, Matter & Energy",
+                question: "Which material is an excellent conductor of electricity?",
+                options: ["Plastic", "Rubber", "Copper", "Glass"],
+                correctIndex: 2,
+                hint: "Metals contain free, delocalized electrons.",
+                rationale: "Copper is a metal with free electrons, enabling it to conduct electricity exceptionally well."
+            },
+            {
+                id: 96,
+                topic: "Forces, Matter & Energy",
+                question: "What is a material that does NOT allow electricity to pass through it easily called?",
+                options: ["Conductor", "Metal", "Insulator", "Electrolyte"],
+                correctIndex: 2,
+                hint: "Plastic coatings on wires are made of this.",
+                rationale: "Insulators have tightly bound electrons, preventing electrical current from flowing."
+            },
+            {
+                id: 97,
+                topic: "Forces, Matter & Energy",
+                question: "What occurs during a physical change, like ice melting?",
+                options: ["New chemical substances are formed", "The change is easily reversed and no new substances are made", "The molecules are completely destroyed", "Heat is consumed forever"],
+                correctIndex: 1,
+                hint: "You can freeze water back into ice.",
+                rationale: "Physical changes alter state or appearance but do not yield new chemicals and are typically reversible."
+            },
+            {
+                id: 98,
+                topic: "Forces, Matter & Energy",
+                question: "Which of the following represents a chemical change?",
+                options: ["Breaking glass", "Melting wax", "Baking a cake", "Dissolving salt in water"],
+                correctIndex: 2,
+                hint: "You cannot un-bake a cake back into raw eggs and flour.",
+                rationale: "Baking involves chemical reactions (heat causing proteins to denature and leavening agents to react) creating new substances."
+            },
+            {
+                id: 99,
+                topic: "Forces, Matter & Energy",
+                question: "Which gas in our atmosphere is essential for combustion (burning)?",
+                options: ["Nitrogen", "Carbon dioxide", "Oxygen", "Argon"],
+                correctIndex: 2,
+                hint: "Fires cannot burn in a vacuum or in carbon dioxide.",
+                rationale: "Oxygen supports combustion, reacting chemically with fuels to keep flames burning."
+            },
+            {
+                id: 100,
+                topic: "Forces, Matter & Energy",
+                question: "What is density defined as?",
+                options: ["The mass per unit volume of a substance", "The weight of an object", "The volume of liquid displaced", "How fast a substance melts"],
+                correctIndex: 0,
+                hint: "Density = Mass ÷ Volume.",
+                rationale: "Density measures how tightly packed the mass of a substance is within a given space."
+            }
+        ];
+
+        // State variables
+        let currentTopic = "all";
+        let activeIndex = 0;
+        let filteredQuestions = [...allQuestions];
+        
+        let progress = {};
+        allQuestions.forEach(q => {
+            progress[q.id] = {
+                status: 'unseen',
+                flagged: false,
+                userAnswer: null
+            };
+        });
+
+        // Local Storage Utilities
+        function loadSavedState() {
+            const saved = localStorage.getItem('science_quiz_state_2026');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    progress = parsed.progress || progress;
+                    currentTopic = parsed.currentTopic || "all";
+                    activeIndex = parsed.activeIndex || 0;
+                } catch(e) {
+                    console.error("Could not load stored progress values", e);
+                }
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('science_quiz_state_2026', JSON.stringify({
+                progress,
+                currentTopic,
+                activeIndex
+            }));
+        }
+
+        // Initialize App UI
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedState();
+            lucide.createIcons();
+            renderTopicFilters();
+            applyTopicFilter(currentTopic, false);
+            updateDashboard();
+            renderProgressMatrix();
+            renderQuestion();
+        });
+
+        // Filter Categories
+        function renderTopicFilters() {
+            const container = document.getElementById('topic-filter-list');
+            const topics = [
+                { id: "all", name: "All 100 Questions", count: 100 },
+                { id: "Cells & Microscopes", name: "1. Cells & Microscopes", count: 30 },
+                { id: "Organs & Organ Systems", name: "2. Organs & Organ Systems", count: 20 },
+                { id: "Acids, Alkalis & Indicators", name: "3. Acids & Alkalis", count: 30 },
+                { id: "Forces, Matter & Energy", name: "4. Matter, Forces & Energy", count: 20 }
+            ];
+
+            container.innerHTML = topics.map(t => {
+                const isActive = t.id === currentTopic;
+                const activeClass = isActive 
+                    ? 'bg-emerald-600 text-white font-bold border-emerald-700' 
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200';
+                return `
+                    <button onclick="applyTopicFilter('${t.id}')" class="w-full text-left px-3 py-2.5 rounded-xl border text-xs flex justify-between items-center transition font-semibold ${activeClass}">
+                        <span>${t.name}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] ${isActive ? 'bg-emerald-900 text-amber-300' : 'bg-slate-200 text-slate-600'}">${t.count} Qs</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function applyTopicFilter(topicId, resetIndex = true) {
+            currentTopic = topicId;
+            if (topicId === "all") {
+                filteredQuestions = [...allQuestions];
+            } else {
+                filteredQuestions = allQuestions.filter(q => q.topic === topicId);
+            }
+
+            if (resetIndex || activeIndex >= filteredQuestions.length) {
+                activeIndex = 0;
+            }
+
+            const tag = document.getElementById('topic-count-tag');
+            const topicTitles = {
+                all: "All Questions",
+                "Cells & Microscopes": "Cells & Microscopes",
+                "Organs & Organ Systems": "Organs & Organ Systems",
+                "Acids, Alkalis & Indicators": "Acids & Alkalis",
+                "Forces, Matter & Energy": "Matter, Forces & Energy"
+            };
+            tag.innerText = topicTitles[topicId] || "Filtered Module";
+
+            renderTopicFilters();
+            renderProgressMatrix();
+            renderQuestion();
+            saveState();
+        }
+
+        // Render Fast-Jump Grid
+        function renderProgressMatrix() {
+            const container = document.getElementById('progress-matrix-grid');
+            container.innerHTML = filteredQuestions.map((q, localIdx) => {
+                const state = progress[q.id];
+                let bgClass = "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200";
+                
+                if (state.status === 'correct') {
+                    bgClass = "bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600";
+                } else if (state.status === 'wrong') {
+                    bgClass = "bg-rose-500 text-white border-rose-600 hover:bg-rose-600";
+                }
+
+                const isCurrent = localIdx === activeIndex;
+                const borderClass = isCurrent ? "ring-2 ring-amber-400 ring-offset-2 scale-110 font-bold" : "";
+                
+                const flagIndicator = state.flagged 
+                    ? `<span class="absolute top-0 right-0 w-2 h-2 bg-amber-400 rounded-full border border-white"></span>` 
+                    : '';
+
+                return `
+                    <button onclick="jumpToQuestion(${localIdx})" class="aspect-square flex items-center justify-center text-xs font-bold rounded-lg border relative transition duration-150 ${bgClass} ${borderClass}">
+                        ${q.id}
+                        ${flagIndicator}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Calculations & Grade boundary estimations
+        function updateDashboard() {
+            let solved = 0;
+            let correct = 0;
+            let flagged = 0;
+
+            allQuestions.forEach(q => {
+                const state = progress[q.id];
+                if (state.status !== 'unseen') solved++;
+                if (state.status === 'correct') correct++;
+                if (state.flagged) flagged++;
+            });
+
+            const accuracy = solved > 0 ? Math.round((correct / solved) * 100) : 0;
+
+            document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('stat-solved').innerText = `${solved}/100`;
+            document.getElementById('stat-correct').innerText = correct;
+            document.getElementById('stat-flagged').innerText = flagged;
+
+            document.getElementById('header-progress-txt').innerText = `${solved} / 100 Completed`;
+            document.getElementById('header-progress-bar').style.width = `${solved}%`;
+
+            const gradeBadge = document.getElementById('grade-badge');
+            const gradeDesc = document.getElementById('grade-description');
+
+            if (solved < 10) {
+                gradeBadge.innerText = "Working Towards";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs";
+                gradeDesc.innerText = "Answer at least 10 questions to estimate your GCSE equivalent grade!";
+                return;
+            }
+
+            if (accuracy >= 85) {
+                gradeBadge.innerText = "Grade 9 (Distinction)";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs";
+                gradeDesc.innerHTML = "🎯 <strong>Incredible!</strong> You have masterfully memorized indicators, pH values, and key cellular structures. Easily on track for a top-tier science grade.";
+            } else if (accuracy >= 70) {
+                gradeBadge.innerText = "Grade 7/8 (Merit)";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs";
+                gradeDesc.innerHTML = "✨ <strong>Great job!</strong> Clear grasp of acids, bases, and organs. Pay closer attention to red cabbage indicator hues and plant specialized cells.";
+            } else if (accuracy >= 50) {
+                gradeBadge.innerText = "Grade 5/6 (Pass)";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs";
+                gradeDesc.innerHTML = "📚 <strong>Solid Pass.</strong> You understand high-frequency biological and chemical structures. Try flagging tricky questions for later study.";
+            } else {
+                gradeBadge.innerText = "Grade 3/4 (Emerging)";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-red-100 text-red-800 text-xs";
+                gradeDesc.innerHTML = "✏️ <strong>Revision Recommended.</strong> Make sure to read the linguistic/scientific rationale after making each selection.";
+            }
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            if (filteredQuestions.length === 0) {
+                showMsgBox("Queue Empty", "Please select another study module filter.");
+                return;
+            }
+
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+
+            document.getElementById('curr-q-topic').innerText = q.topic;
+            document.getElementById('curr-q-num').innerText = activeIndex + 1;
+            document.getElementById('question-text').innerText = q.question;
+            
+            const percentage = ((activeIndex + 1) / filteredQuestions.length) * 100;
+            document.getElementById('card-progress-bar').style.width = `${percentage}%`;
+
+            const optionsStack = document.getElementById('options-stack');
+            optionsStack.innerHTML = '';
+            
+            const expBox = document.getElementById('explanation-box');
+            expBox.className = "hidden mt-6 p-5 bg-emerald-50/50 border border-emerald-100 rounded-xl transition-all";
+            
+            const hintBubble = document.getElementById('hint-bubble');
+            hintBubble.classList.add('hidden');
+            document.getElementById('hint-text').innerText = q.hint;
+
+            // Bookmark Flag UI
+            const flagBtn = document.getElementById('flag-btn');
+            const flagIcon = document.getElementById('flag-icon');
+            if (state.flagged) {
+                flagBtn.classList.add('text-amber-500');
+                flagIcon.setAttribute('data-lucide', 'bookmark-check');
+            } else {
+                flagBtn.classList.remove('text-amber-500');
+                flagIcon.setAttribute('data-lucide', 'bookmark');
+            }
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition flex items-center justify-between text-sm md:text-base font-semibold group";
+                btn.setAttribute('onclick', `selectAnswer(${idx})`);
+                
+                if (state.status !== 'unseen') {
+                    btn.disabled = true;
+                    if (idx === q.correctIndex) {
+                        btn.className = "w-full text-left p-4 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-950 transition flex items-center justify-between text-sm md:text-base font-bold";
+                        btn.innerHTML = `<span class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs flex-shrink-0">✓</span> 
+                            <span>${opt}</span>
+                        </span>
+                        <i data-lucide="check" class="text-emerald-600 w-4 h-4"></i>`;
+                    } else if (state.userAnswer === idx) {
+                        btn.className = "w-full text-left p-4 rounded-xl border border-rose-500 bg-rose-50 text-rose-950 transition flex items-center justify-between text-sm md:text-base font-bold";
+                        btn.innerHTML = `<span class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs flex-shrink-0">✗</span> 
+                            <span>${opt}</span>
+                        </span>
+                        <i data-lucide="alert-circle" class="text-rose-600 w-4 h-4"></i>`;
+                    } else {
+                        btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-white opacity-55 text-slate-400 transition flex items-center justify-between text-sm md:text-base font-medium";
+                        btn.innerHTML = `<span class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xs flex-shrink-0">${String.fromCharCode(65 + idx)}</span> 
+                            <span>${opt}</span>
+                        </span>`;
+                    }
+                } else {
+                    btn.innerHTML = `<span class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center text-xs flex-shrink-0 group-hover:bg-emerald-100 group-hover:text-emerald-900 transition">${String.fromCharCode(65 + idx)}</span> 
+                        <span>${opt}</span>
+                    </span>
+                    <i data-lucide="chevron-right" class="text-slate-300 opacity-0 group-hover:opacity-100 transition w-4 h-4"></i>`;
+                }
+
+                optionsStack.appendChild(btn);
+            });
+
+            // Display explanations post-answer
+            if (state.status !== 'unseen') {
+                expBox.classList.remove('hidden');
+                document.getElementById('explanation-text').innerText = q.rationale;
+                const badge = document.getElementById('explanation-badge');
+                if (state.status === 'correct') {
+                    badge.innerText = "Correct";
+                    badge.className = "text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-500 text-white font-mono";
+                } else {
+                    badge.innerText = "Incorrect Option Chosen";
+                    badge.className = "text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-rose-500 text-white font-mono";
+                }
+            }
+
+            document.getElementById('prev-btn').disabled = activeIndex === 0;
+            document.getElementById('next-btn').disabled = activeIndex === filteredQuestions.length - 1;
+
+            lucide.createIcons();
+        }
+
+        function selectAnswer(index) {
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+
+            if (state.status !== 'unseen') return;
+
+            state.userAnswer = index;
+            if (index === q.correctIndex) {
+                state.status = 'correct';
+            } else {
+                state.status = 'wrong';
+            }
+
+            renderQuestion();
+            updateDashboard();
+            renderProgressMatrix();
+            saveState();
+        }
+
+        // Toggle Hint Card
+        function toggleHint() {
+            const hintBubble = document.getElementById('hint-bubble');
+            hintBubble.classList.toggle('hidden');
+        }
+
+        // Toggle Flag bookmarks
+        function toggleFlagCurrentQuestion() {
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+            state.flagged = !state.flagged;
+            
+            renderQuestion();
+            updateDashboard();
+            renderProgressMatrix();
+            saveState();
+
+            if (state.flagged) {
+                showMsgBox("Question Bookmarked", `Question ${q.id} has been saved for review in the matrix.`);
+            }
+        }
+
+        // Jump to Question index
+        function jumpToQuestion(localIdx) {
+            activeIndex = localIdx;
+            renderQuestion();
+            renderProgressMatrix();
+            saveState();
+        }
+
+        // Navigation
+        function navigateToPrev() {
+            if (activeIndex > 0) {
+                activeIndex--;
+                renderQuestion();
+                renderProgressMatrix();
+                saveState();
+            }
+        }
+
+        function navigateToNext() {
+            if (activeIndex < filteredQuestions.length - 1) {
+                activeIndex++;
+                renderQuestion();
+                renderProgressMatrix();
+                saveState();
+            }
+        }
+
+        // Clear everything
+        function restartEntireQuiz() {
+            if (confirm("Are you sure you want to delete your progress history and start over?")) {
+                allQuestions.forEach(q => {
+                    progress[q.id] = {
+                        status: 'unseen',
+                        flagged: false,
+                        userAnswer: null
+                    };
+                });
+                activeIndex = 0;
+                applyTopicFilter("all");
+                updateDashboard();
+                renderProgressMatrix();
+                renderQuestion();
+                saveState();
+                showMsgBox("Revision History Reset", "All diagnostic records have been reset. Good luck!");
+            }
+        }
+
+        // TTS Pronunciation Assistance using Web Speech API
+        function speakCurrentQuestion() {
+            const q = filteredQuestions[activeIndex];
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                
+                const textToSpeak = `Question ${q.id}. ${q.question}. Option A. ${q.options[0]}. Option B. ${q.options[1]}. Option C. ${q.options[2]}. Option D. ${q.options[3]}.`;
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                
+                const voices = window.speechSynthesis.getVoices();
+                const englishVoice = voices.find(v => v.lang.startsWith('en'));
+                
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+                
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showMsgBox("Speech Engine Unavailable", "Your current browser does not support local Speech Synthesis.");
+            }
+        }
+
+        // Custom notification replace window.alerts
+        function showMsgBox(title, body) {
+            const box = document.getElementById('custom-message-box');
+            document.getElementById('msg-title').innerText = title;
+            document.getElementById('msg-body').innerText = body;
+            box.classList.remove('hidden');
+            setTimeout(closeMsgBox, 5500);
+        }
+
+        function closeMsgBox() {
+            document.getElementById('custom-message-box').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
