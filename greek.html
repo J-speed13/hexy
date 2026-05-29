@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greek A1 Vocabulary & Grammar Masterclass</title>
+    <!-- Tailwind CSS for modern responsive layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .greek-title {
+            font-family: 'Comfortaa', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased">
+
+    <!-- Header -->
+    <header class="bg-blue-900 border-b-4 border-amber-400 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-400 text-blue-900 p-2 rounded-xl font-bold shadow-md">
+                    <i data-lucide="languages" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="greek-title text-xl md:text-2xl font-bold tracking-wide text-white">ΕΛΛΗΝΙΚΑ Α1</h1>
+                    <p class="text-xs text-blue-200 font-medium">Greek Vocabulary & Grammar Masterclass (100 Qs)</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <span class="text-xs text-blue-200 block">Overall Progress</span>
+                    <span class="text-sm font-bold text-amber-300" id="header-progress-txt">0 / 100 Completed</span>
+                </div>
+                <div class="w-24 bg-blue-950 h-2.5 rounded-full overflow-hidden border border-blue-800 hidden sm:block">
+                    <div id="header-progress-bar" class="bg-gradient-to-r from-amber-400 to-amber-300 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <button onclick="restartEntireQuiz()" class="bg-blue-950 hover:bg-blue-800 hover:text-amber-300 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-blue-800 transition">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Workspace -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Stats Panel & Topic Filters -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Quick Dashboard Stats -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5">
+                <h3 class="font-bold text-slate-900 text-xs tracking-wider uppercase mb-4 flex items-center gap-2">
+                    <i data-lucide="compass" class="text-blue-600 w-4 h-4"></i> Study Metrics
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+                        <span class="text-[10px] text-slate-500 block uppercase font-semibold">Current Accuracy</span>
+                        <span id="stat-accuracy" class="text-xl font-extrabold text-blue-900">0%</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+                        <span class="text-[10px] text-slate-500 block uppercase font-semibold">Questions Solved</span>
+                        <span id="stat-solved" class="text-xl font-extrabold text-slate-800">0/100</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+                        <span class="text-[10px] text-slate-500 block uppercase font-semibold">Correct Answers</span>
+                        <span id="stat-correct" class="text-xl font-extrabold text-emerald-600">0</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-center border border-slate-100">
+                        <span class="text-[10px] text-slate-500 block uppercase font-semibold">Bookmarked</span>
+                        <span id="stat-flagged" class="text-xl font-extrabold text-amber-600">0</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-500 font-medium">Estimated CEFR Proficiency</span>
+                        <span id="grade-badge" class="font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">A0 Initial</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1" id="grade-description">Solve 10 questions to unlock an accurate estimation of your proficiency based on "Greek for You" curriculum.</p>
+                </div>
+            </div>
+
+            <!-- Vocabulary & Grammar Topics Filter -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5">
+                <h3 class="font-bold text-slate-900 text-xs tracking-wider uppercase mb-3 flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-blue-600 w-4 h-4"></i> Language Topics
+                </h3>
+                <p class="text-xs text-slate-500 mb-4">Select a specific module to narrow down your study sequence:</p>
+                
+                <div class="flex flex-col gap-2" id="topic-filter-list">
+                    <!-- Categories rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- Fast-Jump Matrix Grid -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 flex-grow flex flex-col max-h-[400px]">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-slate-900 text-xs tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="layout-grid" class="text-blue-600 w-4 h-4"></i> Progress Matrix
+                    </h3>
+                    <span id="topic-count-tag" class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded">All Questions</span>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 text-[10px] text-slate-500 pb-3 mb-3 border-b border-slate-100">
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-slate-200 border"></span> Unseen</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-emerald-500"></span> Correct</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-rose-500"></span> Wrong</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-400"></span> Bookmarked</span>
+                </div>
+
+                <div id="progress-matrix-grid" class="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-10 lg:grid-cols-8 gap-1.5 overflow-y-auto custom-scrollbar pr-1 flex-grow">
+                    <!-- 100 boxes populated dynamically -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Interactive Quiz Engine -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- Context Alerts replacement for alert() window -->
+            <div id="custom-message-box" class="hidden bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-2xl shadow-sm transition-all flex items-start gap-3">
+                <i data-lucide="info" class="text-blue-600 w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                <div class="flex-grow">
+                    <h4 class="font-bold text-blue-950 text-sm" id="msg-title">Notification</h4>
+                    <p class="text-xs text-blue-800 mt-0.5" id="msg-body">Alert details.</p>
+                </div>
+                <button onclick="closeMsgBox()" class="text-blue-400 hover:text-blue-900">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Core Study Card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative" id="quiz-main-card">
+                
+                <!-- Topic Bar & Auxiliary Functions -->
+                <div class="bg-blue-950 text-white px-6 py-4 flex items-center justify-between border-b border-blue-900">
+                    <div>
+                        <span id="curr-q-topic" class="text-[9px] bg-blue-800 text-amber-300 font-extrabold tracking-wider uppercase px-2 py-0.5 rounded-md border border-blue-700">GREETINGS</span>
+                        <h2 class="text-xs text-slate-300 mt-1 flex items-center gap-1">
+                            Question <span id="curr-q-num" class="font-bold text-white">1</span> of 100
+                        </h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button id="tts-btn" onclick="speakCurrentQuestion()" class="p-2 hover:bg-blue-900 rounded-lg text-slate-300 hover:text-amber-300 transition" title="Listen to Greek Pronunciation">
+                            <i data-lucide="volume-2" class="w-4.5 h-4.5"></i>
+                        </button>
+                        <button id="flag-btn" onclick="toggleFlagCurrentQuestion()" class="p-2 hover:bg-blue-900 rounded-lg text-slate-300 hover:text-amber-300 transition" title="Bookmark for revision">
+                            <i data-lucide="bookmark" id="flag-icon" class="w-4.5 h-4.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simple Card Progress Indicator -->
+                <div class="w-full bg-slate-100 h-1">
+                    <div id="card-progress-bar" class="bg-amber-400 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Active Area -->
+                <div class="p-6 md:p-8">
+                    
+                    <!-- Question Prompt -->
+                    <div class="mb-6">
+                        <span class="text-xs text-slate-400 font-semibold block mb-1">Translate or complete the target sentence:</span>
+                        <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-950 leading-snug">
+                            How do you say "Good morning" in Greek?
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options stack -->
+                    <div id="options-stack" class="flex flex-col gap-3">
+                        <!-- Filled dynamically -->
+                    </div>
+
+                    <!-- Explanations Box -->
+                    <div id="explanation-box" class="hidden mt-6 p-5 bg-blue-50/50 border border-blue-100 rounded-xl transition-all duration-300">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span id="explanation-badge" class="text-[10px] font-bold uppercase px-2 py-0.5 rounded">Correct</span>
+                            <h4 class="font-bold text-slate-900 text-xs">Linguistic Explanation</h4>
+                        </div>
+                        <p id="explanation-text" class="text-xs md:text-sm text-slate-700 leading-relaxed">
+                            Explanation contents...
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Action Controls Footer -->
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-200/60 flex items-center justify-between gap-4">
+                    <button id="prev-btn" onclick="navigateToPrev()" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg border border-slate-200 font-semibold text-xs flex items-center gap-1.5 transition">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Prev
+                    </button>
+
+                    <button id="show-hint-btn" onclick="toggleHint()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 px-4 py-2 rounded-lg border border-amber-200 font-bold text-xs flex items-center gap-1.5 transition">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i> Hint
+                    </button>
+
+                    <button id="next-btn" onclick="navigateToNext()" class="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition">
+                        Next <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Hint overlay card -->
+            <div id="hint-bubble" class="hidden bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl text-xs flex items-start gap-2.5">
+                <i data-lucide="lightbulb" class="text-amber-600 w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <span class="font-bold uppercase tracking-wider text-[10px] text-amber-800 block mb-0.5">Grammar Hint</span>
+                    <p id="hint-text" class="text-amber-900">Hint text content.</p>
+                </div>
+            </div>
+
+            <!-- Greek Language Learning Tips -->
+            <div class="bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden border border-blue-950">
+                <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-12 translate-y-12">
+                    <i data-lucide="award" class="w-72 h-72"></i>
+                </div>
+                
+                <h3 class="greek-title text-lg font-bold text-amber-300 mb-2 flex items-center gap-2">
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i> A1 Learning Tips
+                </h3>
+                <p class="text-xs text-blue-100 leading-relaxed max-w-2xl mb-4">
+                    Modern Greek grammar relies on grammatical genders (<strong>Masculine, Feminine, Neuter</strong>). Check the endings of articles and nouns to determine their category. For pronunciation, pay attention to the accent mark (<strong>τόνος</strong>); it tells you exactly where to stress the word!
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="bg-blue-950/70 p-3 rounded-xl border border-blue-800 text-center">
+                        <span class="text-amber-300 text-xs font-bold block mb-1">Accented Stress</span>
+                        <p class="text-[10px] text-blue-200">The stress mark (e.g., ά, έ) tells you which syllable to read louder.</p>
+                    </div>
+                    <div class="bg-blue-950/70 p-3 rounded-xl border border-blue-800 text-center">
+                        <span class="text-amber-300 text-xs font-bold block mb-1">The Neuter Rule</span>
+                        <p class="text-[10px] text-blue-200">Nouns ending in <strong>-ι</strong>, <strong>-ο</strong>, or <strong>-μα</strong> are usually Neuter (το).</p>
+                    </div>
+                    <div class="bg-blue-950/70 p-3 rounded-xl border border-blue-800 text-center">
+                        <span class="text-amber-300 text-xs font-bold block mb-1">Politeness (Plural)</span>
+                        <p class="text-[10px] text-blue-200">Use second-person plural (<strong>-ετε</strong>) to show formal respect to strangers.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-blue-950 text-blue-300 text-center py-4 text-xs border-t border-blue-900">
+        <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-2">
+            <p>&copy; 2026 Greek Language CEFR A1 Revision Platform.</p>
+            <p class="flex items-center gap-1 text-blue-400">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-amber-400"></i> Level: Basic User (CEFR A1)
+            </p>
+        </div>
+    </footer>
+
+    <!-- System JavaScript and Question Repository -->
+    <script>
+        const allQuestions = [
+            // ================== TOPIC 1: GREETINGS & SOCIAL EXPRESSIONS (1-15) ==================
+            {
+                id: 1,
+                topic: "Greetings & Social",
+                question: "How do you say \"Good morning\" in Greek?",
+                options: ["Καλημέρα", "Καλησπέρα", "Καληνύχτα", "Γεια σου"],
+                correctIndex: 0,
+                hint: "This greeting is used from sunrise until midday and translates literally to 'good day'.",
+                rationale: "«Καλημέρα» is the common greeting for 'Good morning'. It combines «καλή» (good) and «μέρα» (day)."
+            },
+            {
+                id: 2,
+                topic: "Greetings & Social",
+                question: "How do you greet someone politely in the evening (\"Good evening\")?",
+                options: ["Καλημέρα", "Καλησπέρα", "Καληνύχτα", "Χαίρετε"],
+                correctIndex: 1,
+                hint: "The second part of the word comes from 'εσπέρα' which means evening.",
+                rationale: "«Καλησπέρα» is used for 'Good evening' from late afternoon until nightfall."
+            },
+            {
+                id: 3,
+                topic: "Greetings & Social",
+                question: "What is the correct way to say \"Good night\" before going to sleep?",
+                options: ["Καλησπέρα", "Καλημέρα", "Καληνύχτα", "Γεια σας"],
+                correctIndex: 2,
+                hint: "Think of the word for 'night' which is 'νύχτα'.",
+                rationale: "«Καληνύχτα» means 'Good night' and is exclusively used when departing for sleep or late-night departures."
+            },
+            {
+                id: 4,
+                topic: "Greetings & Social",
+                question: "How do you say \"Hello\" informally to one person?",
+                options: ["Γεια σου", "Γεια σας", "Καλησπέρα", "Αντίο"],
+                correctIndex: 0,
+                hint: "This translates literally to 'health to you (singular/informal)'.",
+                rationale: "«Γεια σου» is the informal greeting or farewell for a friend, classmate, or family member."
+            },
+            {
+                id: 5,
+                topic: "Greetings & Social",
+                question: "How do you say \"Hello\" or \"Goodbye\" formally, or when addressing a group of people?",
+                options: ["Γεια σου", "Γεια σας", "Καλημέρα", "Παρακαλώ"],
+                correctIndex: 1,
+                hint: "This uses the second-person plural pronoun 'σας' for politeness.",
+                rationale: "«Γεια σας» is the polite plural form of 'Hello/Goodbye' used for strangers, older individuals, or groups."
+            },
+            {
+                id: 6,
+                topic: "Greetings & Social",
+                question: "How do you say \"Thank you\" in Greek?",
+                options: ["Παρακαλώ", "Συγγνώμη", "Ευχαριστώ", "Ορίστε"],
+                correctIndex: 2,
+                hint: "Think of the root behind the English word 'Eucharist' (holy Thanksgiving).",
+                rationale: "«Ευχαριστώ» translates directly to 'Thank you' in modern Greek."
+            },
+            {
+                id: 7,
+                topic: "Greetings & Social",
+                question: "If someone says \"Ευχαριστώ\" (Thank you), how do you reply with \"You're welcome\"?",
+                options: ["Παρακαλώ", "Συγγνώμη", "Γεια σας", "Εντάξει"],
+                correctIndex: 0,
+                hint: "This word also means 'please' depending on the context.",
+                rationale: "«Παρακαλώ» is used both as 'Please' and 'You are welcome'."
+            },
+            {
+                id: 8,
+                topic: "Greetings & Social",
+                question: "How do you say \"Excuse me\" or \"Sorry\" in Greek?",
+                options: ["Παρακαλώ", "Συγγνώμη", "Ευχαριστώ", "Αντίο"],
+                correctIndex: 1,
+                hint: "Begins with the letter 'Σ' and has double gammas (γγ).",
+                rationale: "«Συγγνώμη» is the modern Greek word for 'Sorry' or 'Excuse me'."
+            },
+            {
+                id: 9,
+                topic: "Greetings & Social",
+                question: "What is the polite phrase for \"Nice to meet you\"?",
+                options: ["Χαίρω πολύ", "Γεια σας", "Τι κάνετε;", "Καλή τύχη"],
+                correctIndex: 0,
+                hint: "Literally means 'I rejoice much'.",
+                rationale: "«Χαίρω πολύ» is the formal standard phrase used upon introduction."
+            },
+            {
+                id: 10,
+                topic: "Greetings & Social",
+                question: "How do you say \"Goodbye\" formally/semi-permanently?",
+                options: ["Αντίο", "Γεια", "Καλημέρα", "Παρακαλώ"],
+                correctIndex: 0,
+                hint: "Sounds similar to the Spanish word 'adiós'.",
+                rationale: "«Αντίο» is the standard word for 'Goodbye' when parting ways."
+            },
+            {
+                id: 11,
+                topic: "Greetings & Social",
+                question: "What does \"Τα λέμε\" mean in casual conversation?",
+                options: ["See you later", "Thank you", "Good morning", "What's up?"],
+                correctIndex: 0,
+                hint: "Literally means 'we talk about them/we will speak'.",
+                rationale: "«Τα λέμε» is a highly common colloquial expression for 'See you/Talk to you later'."
+            },
+            {
+                id: 12,
+                topic: "Greetings & Social",
+                question: "Translate \"Welcome\" (to a guest arriving at your home, singular):",
+                options: ["Καλώς ήρθες", "Καλώς ήρθατε", "Καλημέρα", "Γεια σας"],
+                correctIndex: 0,
+                hint: "Combines 'good' (καλώς) and 'you came' (singular).",
+                rationale: "«Καλώς ήρθες» is used to welcome a single friend. (The plural/formal equivalent is «Καλώς ήρθατε»)."
+            },
+            {
+                id: 13,
+                topic: "Greetings & Social",
+                question: "What does \"Ναι\" mean in Greek?",
+                options: ["Yes", "No", "Maybe", "Please"],
+                correctIndex: 0,
+                hint: "Caution: This word sounds like 'Nay' in English, but it means the opposite!",
+                rationale: "«Ναι» means 'Yes' in modern Greek. False friend alert for English speakers!"
+            },
+            {
+                id: 14,
+                topic: "Greetings & Social",
+                question: "What does \"Όχι\" mean in Greek?",
+                options: ["No", "Yes", "Hello", "Thanks"],
+                correctIndex: 0,
+                hint: "Begins with the letter omicron (Ό).",
+                rationale: "«Όχι» means 'No' in modern Greek."
+            },
+            {
+                id: 15,
+                topic: "Greetings & Social",
+                question: "How do you say \"Okay\" or \"Alright\" in Greek?",
+                options: ["Εντάξει", "Παρακαλώ", "Συγγνώμη", "Χαίρετε"],
+                correctIndex: 0,
+                hint: "Literally means 'in order'.",
+                rationale: "«Εντάξει» means 'Okay/Alright'. It comes from 'εν' (in) and 'τάξει' (order)."
+            },
+
+            // ================== TOPIC 2: NOUNS, GENDERS & ARTICLES (16-30) ==================
+            {
+                id: 16,
+                topic: "Nouns, Genders & Articles",
+                question: "Which of the following is the singular feminine definite article in nominative case?",
+                options: ["ο", "η", "το", "οι"],
+                correctIndex: 1,
+                hint: "Matches feminine nouns ending in -α or -η.",
+                rationale: "«η» is the feminine singular nominative definite article (e.g. η γυναίκα - the woman)."
+            },
+            {
+                id: 17,
+                topic: "Nouns, Genders & Articles",
+                question: "Which of the following is the singular masculine definite article in nominative case?",
+                options: ["ο", "η", "το", "οι"],
+                correctIndex: 0,
+                hint: "Matches masculine nouns ending in -ης, -ας, or -ος.",
+                rationale: "«ο» is the masculine singular nominative definite article (e.g. ο άνδρας - the man)."
+            },
+            {
+                id: 18,
+                topic: "Nouns, Genders & Articles",
+                question: "Which of the following is the singular neuter definite article?",
+                options: ["ο", "η", "το", "τα"],
+                correctIndex: 2,
+                hint: "Often precedes nouns ending in -ο, -ι, or -μα.",
+                rationale: "«το» is the neuter singular nominative and accusative definite article (e.g. το παιδί - the child)."
+            },
+            {
+                id: 19,
+                topic: "Nouns, Genders & Articles",
+                question: "What is the plural definite article for both masculine and feminine nouns in the nominative case?",
+                options: ["τα", "οι", "τους", "τις"],
+                correctIndex: 1,
+                hint: "Written with omicron iota.",
+                rationale: "«οι» is the plural nominative definite article for both masculine and feminine nouns (e.g. οι άνδρες, οι γυναίκες)."
+            },
+            {
+                id: 20,
+                topic: "Nouns, Genders & Articles",
+                question: "What is the plural definite article for neuter nouns?",
+                options: ["οι", "τα", "τους", "της"],
+                correctIndex: 1,
+                hint: "Precedes plural neuter nouns like 'παιδιά' (children).",
+                rationale: "«τα» is the plural nominative and accusative article for neuter nouns (e.g. τα παιδιά - the children)."
+            },
+            {
+                id: 21,
+                topic: "Nouns, Genders & Articles",
+                question: "Which of the following is the indefinite article meaning \"a/an\" for a feminine noun (nominative)?",
+                options: ["ένας", "μία", "ένα", "έναν"],
+                correctIndex: 1,
+                hint: "It also corresponds to the feminine cardinal number 'one'.",
+                rationale: "«μία» (or «μια») is the feminine indefinite article 'a/an/one' (e.g. μια γυναίκα)."
+            },
+            {
+                id: 22,
+                topic: "Nouns, Genders & Articles",
+                question: "Which of the following is the indefinite article meaning \"a/an\" for a masculine noun?",
+                options: ["ένας", "μία", "ένα", "έναν"],
+                correctIndex: 0,
+                hint: "Corresponds to the masculine number 'one'.",
+                rationale: "«ένας» is the masculine indefinite article 'a/an/one' (e.g. ένας άνδρας)."
+            },
+            {
+                id: 23,
+                topic: "Nouns, Genders & Articles",
+                question: "Which of the following is the indefinite article meaning \"a/an\" for a neuter noun?",
+                options: ["ένας", "μία", "ένα", "έναν"],
+                correctIndex: 2,
+                hint: "Corresponds to the neuter number 'one'.",
+                rationale: "«ένα» is the neuter indefinite article 'a/an/one' (e.g. ένα σπίτι - a house)."
+            },
+            {
+                id: 24,
+                topic: "Nouns, Genders & Articles",
+                question: "Identify the gender of the noun \"γάλα\" (milk):",
+                options: ["Masculine", "Feminine", "Neuter", "Plural"],
+                correctIndex: 2,
+                hint: "Matches the article 'το'. Words ending in -μα are typically neuter.",
+                rationale: "«το γάλα» (the milk) is a neuter noun. The grammatical ending -μα denotes neuter gender."
+            },
+            {
+                id: 25,
+                topic: "Nouns, Genders & Articles",
+                question: "What is the gender of the noun \"θάλασσα\" (sea)?",
+                options: ["Masculine", "Feminine", "Neuter", "Plural"],
+                correctIndex: 1,
+                hint: "Matches the article 'η' and ends in -α.",
+                rationale: "«η θάλασσα» (the sea) is a feminine noun ending in -α."
+            },
+            {
+                id: 26,
+                topic: "Nouns, Genders & Articles",
+                question: "What is the gender of the noun \"δάσκαλος\" (teacher, male)?",
+                options: ["Masculine", "Feminine", "Neuter", "Plural"],
+                correctIndex: 0,
+                hint: "Matches the article 'ο' and ends in -ος.",
+                rationale: "«ο δάσκαλος» is masculine. It corresponds to a male teacher."
+            },
+            {
+                id: 27,
+                topic: "Nouns, Genders & Articles",
+                question: "What is the plural form of \"το βιβλίο\" (the book)?",
+                options: ["οι βιβλίο", "τα βιβλία", "οι βιβλία", "τα βιβλίο"],
+                correctIndex: 1,
+                hint: "The neuter ending -ο shifts to -α in plural nominative/accusative, and the article shifts to 'τα'.",
+                rationale: "«τα βιβλία» is the plural of «το βιβλίο». Neuter nouns in -ο end in -α in plural."
+            },
+            {
+                id: 28,
+                topic: "Nouns, Genders & Articles",
+                question: "What is the plural form of \"η πόρτα\" (the door)?",
+                options: ["οι πόρτα", "τα πόρτες", "οι πόρτες", "τα πόρτα"],
+                correctIndex: 2,
+                hint: "Feminine nouns ending in -α take the ending -ες in plural, and the article shifts to 'οι'.",
+                rationale: "«οι πόρτες» is the plural of «η πόρτα»."
+            },
+            {
+                id: 29,
+                topic: "Nouns, Genders & Articles",
+                question: "What is the plural form of \"ο φίλος\" (the male friend)?",
+                options: ["οι φίλοι", "τα φίλοι", "οι φίλες", "τα φίλους"],
+                correctIndex: 0,
+                hint: "Masculine nouns ending in -ος take the ending -οι in the plural, matched by the article 'οι'.",
+                rationale: "«οι φίλοι» is the plural of «ο φίλος»."
+            },
+            {
+                id: 30,
+                topic: "Nouns, Genders & Articles",
+                question: "What is the plural form of the neuter noun \"το μάθημα\" (the lesson)?",
+                options: ["τα μάθημα", "τα μαθήματα", "οι μαθήματα", "οι μάθημες"],
+                correctIndex: 1,
+                hint: "Neuter nouns ending in -μα expand to -ματα in the plural.",
+                rationale: "The plural of «το μάθημα» is «τα μαθήματα». This is a standard rule for all neuter nouns ending in -μα."
+            },
+
+            // ================== TOPIC 3: BASIC VERBS & CONJUGATIONS (31-45) ==================
+            {
+                id: 31,
+                topic: "Verbs & Conjugations",
+                question: "Which Greek verb means \"I am\"?",
+                options: ["έχω", "κάνω", "είμαι", "μένω"],
+                correctIndex: 2,
+                hint: "Begins with 'ει-' and is highly irregular.",
+                rationale: "«είμαι» is the auxiliary verb 'to be' in modern Greek."
+            },
+            {
+                id: 32,
+                topic: "Verbs & Conjugations",
+                question: "Conjugate \"είμαι\" for the pronoun \"εσύ\" (you, singular):",
+                options: ["είμαι", "είσαι", "είναι", "είστε"],
+                correctIndex: 1,
+                hint: "Ends with '-σαι'.",
+                rationale: "«είσαι» means 'you are' (singular, informal)."
+            },
+            {
+                id: 33,
+                topic: "Verbs & Conjugations",
+                question: "Conjugate \"είμαι\" for \"αυτός/αυτή/αυτό\" (he/she/it):",
+                options: ["είμαι", "είσαι", "είναι", "είμαστε"],
+                correctIndex: 2,
+                hint: "Ends with '-ναι'.",
+                rationale: "«είναι» means 'he/she/it is'."
+            },
+            {
+                id: 34,
+                topic: "Verbs & Conjugations",
+                question: "Conjugate \"είμαι\" for \"εμείς\" (we):",
+                options: ["είμαστε", "είστε", "είναι", "είμαι"],
+                correctIndex: 0,
+                hint: "Ends with the characteristic first person plural suffix '-μαστε'.",
+                rationale: "«είμαστε» means 'we are'."
+            },
+            {
+                id: 35,
+                topic: "Verbs & Conjugations",
+                question: "Conjugate \"είμαι\" for \"εσείς\" (you plural/formal):",
+                options: ["είμαστε", "είστε", "είναι", "είσαι"],
+                correctIndex: 1,
+                hint: "Ends in '-στε'.",
+                rationale: "«είστε» means 'you are' (plural or formal singular)."
+            },
+            {
+                id: 36,
+                topic: "Verbs & Conjugations",
+                question: "What is the third-person plural (\"they are\") form of \"είμαι\"?",
+                options: ["είναι", "είμαστε", "είστε", "είσαι"],
+                correctIndex: 0,
+                hint: "Notice that third-person singular and third-person plural share the exact same spelling in modern Greek.",
+                rationale: "«είναι» represents both 'he/she/it is' and 'they are'."
+            },
+            {
+                id: 37,
+                topic: "Verbs & Conjugations",
+                question: "Which Greek verb means \"I have\"?",
+                options: ["κάνω", "έχω", "θέλω", "ξέρω"],
+                correctIndex: 1,
+                hint: "Begins with epsilon (έ).",
+                rationale: "«έχω» translates to 'I have' in Greek."
+            },
+            {
+                id: 38,
+                topic: "Verbs & Conjugations",
+                question: "Conjugate \"έχω\" (to have) for the pronoun \"εσείς\" (you plural):",
+                options: ["έχεις", "έχουμε", "έχετε", "έχουν"],
+                correctIndex: 2,
+                hint: "Active verbs conjugate with '-ετε' for 'εσείς' (you plural).",
+                rationale: "«έχετε» means 'you have' (plural/formal)."
+            },
+            {
+                id: 39,
+                topic: "Verbs & Conjugations",
+                question: "What is the third-person plural (\"they have\") form of \"έχω\"?",
+                options: ["έχουν", "έχουμε", "έχετε", "έχεις"],
+                correctIndex: 0,
+                hint: "Usually ends with '-ουν' or '-ουνε'.",
+                rationale: "«έχουν» (or «έχουνε») means 'they have'."
+            },
+            {
+                id: 40,
+                topic: "Verbs & Conjugations",
+                question: "Which verb translates to \"I want\"?",
+                options: ["έχω", "θέλω", "κάνω", "καταλαβαίνω"],
+                correctIndex: 1,
+                hint: "Begins with theta (θ).",
+                rationale: "«θέλω» means 'I want' in Greek."
+            },
+            {
+                id: 41,
+                topic: "Verbs & Conjugations",
+                question: "What does the verb \"κάνω\" mean?",
+                options: ["I want", "I have", "I do / make", "I understand"],
+                correctIndex: 2,
+                hint: "Used in the question 'Τι κάνεις;'.",
+                rationale: "«κάνω» translates to 'I do' or 'I make'."
+            },
+            {
+                id: 42,
+                topic: "Verbs & Conjugations",
+                question: "How do you conjugate \"κάνω\" for \"εμείς\" (we)?",
+                options: ["κάνεις", "κάνουμε", "κάνετε", "κάνουν"],
+                correctIndex: 1,
+                hint: "The ending for 'we' in active verbs is '-ουμε'.",
+                rationale: "«κάνουμε» means 'we do/make'."
+            },
+            {
+                id: 43,
+                topic: "Verbs & Conjugations",
+                question: "What is the meaning of the Greek verb \"καταλαβαίνω\"?",
+                options: ["I understand", "I speak", "I learn", "I travel"],
+                correctIndex: 0,
+                hint: "Related to comprehension; often used in the negative 'Δεν...'.",
+                rationale: "«καταλαβαίνω» means 'I understand'."
+            },
+            {
+                id: 44,
+                topic: "Verbs & Conjugations",
+                question: "How do you say \"I don't understand\" in Greek?",
+                options: ["Δεν καταλαβαίνω", "Καταλαβαίνω πολύ", "Δεν ξέρω", "Δεν πειράζει"],
+                correctIndex: 0,
+                hint: "Uses the negative particle 'δεν' before the verb.",
+                rationale: "«Δεν καταλαβαίνω» translates directly to 'I don't understand'."
+            },
+            {
+                id: 45,
+                topic: "Verbs & Conjugations",
+                question: "What does the verb \"μαθαίνω\" mean?",
+                options: ["I teach", "I learn / study", "I read", "I write"],
+                correctIndex: 1,
+                hint: "Think of words like 'mathematics' (things learned).",
+                rationale: "«μαθαίνω» means 'I learn' or 'I study'."
+            },
+
+            // ================== TOPIC 4: NUMBERS, TIME & DAYS (46-60) ==================
+            {
+                id: 46,
+                topic: "Numbers, Time & Days",
+                question: "What is the Greek word for the number \"one\" (neuter form)?",
+                options: ["ένα", "ένας", "μία", "δύο"],
+                correctIndex: 0,
+                hint: "Used when counting things in sequence (1, 2, 3...).",
+                rationale: "«ένα» is the neuter cardinal number 'one' and the counting baseline."
+            },
+            {
+                id: 47,
+                topic: "Numbers, Time & Days",
+                question: "What is the Greek word for the number \"two\"?",
+                options: ["ένα", "δύο", "τρία", "τέσσερα"],
+                correctIndex: 1,
+                hint: "Spelled with delta and upsilon.",
+                rationale: "«δύο» means 'two' in Greek."
+            },
+            {
+                id: 48,
+                topic: "Numbers, Time & Days",
+                question: "What is the Greek word for the number \"three\"?",
+                options: ["τρία", "τέσσερα", "πέντε", "έξι"],
+                correctIndex: 0,
+                hint: "Cognate with English words starting with 'tri-'.",
+                rationale: "«τρία» is the Greek word for 'three'."
+            },
+            {
+                id: 49,
+                topic: "Numbers, Time & Days",
+                question: "What is the Greek word for the number \"four\"?",
+                options: ["τρία", "τέσσερα", "έξι", "οκτώ"],
+                correctIndex: 1,
+                hint: "Begins with tau (τ).",
+                rationale: "«τέσσερα» is the Greek word for 'four'."
+            },
+            {
+                id: 50,
+                topic: "Numbers, Time & Days",
+                question: "How do you say \"ten\" in Greek?",
+                options: ["πέντε", "δέκα", "έξι", "εφτά"],
+                correctIndex: 1,
+                hint: "Think of words like 'decade'.",
+                rationale: "«δέκα» means 'ten' in Greek."
+            },
+            {
+                id: 51,
+                topic: "Numbers, Time & Days",
+                question: "What is the number \"έξι\"?",
+                options: ["5", "6", "7", "8"],
+                correctIndex: 1,
+                hint: "Sounds similar to the English 'six' if pronounced quickly.",
+                rationale: "«έξι» means 'six'."
+            },
+            {
+                id: 52,
+                topic: "Numbers, Time & Days",
+                question: "What is the Greek word for \"seven\"?",
+                options: ["εφτά", "οκτώ", "εννιά", "δέκα"],
+                correctIndex: 0,
+                hint: "Also spelled as «επτά» in formal Greek.",
+                rationale: "«εφτά» (or «επτά») means 'seven'."
+            },
+            {
+                id: 53,
+                topic: "Numbers, Time & Days",
+                question: "Translate \"οκτώ\":",
+                options: ["8", "9", "10", "11"],
+                correctIndex: 0,
+                hint: "Linguistic ancestor of 'octopus'.",
+                rationale: "«οκτώ» (or «οχτώ») means 'eight'."
+            },
+            {
+                id: 54,
+                topic: "Numbers, Time & Days",
+                question: "What is the number \"δώδεκα\"?",
+                options: ["2", "10", "12", "20"],
+                correctIndex: 2,
+                hint: "Combines 'δύο' (two) and 'δέκα' (ten).",
+                rationale: "«δώδεκα» translates to 'twelve'."
+            },
+            {
+                id: 55,
+                topic: "Numbers, Time & Days",
+                question: "How do you write the number \"twenty\"?",
+                options: ["δέκα", "δώδεκα", "είκοσι", "τριάντα"],
+                correctIndex: 2,
+                hint: "Begins with the letter epsilon (εί-).",
+                rationale: "«είκοσι» means 'twenty' in Greek."
+            },
+            {
+                id: 56,
+                topic: "Numbers, Time & Days",
+                question: "What day of the week is \"Δευτέρα\"?",
+                options: ["Monday", "Tuesday", "Wednesday", "Sunday"],
+                correctIndex: 0,
+                hint: "Literally means 'the second' (historically counting from Sunday).",
+                rationale: "«Δευτέρα» is 'Monday' (literally the second day after Sunday)."
+            },
+            {
+                id: 57,
+                topic: "Numbers, Time & Days",
+                question: "What day of the week is \"Παρασκευή\"?",
+                options: ["Thursday", "Friday", "Saturday", "Sunday"],
+                correctIndex: 1,
+                hint: "Means 'preparation' (historically referring to preparation for Sabbath).",
+                rationale: "«Παρασκευή» translates to 'Friday'."
+            },
+            {
+                id: 58,
+                topic: "Numbers, Time & Days",
+                question: "Which day is \"Κυριακή\"?",
+                options: ["Friday", "Saturday", "Sunday", "Monday"],
+                correctIndex: 2,
+                hint: "The day associated with the 'Lord' (Κύριος).",
+                rationale: "«Κυριακή» means 'Sunday' (The Lord's Day)."
+            },
+            {
+                id: 59,
+                topic: "Numbers, Time & Days",
+                question: "What does \"Σάββατο\" mean?",
+                options: ["Friday", "Saturday", "Sunday", "Wednesday"],
+                correctIndex: 1,
+                hint: "Linguistically related to the word Sabbath.",
+                rationale: "«Σάββατο» means 'Saturday'."
+            },
+            {
+                id: 60,
+                topic: "Numbers, Time & Days",
+                question: "How do you ask \"What time is it?\" in Greek?",
+                options: ["Τι ώρα είναι;", "Τι κάνεις;", "Πού είναι;", "Πόσο κάνει;"],
+                correctIndex: 0,
+                hint: "Uses the Greek cognate of the word hour ('ώρα').",
+                rationale: "«Τι ώρα είναι;» translates directly to 'What time is it?'."
+            },
+
+            // ================== TOPIC 5: SHOPS, SHOPKEEPERS, & PRODUCTS (61-85) [NEW GREEK FOR YOU THEME] ==================
+            {
+                id: 61,
+                topic: "Shops & Shopping",
+                question: "How do you say \"Bakery\" in Greek (where you go to buy fresh bread)?",
+                options: ["ο φούρνος", "το κρεοπωλείο", "το φαρμακείο", "το βιβλιοπωλείο"],
+                correctIndex: 0,
+                hint: "Think of an 'oven'. This word also represents the physical oven.",
+                rationale: "«ο φούρνος» (or «το αρτοποιείο») is the bakery where you buy fresh bread and pastries."
+            },
+            {
+                id: 62,
+                topic: "Shops & Shopping",
+                question: "Who is the baker (shopkeeper of the φούρνος)?",
+                options: ["ο ψαράς", "ο μανάβης", "ο φούρναρης", "ο κρεοπώλης"],
+                correctIndex: 2,
+                hint: "Directly derived from the word 'φούρνος'.",
+                rationale: "«ο φούρναρης» (or «ο αρτοποιός») is the baker in modern Greek."
+            },
+            {
+                id: 63,
+                topic: "Shops & Shopping",
+                question: "Which product are you most likely to buy at a \"φούρνος\"?",
+                options: ["μια μπριζόλα", "ένα ψωμί", "μια ασπιρίνη", "ένα περιοδικό"],
+                correctIndex: 1,
+                hint: "The most basic bread loaf staple.",
+                rationale: "At the bakery, you buy «ψωμί» (bread). You can also buy «τυρόπιτα» (cheese pie) or «κουλούρι»."
+            },
+            {
+                id: 64,
+                topic: "Shops & Shopping",
+                question: "Where do you go to buy cakes, ice cream, and traditional Greek sweets?",
+                options: ["στο ζαχαροπλαστείο", "στο οπωροπωλείο", "στο ιχθυοπωλείο", "στο κομμωτήριο"],
+                correctIndex: 0,
+                hint: "Linguistically related to the word for sugar ('ζάχαρη').",
+                rationale: "«το ζαχαροπλαστείο» is the confectionery/pastry shop."
+            },
+            {
+                id: 65,
+                topic: "Shops & Shopping",
+                question: "Who is the pastry chef or confectionery shopkeeper?",
+                options: ["ο φαρμακοποιός", "ο ζαχαροπλάστης", "ο βιβλιοπώλης", "ο περιπτεράς"],
+                correctIndex: 1,
+                hint: "Derived from 'ζάχαρη' (sugar) and 'πλάθω' (to shape).",
+                rationale: "«ο ζαχαροπλάστης» is the person who makes and sells sweets in a «ζαχαροπλαστείο»."
+            },
+            {
+                id: 66,
+                topic: "Shops & Shopping",
+                question: "Which sweet treat would you buy at the \"ζαχαροπλαστείο\"?",
+                options: ["μια τυρόπιτα", "μια τούρτα", "ένα ψάρι", "ένα κοτόπουλο"],
+                correctIndex: 1,
+                hint: "The word sounds very similar to the Italian/Spanish word for cake.",
+                rationale: "You buy «τούρτα» (celebration cake), «γλυκά» (sweets), or «παγωτό» (ice cream) at a pastry shop."
+            },
+            {
+                id: 67,
+                topic: "Shops & Shopping",
+                question: "How do you say \"Greengrocer's\" (the fruit and vegetable shop)?",
+                options: ["το μανάβικο", "το κρεοπωλείο", "το περίπτερο", "το ψαράδικο"],
+                correctIndex: 0,
+                hint: "Commonly used in daily Greek life alongside 'οπωροπωλείο'.",
+                rationale: "«το μανάβικο» (or «το οπωροπωλείο») is the greengrocer's shop."
+            },
+            {
+                id: 68,
+                topic: "Shops & Shopping",
+                question: "Who is the greengrocer who sells you fresh tomatoes, cucumbers, and apples?",
+                options: ["ο μανάβης", "ο ψαράς", "ο περιπτεράς", "ο βιβλιοπώλης"],
+                correctIndex: 0,
+                hint: "Derived directly from 'μανάβικο'.",
+                rationale: "«ο μανάβης» is the greengrocer."
+            },
+            {
+                id: 69,
+                topic: "Shops & Shopping",
+                question: "What is the common term for the Butcher's shop?",
+                options: ["το κρεοπωλείο", "το βιβλιοπωλείο", "το φαρμακείο", "το ζαχαροπλαστείο"],
+                correctIndex: 0,
+                hint: "Related to the Greek word for meat: 'κρέας'.",
+                rationale: "«το κρεοπωλείο» (informally «το χασάπικο») is the butcher's shop."
+            },
+            {
+                id: 70,
+                topic: "Shops & Shopping",
+                question: "Who is the butcher who sells beef, pork, and chicken?",
+                options: ["ο κρεοπώλης", "ο ζαχαροπλάστης", "ο φαρμακοποιός", "ο μανάβης"],
+                correctIndex: 0,
+                hint: "Derived from 'κρέας' (meat) and 'πωλώ' (to sell).",
+                rationale: "«ο κρεοπώλης» (or «ο χασάπης») is the butcher."
+            },
+            {
+                id: 71,
+                topic: "Shops & Shopping",
+                question: "Which of the following would you buy at the \"κρεοπωλείο\"?",
+                options: ["μπριζόλες", "πορτοκάλια", "ψάρια", "βιβλία"],
+                correctIndex: 0,
+                hint: "Plural word for chops or steaks.",
+                rationale: "You buy «μπριζόλες» (pork/beef chops) or «κοτόπουλο» (chicken) at the butcher's."
+            },
+            {
+                id: 72,
+                topic: "Shops & Shopping",
+                question: "What do you call a \"Pharmacy\" in Greek?",
+                options: ["το φαρμακείο", "το περίπτερο", "το βιβλιοπωλείο", "ο φούρνος"],
+                correctIndex: 0,
+                hint: "Linguistic origin of the English word 'pharmacy'.",
+                rationale: "«το φαρμακείο» is the pharmacy/chemist's shop, marked by a green cross in Greece."
+            },
+            {
+                id: 73,
+                topic: "Shops & Shopping",
+                question: "Who is the qualified pharmacist working behind the counter?",
+                options: ["ο φαρμακοποιός", "ο κομμωτής", "ο βιβλιοπώλης", "ο ζαχαροπλάστης"],
+                correctIndex: 0,
+                hint: "A compound word merging 'φάρμακο' (medicine) and 'ποιώ' (to make).",
+                rationale: "«ο φαρμακοποιός» is the pharmacist."
+            },
+            {
+                id: 74,
+                topic: "Shops & Shopping",
+                question: "What are you buying when you request \"φάρμακα\" or an \"ασπιρίνη\"?",
+                options: ["Medicines / an aspirin", "Fruits / a peach", "Newspapers / a magazine", "Pastries / a cheese pie"],
+                correctIndex: 0,
+                hint: "Items bought to cure a headache or illness.",
+                rationale: "«φάρμακα» means medicines and «ασπιρίνη» is aspirin, purchased at the «φαρμακείο»."
+            },
+            {
+                id: 75,
+                topic: "Shops & Shopping",
+                question: "What is a \"περίπτερο\"?",
+                options: ["A typical Greek street kiosk", "A high-end restaurant", "A fresh fish market", "A flower shop"],
+                correctIndex: 0,
+                hint: "Found on almost every pavement/sidewalk in Greece, selling snacks, water, and bus tickets.",
+                rationale: "«το περίπτερο» is the traditional street kiosk."
+            },
+            {
+                id: 76,
+                topic: "Shops & Shopping",
+                question: "Who is the kiosk keeper?",
+                options: ["ο περιπτεράς", "ο ψαράς", "ο μανάβης", "ο φούρναρης"],
+                correctIndex: 0,
+                hint: "Ends with the common masculine colloquial occupation suffix '-άς'.",
+                rationale: "«ο περιπτεράς» is the kiosk keeper."
+            },
+            {
+                id: 77,
+                topic: "Shops & Shopping",
+                question: "Which items are typically purchased at a \"περίπτερο\"?",
+                options: ["εφημερίδες, τσίχλες, περιοδικά", "ψάρια, κρέας, κοτόπουλο", "ψωμί, γάλα, τούρτες", "φάρμακα, ασπιρίνες"],
+                correctIndex: 0,
+                hint: "Daily necessities like newspapers, chewing gum, and magazines.",
+                rationale: "At the kiosk, you buy «εφημερίδες» (newspapers), «περιοδικά» (magazines), and «τσίχλες» (chewing gum)."
+            },
+            {
+                id: 78,
+                topic: "Shops & Shopping",
+                question: "What is a \"βιβλιοπωλείο\"?",
+                options: ["Bookstore", "Fish market", "Hair salon", "Supermarket"],
+                correctIndex: 0,
+                hint: "Combines 'βιβλίο' (book) and 'πωλώ' (to sell).",
+                rationale: "«το βιβλιοπωλείο» is the bookstore/stationer's shop."
+            },
+            {
+                id: 79,
+                topic: "Shops & Shopping",
+                question: "What products do you purchase at a \"βιβλιοπωλείο\"?",
+                options: ["τετράδια, στυλό, βιβλία", "φρούτα, λαχανικά", "μπριζόλες, λουκάνικα", "γλυκά, παγωτά"],
+                correctIndex: 0,
+                hint: "Tools for writing, studying, and reading.",
+                rationale: "At a bookstore, you buy «βιβλία» (books), «τετράδια» (notebooks), and «στυλό» (pens)."
+            },
+            {
+                id: 80,
+                topic: "Shops & Shopping",
+                question: "What do you call a \"Fishmarket\" or a local fishmonger's shop?",
+                options: ["το ψαράδικο", "το μανάβικο", "ο φούρνος", "το κρεοπωλείο"],
+                correctIndex: 0,
+                hint: "Derived from the Greek word for fish: 'ψάρι'.",
+                rationale: "«το ψαράδικο» (or «το ιχθυοπωλείο») is the fishmonger's shop."
+            },
+            {
+                id: 81,
+                topic: "Shops & Shopping",
+                question: "Who is the fishmonger (shopkeeper)?",
+                options: ["ο ψαράς", "ο μανάβης", "ο ζαχαροπλάστης", "ο χασάπης"],
+                correctIndex: 0,
+                hint: "A very common job in seaside Greek villages.",
+                rationale: "«ο ψαράς» is the fishmonger or fisherman."
+            },
+            {
+                id: 82,
+                topic: "Shops & Shopping",
+                question: "Translate this common customer request: \"Θέλω μισό κιλό ντομάτες, παρακαλώ.\"",
+                options: ["I want half a kilo of tomatoes, please.", "I want one kilo of tomatoes, please.", "I would like some potatoes, please.", "Do you have any red tomatoes?"],
+                correctIndex: 0,
+                hint: "«μισό» means half, and «κιλό» means kilo.",
+                rationale: "«Θέλω μισό κιλό ντομάτες, παρακαλώ» translates to 'I want half a kilo of tomatoes, please'."
+            },
+            {
+                id: 83,
+                topic: "Shops & Shopping",
+                question: "Translate this standard checkout question: \"Πώς θα πληρώσετε; Με κάρτα ή με μετρητά;\"",
+                options: ["How will you pay? By card or in cash?", "How much is this? In euros or dollars?", "Do you want a receipt? Printed or by email?", "Are you paying together or separately?"],
+                correctIndex: 0,
+                hint: "«κάρτα» is card, and «μετρητά» is cash.",
+                rationale: "«Πώς θα πληρώσετε; Με κάρτα ή με μετρητά;» means 'How will you pay? By card or in cash?'."
+            },
+            {
+                id: 84,
+                topic: "Shops & Shopping",
+                question: "When the shopkeeper hands you your change and says: \"Ορίστε τα ρέστα σας.\", what do they mean?",
+                options: ["Here is your change.", "Do you want a bag?", "Please sign here.", "Have a nice day."],
+                correctIndex: 0,
+                hint: "«ρέστα» is the change/coins returned to the buyer.",
+                rationale: "«Ορίστε τα ρέστα σας» translates to 'Here is your change'."
+            },
+            {
+                id: 85,
+                topic: "Shops & Shopping",
+                question: "What does the cashier mean by asking: \"Θέλετε σακούλα;\"",
+                options: ["Do you want a bag?", "Would you like a receipt?", "Are you paying in cash?", "Is this a gift?"],
+                correctIndex: 0,
+                hint: "«σακούλα» refers to a plastic or paper shopping bag.",
+                rationale: "«Θέλετε σακούλα;» means 'Do you want a bag?'."
+            },
+
+            // ================== TOPIC 6: VOCABULARY & FOOD (86-90) ==================
+            {
+                id: 86,
+                topic: "Vocabulary",
+                question: "What is the Greek word for \"house\" or \"home\"?",
+                options: ["σχολείο", "σπίτι", "ξενοδοχείο", "γραφείο"],
+                correctIndex: 1,
+                hint: "Starts with the letter sigma (σ).",
+                rationale: "«το σπίτι» means 'house' or 'home'."
+            },
+            {
+                id: 87,
+                topic: "Vocabulary",
+                question: "What does \"αυτοκίνητο\" mean?",
+                options: ["car", "bicycle", "bus", "train"],
+                correctIndex: 0,
+                hint: "Literally means 'self-moving thing'.",
+                rationale: "«το αυτοκίνητο» is the modern Greek word for 'car'."
+            },
+            {
+                id: 88,
+                topic: "Vocabulary",
+                question: "What is \"μητέρα\"?",
+                options: ["father", "mother", "sister", "brother"],
+                correctIndex: 1,
+                hint: "Linguistically related to 'maternal' or 'mother'.",
+                rationale: "«η μητέρα» (often informally «μαμά») is 'mother'."
+            },
+            {
+                id: 89,
+                topic: "Vocabulary",
+                question: "What is \"πατέρας\"?",
+                options: ["father", "brother", "son", "husband"],
+                correctIndex: 0,
+                hint: "Root of 'paternal' or 'patriarch'.",
+                rationale: "«ο πατέρας» is 'father'."
+            },
+            {
+                id: 90,
+                topic: "Vocabulary",
+                question: "What is \"αδελφός\"?",
+                options: ["friend", "uncle", "brother", "son"],
+                correctIndex: 2,
+                hint: "Root of the city name 'Philadelphia' (brotherly love).",
+                rationale: "«ο αδελφός» (or «αδερφός») means 'brother'."
+            },
+
+            // ================== TOPIC 7: ESSENTIAL QUESTIONS & PHRASES (91-100) ==================
+            {
+                id: 91,
+                topic: "Questions & Phrases",
+                question: "How do you ask \"Where is...?\" in Greek?",
+                options: ["Πώς είναι;", "Πού είναι;", "Ποιος είναι;", "Τι είναι;"],
+                correctIndex: 1,
+                hint: "The word for 'where' is 'πού' (written with an accent to distinguish from 'που').",
+                rationale: "«Πού είναι...;» translates to 'Where is...?'. (e.g. Πού είναι το ξενοδοχείο;)"
+            },
+            {
+                id: 92,
+                topic: "Questions & Phrases",
+                question: "How do you ask \"What is this?\" in Greek?",
+                options: ["Τι είναι αυτό;", "Πού είναι αυτό;", "Πώς είναι αυτό;", "Ποιος είναι αυτός;"],
+                correctIndex: 0,
+                hint: "Uses the question word 'τι' (what) and the neuter pronoun 'αυτό' (this).",
+                rationale: "«Τι είναι αυτό;» translates directly to 'What is this?'."
+            },
+            {
+                id: 93,
+                topic: "Questions & Phrases",
+                question: "What is the correct translation of \"Πόσο κάνει;\"?",
+                options: ["Where are you?", "How much does it cost?", "How are you doing?", "Who is it?"],
+                correctIndex: 1,
+                hint: "Literally means 'how much does it make/do?'.",
+                rationale: "«Πόσο κάνει;» is the standard question used when asking for a price."
+            },
+            {
+                id: 94,
+                topic: "Questions & Phrases",
+                question: "How do you ask \"Where are you from?\" (singular, informal)?",
+                options: ["Από πού είσαι;", "Από πού είστε;", "Πού μένεις;", "Πώς σε λένε;"],
+                correctIndex: 0,
+                hint: "Combines 'from' (από), 'where' (πού), and the verb 'you are' (είσαι).",
+                rationale: "«Από πού είσαι;» is the informal question for 'Where are you from?'."
+            },
+            {
+                id: 95,
+                topic: "Questions & Phrases",
+                question: "How do you ask someone \"What is your name?\" (informally)?",
+                options: ["Πώς σε λένε;", "Πώς σας λένε;", "Πού μένεις;", "Ποιος είσαι;"],
+                correctIndex: 0,
+                hint: "Literally means 'How do they call you?'.",
+                rationale: "«Πώς σε λένε;» is the common informal way to ask someone's name."
+            },
+            {
+                id: 96,
+                topic: "Questions & Phrases",
+                question: "What does \"Δεν πειράζει\" mean?",
+                options: ["It doesn't matter / No problem", "I don't know", "I don't like it", "Excuse me"],
+                correctIndex: 0,
+                hint: "Very common casual phrase of comfort or dismissal.",
+                rationale: "«Δεν πειράζει» means 'It doesn't matter', 'Never mind', or 'No problem'."
+            },
+            {
+                id: 97,
+                topic: "Questions & Phrases",
+                question: "How do you say \"I don't know\" in Greek?",
+                options: ["Δεν πειράζει", "Δεν ξέρω", "Δεν καταλαβαίνω", "Δεν θέλω"],
+                correctIndex: 1,
+                hint: "Uses the verb 'know' (ξέρω) preceded by 'δεν'.",
+                rationale: "«Δεν ξέρω» translates to 'I don't know'."
+            },
+            {
+                id: 98,
+                topic: "Questions & Phrases",
+                question: "What does \"Πώς είσαι;\" mean?",
+                options: ["Where are you?", "How are you?", "What is your name?", "How old are you?"],
+                correctIndex: 1,
+                hint: "Literally translates to 'How are you (singular/informal)?'.",
+                rationale: "«Πώς είσαι;» is the standard informal way of asking how someone is."
+            },
+            {
+                id: 99,
+                topic: "Questions & Phrases",
+                question: "What does \"Μιλάτε αγγλικά;\" mean?",
+                options: ["Do you speak Greek?", "Do you speak English?", "Where is England?", "Can you write in English?"],
+                correctIndex: 1,
+                hint: "Uses the polite plural verb 'μιλάτε' and the word 'αγγλικά' (English).",
+                rationale: "«Μιλάτε αγγλικά;» translates to 'Do you speak English?' (formal/plural)."
+            },
+            {
+                id: 100,
+                topic: "Questions & Phrases",
+                question: "How do you say \"I love you\" in Greek?",
+                options: ["Σ' αγαπώ", "Σε θέλω", "Σε ξέρω", "Σε βλέπω"],
+                correctIndex: 0,
+                hint: "Uses the noun 'αγάπη' (love) transformed into a verb.",
+                rationale: "«Σ' αγαπώ» (or «Σε αγαπώ») means 'I love you' in Greek."
+            }
+        ];
+
+        // State variables
+        let currentTopic = "all";
+        let activeIndex = 0;
+        let filteredQuestions = [...allQuestions];
+        
+        let progress = {};
+        allQuestions.forEach(q => {
+            progress[q.id] = {
+                status: 'unseen',
+                flagged: false,
+                userAnswer: null
+            };
+        });
+
+        // Local Storage Utilities
+        function loadSavedState() {
+            const saved = localStorage.getItem('greek_a1_quiz_state');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    progress = parsed.progress || progress;
+                    currentTopic = parsed.currentTopic || "all";
+                    activeIndex = parsed.activeIndex || 0;
+                } catch(e) {
+                    console.error("Could not load stored progress values", e);
+                }
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('greek_a1_quiz_state', JSON.stringify({
+                progress,
+                currentTopic,
+                activeIndex
+            }));
+        }
+
+        // Initialize App UI
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedState();
+            lucide.createIcons();
+            renderTopicFilters();
+            applyTopicFilter(currentTopic, false);
+            updateDashboard();
+            renderProgressMatrix();
+            renderQuestion();
+        });
+
+        // Filter Categories
+        function renderTopicFilters() {
+            const container = document.getElementById('topic-filter-list');
+            const topics = [
+                { id: "all", name: "All 100 Questions", count: 100 },
+                { id: "Greetings & Social", name: "1. Greetings & Social", count: 15 },
+                { id: "Nouns, Genders & Articles", name: "2. Genders & Articles", count: 15 },
+                { id: "Verbs & Conjugations", name: "3. Verbs & Conjugations", count: 15 },
+                { id: "Numbers, Time & Days", name: "4. Numbers & Calendar", count: 15 },
+                { id: "Shops & Shopping", name: "5. Shops & Shopping", count: 25 },
+                { id: "Vocabulary", name: "6. Food & Family Words", count: 5 },
+                { id: "Questions & Phrases", name: "7. Essential Questions", count: 10 }
+            ];
+
+            container.innerHTML = topics.map(t => {
+                const isActive = t.id === currentTopic;
+                const activeClass = isActive 
+                    ? 'bg-blue-600 text-white font-bold border-blue-700' 
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200';
+                return `
+                    <button onclick="applyTopicFilter('${t.id}')" class="w-full text-left px-3 py-2.5 rounded-xl border text-xs flex justify-between items-center transition font-semibold ${activeClass}">
+                        <span>${t.name}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] ${isActive ? 'bg-blue-900 text-amber-300' : 'bg-slate-200 text-slate-600'}">${t.count} Qs</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function applyTopicFilter(topicId, resetIndex = true) {
+            currentTopic = topicId;
+            if (topicId === "all") {
+                filteredQuestions = [...allQuestions];
+            } else {
+                filteredQuestions = allQuestions.filter(q => q.topic === topicId);
+            }
+
+            if (resetIndex || activeIndex >= filteredQuestions.length) {
+                activeIndex = 0;
+            }
+
+            const tag = document.getElementById('topic-count-tag');
+            const topicTitles = {
+                all: "All Questions",
+                "Greetings & Social": "Greetings & Social",
+                "Nouns, Genders & Articles": "Genders & Articles",
+                "Verbs & Conjugations": "Verbs & Conjugations",
+                "Numbers, Time & Days": "Numbers & Calendar",
+                "Shops & Shopping": "Shops & Shopping (Neohel)",
+                "Vocabulary": "Food & Family Words",
+                "Questions & Phrases": "Essential Questions"
+            };
+            tag.innerText = topicTitles[topicId] || "Filtered Module";
+
+            renderTopicFilters();
+            renderProgressMatrix();
+            renderQuestion();
+            saveState();
+        }
+
+        // Render Fast-Jump Grid
+        function renderProgressMatrix() {
+            const container = document.getElementById('progress-matrix-grid');
+            container.innerHTML = filteredQuestions.map((q, localIdx) => {
+                const state = progress[q.id];
+                let bgClass = "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200";
+                
+                if (state.status === 'correct') {
+                    bgClass = "bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600";
+                } else if (state.status === 'wrong') {
+                    bgClass = "bg-rose-500 text-white border-rose-600 hover:bg-rose-600";
+                }
+
+                const isCurrent = localIdx === activeIndex;
+                const borderClass = isCurrent ? "ring-2 ring-amber-400 ring-offset-2 scale-110 font-bold" : "";
+                
+                const flagIndicator = state.flagged 
+                    ? `<span class="absolute top-0 right-0 w-2 h-2 bg-amber-400 rounded-full border border-white"></span>` 
+                    : '';
+
+                return `
+                    <button onclick="jumpToQuestion(${localIdx})" class="aspect-square flex items-center justify-center text-xs font-bold rounded-lg border relative transition duration-150 ${bgClass} ${borderClass}">
+                        ${q.id}
+                        ${flagIndicator}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Calculations & Grade boundary estimations
+        function updateDashboard() {
+            let solved = 0;
+            let correct = 0;
+            let flagged = 0;
+
+            allQuestions.forEach(q => {
+                const state = progress[q.id];
+                if (state.status !== 'unseen') solved++;
+                if (state.status === 'correct') correct++;
+                if (state.flagged) flagged++;
+            });
+
+            const accuracy = solved > 0 ? Math.round((correct / solved) * 100) : 0;
+
+            document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('stat-solved').innerText = `${solved}/100`;
+            document.getElementById('stat-correct').innerText = correct;
+            document.getElementById('stat-flagged').innerText = flagged;
+
+            document.getElementById('header-progress-txt').innerText = `${solved} / 100 Completed`;
+            document.getElementById('header-progress-bar').style.width = `${solved}%`;
+
+            const gradeBadge = document.getElementById('grade-badge');
+            const gradeDesc = document.getElementById('grade-description');
+
+            if (solved < 10) {
+                gradeBadge.innerText = "A0 Initial";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs";
+                gradeDesc.innerText = "Answer at least 10 questions to unlock your CEFR diagnostic grade!";
+                return;
+            }
+
+            if (accuracy >= 85) {
+                gradeBadge.innerText = "A1 High Proficiency";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs";
+                gradeDesc.innerHTML = "🎉 <strong>Συγχαρητήρια!</strong> Excellent grip of A1 fundamentals from Neohel's curriculum. You are ready to explore A2 materials.";
+            } else if (accuracy >= 70) {
+                gradeBadge.innerText = "A1 Mid-Level";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs";
+                gradeDesc.innerHTML = "✨ <strong>Good job!</strong> Decent command of articles, basic verbs, and Neohel shop terminology.";
+            } else if (accuracy >= 50) {
+                gradeBadge.innerText = "A1 Beginner";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs";
+                gradeDesc.innerHTML = "📚 <strong>Passing.</strong> You recognize basic phrases. Pay careful attention to word genders (masculine vs. neuter).";
+            } else {
+                gradeBadge.innerText = "A1 Basic Novice";
+                gradeBadge.className = "font-bold px-2 py-0.5 rounded bg-red-100 text-red-800 text-xs";
+                gradeDesc.innerHTML = "✏️ <strong>Revision Recommended.</strong> Make sure to read the linguistic rationale after choosing each option.";
+            }
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            if (filteredQuestions.length === 0) {
+                showMsgBox("Queue Empty", "Please select another study module filter.");
+                return;
+            }
+
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+
+            document.getElementById('curr-q-topic').innerText = q.topic;
+            document.getElementById('curr-q-num').innerText = activeIndex + 1;
+            document.getElementById('question-text').innerText = q.question;
+            
+            const percentage = ((activeIndex + 1) / filteredQuestions.length) * 100;
+            document.getElementById('card-progress-bar').style.width = `${percentage}%`;
+
+            const optionsStack = document.getElementById('options-stack');
+            optionsStack.innerHTML = '';
+            
+            const expBox = document.getElementById('explanation-box');
+            expBox.className = "hidden mt-6 p-5 bg-blue-50/50 border border-blue-100 rounded-xl transition-all";
+            
+            const hintBubble = document.getElementById('hint-bubble');
+            hintBubble.classList.add('hidden');
+            document.getElementById('hint-text').innerText = q.hint;
+
+            // Bookmark Flag UI
+            const flagBtn = document.getElementById('flag-btn');
+            const flagIcon = document.getElementById('flag-icon');
+            if (state.flagged) {
+                flagBtn.classList.add('text-amber-500');
+                flagIcon.setAttribute('data-lucide', 'bookmark-check');
+            } else {
+                flagBtn.classList.remove('text-amber-500');
+                flagIcon.setAttribute('data-lucide', 'bookmark');
+            }
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition flex items-center justify-between text-sm md:text-base font-semibold group";
+                btn.setAttribute('onclick', `selectAnswer(${idx})`);
+                
+                if (state.status !== 'unseen') {
+                    btn.disabled = true;
+                    if (idx === q.correctIndex) {
+                        btn.className = "w-full text-left p-4 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-950 transition flex items-center justify-between text-sm md:text-base font-bold";
+                        btn.innerHTML = `<span class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs flex-shrink-0">✓</span> 
+                            <span>${opt}</span>
+                        </span>
+                        <i data-lucide="check" class="text-emerald-600 w-4 h-4"></i>`;
+                    } else if (state.userAnswer === idx) {
+                        btn.className = "w-full text-left p-4 rounded-xl border border-rose-500 bg-rose-50 text-rose-950 transition flex items-center justify-between text-sm md:text-base font-bold";
+                        btn.innerHTML = `<span class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs flex-shrink-0">✗</span> 
+                            <span>${opt}</span>
+                        </span>
+                        <i data-lucide="alert-circle" class="text-rose-600 w-4 h-4"></i>`;
+                    } else {
+                        btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-white opacity-55 text-slate-400 transition flex items-center justify-between text-sm md:text-base font-medium";
+                        btn.innerHTML = `<span class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xs flex-shrink-0">${String.fromCharCode(65 + idx)}</span> 
+                            <span>${opt}</span>
+                        </span>`;
+                    }
+                } else {
+                    btn.innerHTML = `<span class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center text-xs flex-shrink-0 group-hover:bg-blue-100 group-hover:text-blue-900 transition">${String.fromCharCode(65 + idx)}</span> 
+                        <span>${opt}</span>
+                    </span>
+                    <i data-lucide="chevron-right" class="text-slate-300 opacity-0 group-hover:opacity-100 transition w-4 h-4"></i>`;
+                }
+
+                optionsStack.appendChild(btn);
+            });
+
+            // Display explanations post-answer
+            if (state.status !== 'unseen') {
+                expBox.classList.remove('hidden');
+                document.getElementById('explanation-text').innerText = q.rationale;
+                const badge = document.getElementById('explanation-badge');
+                if (state.status === 'correct') {
+                    badge.innerText = "Correct";
+                    badge.className = "text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-500 text-white";
+                } else {
+                    badge.innerText = "Incorrect Option Chosen";
+                    badge.className = "text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-rose-500 text-white";
+                }
+            }
+
+            document.getElementById('prev-btn').disabled = activeIndex === 0;
+            document.getElementById('next-btn').disabled = activeIndex === filteredQuestions.length - 1;
+
+            lucide.createIcons();
+        }
+
+        function selectAnswer(index) {
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+
+            if (state.status !== 'unseen') return;
+
+            state.userAnswer = index;
+            if (index === q.correctIndex) {
+                state.status = 'correct';
+            } else {
+                state.status = 'wrong';
+            }
+
+            renderQuestion();
+            updateDashboard();
+            renderProgressMatrix();
+            saveState();
+        }
+
+        // Toggle Hint Card
+        function toggleHint() {
+            const hintBubble = document.getElementById('hint-bubble');
+            hintBubble.classList.toggle('hidden');
+        }
+
+        // Toggle Flag bookmarks
+        function toggleFlagCurrentQuestion() {
+            const q = filteredQuestions[activeIndex];
+            const state = progress[q.id];
+            state.flagged = !state.flagged;
+            
+            renderQuestion();
+            updateDashboard();
+            renderProgressMatrix();
+            saveState();
+
+            if (state.flagged) {
+                showMsgBox("Question Bookmarked", `Question ${q.id} has been saved for review in the matrix.`);
+            }
+        }
+
+        // Jump to Question index
+        function jumpToQuestion(localIdx) {
+            activeIndex = localIdx;
+            renderQuestion();
+            renderProgressMatrix();
+            saveState();
+        }
+
+        // Navigation
+        function navigateToPrev() {
+            if (activeIndex > 0) {
+                activeIndex--;
+                renderQuestion();
+                renderProgressMatrix();
+                saveState();
+            }
+        }
+
+        function navigateToNext() {
+            if (activeIndex < filteredQuestions.length - 1) {
+                activeIndex++;
+                renderQuestion();
+                renderProgressMatrix();
+                saveState();
+            }
+        }
+
+        // Clear everything
+        function restartEntireQuiz() {
+            if (confirm("Are you sure you want to delete your progress history and starts over?")) {
+                allQuestions.forEach(q => {
+                    progress[q.id] = {
+                        status: 'unseen',
+                        flagged: false,
+                        userAnswer: null
+                    };
+                });
+                activeIndex = 0;
+                applyTopicFilter("all");
+                updateDashboard();
+                renderProgressMatrix();
+                renderQuestion();
+                saveState();
+                showMsgBox("Revision History Reset", "All diagnostic records have been reset. Good luck!");
+            }
+        }
+
+        // TTS Pronunciation Assistance using Web Speech API
+        function speakCurrentQuestion() {
+            const q = filteredQuestions[activeIndex];
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                
+                // Construct a reading sequence focusing on correct target language options or the question
+                let textToSpeak = "";
+                if (q.question.includes('"')) {
+                    // Extract Greek terms inside quotes
+                    textToSpeak = q.question;
+                } else {
+                    // Speak options to assist learning
+                    textToSpeak = `Choice A: ${q.options[0]}. Choice B: ${q.options[1]}. Choice C: ${q.options[2]}. Choice D: ${q.options[3]}.`;
+                }
+
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                
+                // Attempt to bind native Greek Voice
+                const voices = window.speechSynthesis.getVoices();
+                const greekVoice = voices.find(v => v.lang.startsWith('el-GR') || v.lang.startsWith('el'));
+                
+                if (greekVoice) {
+                    utterance.voice = greekVoice;
+                }
+                
+                utterance.rate = 0.85; // Slightly slower for language learners
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showMsgBox("Speech Engine Unavailable", "Your current browser does not support local Speech Synthesis.");
+            }
+        }
+
+        // Custom notification replace window.alerts
+        function showMsgBox(title, body) {
+            const box = document.getElementById('custom-message-box');
+            document.getElementById('msg-title').innerText = title;
+            document.getElementById('msg-body').innerText = body;
+            box.classList.remove('hidden');
+            setTimeout(closeMsgBox, 5500);
+        }
+
+        function closeMsgBox() {
+            document.getElementById('custom-message-box').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
