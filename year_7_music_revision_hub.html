@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 7 Music Exam Revision Hub</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for sleek icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        /* Styling for Drag & Drop files */
+        .drag-over {
+            border-color: #6366f1 !important;
+            background-color: rgba(99, 102, 241, 0.15) !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- Top Decorative Gradient -->
+    <div class="h-2 bg-gradient-to-r from-teal-400 via-indigo-500 to-pink-500"></div>
+
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-music text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-200 to-teal-200 bg-clip-text text-transparent">
+                        Year 7 Music Revision Hub
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Exam Prep: 2025-2026 • Reference: Exam Revision List 2026.pdf</p>
+                </div>
+            </div>
+            
+            <!-- Tab Controls -->
+            <nav class="flex space-x-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800 w-full md:w-auto overflow-x-auto scrollbar-hide">
+                <button onclick="switchTab('listening')" id="tab-listening" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md shadow-indigo-600/10">
+                    <i class="fa-solid fa-headphones-simple"></i> Listening
+                </button>
+                <button onclick="switchTab('confidence')" id="tab-confidence" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-slate-900">
+                    <i class="fa-solid fa-highlighter"></i> Confidence List
+                </button>
+                <button onclick="switchTab('stave')" id="tab-stave" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-slate-900">
+                    <i class="fa-solid fa-music"></i> Clef Trainer
+                </button>
+                <button onclick="switchTab('calculator')" id="tab-calculator" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-slate-900">
+                    <i class="fa-solid fa-calculator"></i> Quick Review
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
+
+        <!-- TAB 1: LISTENING COMPREHENSION WITH AUDIO UPLOAD / DROP -->
+        <section id="panel-listening" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Column: Song List & Music Player -->
+                <div class="lg:col-span-5 flex flex-col gap-6">
+                    <!-- Song Selection Deck -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                        <h2 class="text-lg font-bold text-slate-100 mb-4 flex items-center gap-2">
+                            <span class="w-2 h-5 bg-indigo-500 rounded"></span> Select Exam Song
+                        </h2>
+                        <div class="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
+                            <!-- Songs will be generated dynamically -->
+                            <div id="songs-list" class="space-y-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Player Box with File Drop capability -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                        
+                        <h2 class="text-lg font-bold text-slate-100 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-play text-indigo-400"></i> Music Player
+                        </h2>
+                        
+                        <!-- Toggle Player Type -->
+                        <div class="flex gap-2 mb-4 bg-slate-950 p-1 rounded-lg border border-slate-800/80">
+                            <button id="player-mode-real" onclick="setPlayerMode('real')" class="flex-1 py-1 text-xs font-semibold rounded bg-slate-800 text-indigo-400 border border-indigo-500/30">
+                                <i class="fa-solid fa-file-audio mr-1"></i> Play Real Audio File
+                            </button>
+                            <button id="player-mode-yt" onclick="setPlayerMode('yt')" class="flex-1 py-1 text-xs font-semibold rounded text-slate-400">
+                                <i class="fa-brands fa-youtube mr-1"></i> YouTube Feed
+                            </button>
+                        </div>
+
+                        <!-- Real Audio Upload & Visualizer View -->
+                        <div id="real-audio-view" class="space-y-4">
+                            <!-- Drag and Drop Audio Zone -->
+                            <div id="drop-zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileDrop(event)" onclick="triggerFileInput()" class="border-2 border-dashed border-slate-700 hover:border-indigo-500/80 bg-slate-950/50 hover:bg-slate-950/80 p-5 rounded-xl text-center cursor-pointer transition-all duration-150">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-400 mb-2"></i>
+                                <p class="text-xs font-bold text-slate-200">Drag & Drop your Real Song File here</p>
+                                <p class="text-[10px] text-slate-500 mt-1">Accepts MP3, WAV, M4A, etc.</p>
+                                <input type="file" id="audio-file-input" accept="audio/*" class="hidden" onchange="handleFileSelect(event)">
+                            </div>
+
+                            <!-- Audio File Info -->
+                            <div id="audio-file-info" class="hidden flex items-center justify-between bg-slate-950/80 px-3 py-2 rounded-lg border border-slate-800">
+                                <span class="text-xs text-teal-400 truncate max-w-[200px]" id="audio-filename">No file selected</span>
+                                <button onclick="removeLoadedAudio()" class="text-slate-500 hover:text-red-400 transition text-xs">
+                                    <i class="fa-solid fa-trash"></i> Remove
+                                </button>
+                            </div>
+
+                            <!-- Real-time Web Audio Visualizer Canvas -->
+                            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center relative overflow-hidden h-32 flex flex-col justify-end items-center">
+                                <canvas id="visualizer" class="absolute inset-0 w-full h-full opacity-60"></canvas>
+                                <div class="relative z-10 text-center pb-2">
+                                    <div id="audio-status-label" class="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Visualizer Active</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button id="play-btn" onclick="toggleAudio()" class="flex-1 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/10">
+                                    <i class="fa-solid fa-play" id="play-icon"></i> <span id="play-text">Play Real Audio</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- YouTube Player View (Backup Fallback) -->
+                        <div id="yt-view" class="hidden space-y-3">
+                            <div class="aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-800">
+                                <iframe id="yt-iframe" class="w-full h-full" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                            </div>
+                            <p class="text-[11px] text-slate-500 italic text-center">
+                                Use the YouTube option if you do not have the local song files handy.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Revision Comprehension Board -->
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex-grow flex flex-col justify-between">
+                        
+                        <!-- Quiz Header -->
+                        <div>
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="px-2.5 py-1 bg-teal-500/10 text-teal-400 text-xs font-semibold rounded-lg border border-teal-500/20" id="quiz-song-genre">Genre</span>
+                                    <h3 class="text-xl font-bold text-slate-100" id="quiz-song-title">Song Title</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-slate-400">Comprehension progress</span>
+                                    <div class="text-sm font-bold text-indigo-400" id="quiz-progress">Question 1 of 5</div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Indicator Bar -->
+                            <div class="w-full h-1 bg-slate-800 rounded-full mb-6 overflow-hidden">
+                                <div id="quiz-progress-bar" class="h-full bg-indigo-500 transition-all duration-300" style="width: 20%;"></div>
+                            </div>
+
+                            <!-- Question Card -->
+                            <div id="quiz-card" class="space-y-4">
+                                <div class="p-4 bg-slate-950/60 rounded-xl border border-indigo-500/10">
+                                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1 text-indigo-400">The Question</p>
+                                    <h4 class="text-lg font-semibold text-slate-200" id="quiz-question-text">Question loading...</h4>
+                                </div>
+
+                                <!-- Answers Stack -->
+                                <div class="grid grid-cols-1 gap-2.5" id="quiz-options-container">
+                                    <!-- Dynamic options will appear here -->
+                                </div>
+                            </div>
+
+                            <!-- Score Summary Screen -->
+                            <div id="quiz-score-screen" class="hidden text-center py-8 space-y-6">
+                                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-500/10 text-indigo-400 mb-2 border border-indigo-500/20">
+                                    <i class="fa-solid fa-trophy text-4xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-2xl font-black text-slate-100">Review Completed!</h4>
+                                    <p class="text-slate-400 mt-1" id="quiz-score-text">You scored 5 out of 5 correct!</p>
+                                </div>
+
+                                <!-- Score Indicator Badge -->
+                                <div class="max-w-xs mx-auto py-3 px-4 bg-slate-950 rounded-xl border border-slate-800">
+                                    <div class="text-xs text-slate-500 font-bold uppercase">Topic Highlight Confidence</div>
+                                    <div class="text-md font-bold mt-1 text-green-400" id="confidence-verdict">CONFIDENT • GREEN</div>
+                                </div>
+
+                                <div class="flex gap-3 max-w-sm mx-auto">
+                                    <button onclick="restartQuiz()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl border border-slate-700 transition">
+                                        Retry Quiz
+                                    </button>
+                                    <button onclick="nextQuizSong()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition">
+                                        Next Song <i class="fa-solid fa-arrow-right ml-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Footer / Feedback State -->
+                        <div id="quiz-feedback" class="mt-6 pt-4 border-t border-slate-800/60 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span id="feedback-icon-container" class="hidden"></span>
+                                <span class="text-sm font-semibold text-slate-400" id="feedback-message">Select an option to test your rhythm and understanding!</span>
+                            </div>
+                            <button id="next-q-btn" onclick="nextQuestion()" class="hidden px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl shadow transition flex items-center gap-1">
+                                Next <i class="fa-solid fa-angle-right"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: CONFIDENCE HIGHLIGHTER SYLLABUS LIST -->
+        <section id="panel-confidence" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-100 flex items-center gap-2.5">
+                            <i class="fa-solid fa-highlighter text-amber-400"></i> Interactive Revision Tracker
+                        </h2>
+                        <p class="text-sm text-slate-400 mt-1">
+                            Review your Year 7 syllabus items from <strong>Exam Revision List 2026.pdf</strong>. Color each topic dynamically!
+                        </p>
+                    </div>
+                    <!-- Legend Indicators -->
+                    <div class="flex flex-wrap gap-2">
+                        <span class="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 text-green-400 text-xs font-semibold rounded-lg border border-green-500/20">
+                            <span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span> Confident
+                        </span>
+                        <span class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 text-amber-400 text-xs font-semibold rounded-lg border border-amber-500/20">
+                            <span class="w-2.5 h-2.5 bg-amber-500 rounded-full"></span> Hesitant
+                        </span>
+                        <span class="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 text-red-400 text-xs font-semibold rounded-lg border border-red-500/20">
+                            <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span> Completely Unaware
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Reset buttons -->
+                <div class="flex gap-2 pb-4 mb-6 border-b border-slate-800">
+                    <button onclick="resetConfidenceTracker()" class="text-xs text-slate-400 hover:text-slate-100 transition flex items-center gap-1 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                        <i class="fa-solid fa-rotate-right"></i> Reset Highlights
+                    </button>
+                </div>
+
+                <!-- Unit Grids -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Unit 1 -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+                        <h3 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+                            <span class="text-xs bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20">UNIT 1</span>
+                            Salsa & Samba
+                        </h3>
+                        <div class="space-y-3" id="unit1-items">
+                            <!-- Injected programmatically with state buttons -->
+                        </div>
+                    </div>
+
+                    <!-- Unit 2 -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+                        <h3 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+                            <span class="text-xs bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20">UNIT 2</span>
+                            Performing Basics
+                        </h3>
+                        <div class="space-y-3" id="unit2-items">
+                            <!-- Injected -->
+                        </div>
+                    </div>
+
+                    <!-- Unit 3 -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+                        <h3 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+                            <span class="text-xs bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20">UNIT 3</span>
+                            Song Writing & Riffs
+                        </h3>
+                        <div class="space-y-3" id="unit3-items">
+                            <!-- Injected -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: TREBLE CLEF TRAINER GAME -->
+        <section id="panel-stave" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Game Engine Column -->
+                <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-6">
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-100 flex items-center gap-2.5">
+                                    <i class="fa-solid fa-music text-indigo-400"></i> Treble Clef Game
+                                </h2>
+                                <p class="text-xs text-slate-400 mt-1">Identify notes written on lines (EGBDF) and spaces (FACE) instantly!</p>
+                            </div>
+                            <div class="flex items-center gap-4 text-right">
+                                <div>
+                                    <div class="text-[10px] text-slate-500 uppercase font-bold">Streaks</div>
+                                    <div id="clef-streak" class="text-lg font-black text-amber-400">0</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-slate-500 uppercase font-bold">Score</div>
+                                    <div id="clef-score" class="text-lg font-black text-emerald-400">0/0</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Note Playground -->
+                        <div class="bg-white rounded-xl p-4 flex justify-center items-center shadow-inner relative border-4 border-slate-800">
+                            <div class="absolute top-2 left-4 text-xs font-black text-slate-400 select-none">TREBLE STAFF PREVIEW</div>
+                            <canvas id="stave-canvas" width="600" height="200" class="max-w-full h-auto"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- User Answer Grid Controls -->
+                    <div class="mt-6 space-y-4">
+                        <div class="text-center">
+                            <p class="text-sm text-slate-400 font-semibold" id="stave-hint-text">Is this note placed on a line or a space? Press the correct key:</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-4 sm:grid-cols-7 gap-2 max-w-xl mx-auto">
+                            <button onclick="checkClefAnswer('C')" class="py-3 bg-slate-800 hover:bg-indigo-600 text-slate-100 font-bold text-lg rounded-xl border border-slate-700 hover:border-indigo-400 transition-all duration-150 shadow">C</button>
+                            <button onclick="checkClefAnswer('D')" class="py-3 bg-slate-800 hover:bg-indigo-600 text-slate-100 font-bold text-lg rounded-xl border border-slate-700 hover:border-indigo-400 transition-all duration-150 shadow">D</button>
+                            <button onclick="checkClefAnswer('E')" class="py-3 bg-slate-800 hover:bg-indigo-600 text-slate-100 font-bold text-lg rounded-xl border border-slate-700 hover:border-indigo-400 transition-all duration-150 shadow">E</button>
+                            <button onclick="checkClefAnswer('F')" class="py-3 bg-slate-800 hover:bg-indigo-600 text-slate-100 font-bold text-lg rounded-xl border border-slate-700 hover:border-indigo-400 transition-all duration-150 shadow">F</button>
+                            <button onclick="checkClefAnswer('G')" class="py-3 bg-slate-800 hover:bg-indigo-600 text-slate-100 font-bold text-lg rounded-xl border border-slate-700 hover:border-indigo-400 transition-all duration-150 shadow">G</button>
+                            <button onclick="checkClefAnswer('A')" class="py-3 bg-slate-800 hover:bg-indigo-600 text-slate-100 font-bold text-lg rounded-xl border border-slate-700 hover:border-indigo-400 transition-all duration-150 shadow">A</button>
+                            <button onclick="checkClefAnswer('B')" class="py-3 bg-slate-800 hover:bg-indigo-600 text-slate-100 font-bold text-lg rounded-xl border border-slate-700 hover:border-indigo-400 transition-all duration-150 shadow">B</button>
+                        </div>
+
+                        <!-- Feedback Box -->
+                        <div id="stave-feedback" class="py-2.5 px-4 rounded-xl text-center font-bold text-sm hidden transition-all duration-200">
+                            Answer Outcome
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory Rules Side Panel -->
+                <div class="lg:col-span-4 space-y-6">
+                    <!-- Lines Rules Card -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                        <h3 class="text-md font-bold text-indigo-400 mb-3 uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="fa-solid fa-grip-lines"></i> Note on the Lines
+                        </h3>
+                        <p class="text-xs text-slate-300 mb-4 lead">
+                            The notes sitting on the five lines of the staff are <strong class="text-white">E, G, B, D, F</strong>. Keep them memorized with this fun phrase:
+                        </p>
+                        <div class="bg-indigo-950/40 border border-indigo-500/20 rounded-xl p-3 text-center mb-4">
+                            <p class="text-sm font-bold text-indigo-300">"Every Good Burger Deserves Fries"</p>
+                        </div>
+                        <!-- Space Card details -->
+                        <h3 class="text-md font-bold text-teal-400 mb-3 uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrows-up-down"></i> Notes in the Spaces
+                        </h3>
+                        <p class="text-xs text-slate-300 mb-4">
+                            The notes located inside the spaces between lines spell out the word:
+                        </p>
+                        <div class="bg-teal-950/40 border border-teal-500/20 rounded-xl p-3 text-center">
+                            <p class="text-lg font-black tracking-widest text-teal-300">F - A - C - E</p>
+                        </div>
+                    </div>
+
+                    <!-- Ledger Lines Tip -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                        <h3 class="text-md font-bold text-pink-400 mb-2 uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="fa-solid fa-ellipsis"></i> Ledger Lines
+                        </h3>
+                        <p class="text-xs text-slate-300">
+                            Notes appearing above or below the standard staff lines utilize small helper lines called <strong class="text-white">ledger lines</strong>. For example, Middle C sits on a line below the treble stave!
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 4: QUICK CALCULATOR & SONGWRITING BASICS -->
+        <section id="panel-calculator" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Card 1: Note Duration Calculator -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-hourglass-half text-indigo-400"></i> Note Duration Matcher
+                    </h3>
+                    <p class="text-xs text-slate-400">Understand notes &amp; calculate how many fit inside one another instantly!</p>
+                    
+                    <div class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-slate-300 font-semibold">How many...</span>
+                            <select id="duration-from" class="bg-slate-900 text-xs border border-slate-700 rounded px-2 py-1 text-slate-200">
+                                <option value="0.25">Quavers (0.5 beats)</option>
+                                <option value="1" selected>Crotchets (1 beat)</option>
+                                <option value="2">Minims (2 beats)</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-slate-300 font-semibold">are in one...</span>
+                            <select id="duration-to" class="bg-slate-900 text-xs border border-slate-700 rounded px-2 py-1 text-slate-200">
+                                <option value="1">Crotchet (1 beat)</option>
+                                <option value="2">Minim (2 beats)</option>
+                                <option value="4" selected>Semibreve (4 beats)</option>
+                            </select>
+                        </div>
+                        <button onclick="calculateDurations()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white rounded-lg transition">
+                            Calculate Value
+                        </button>
+                    </div>
+
+                    <div id="duration-result" class="p-3 bg-slate-950/60 rounded-xl border border-indigo-500/10 text-center text-sm font-bold text-indigo-300 hidden">
+                        Calculated result...
+                    </div>
+                </div>
+
+                <!-- Card 2: C Major Chord Cliché Builder -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-teal-400"></i> C Major Chords
+                    </h3>
+                    <p class="text-xs text-slate-400">Build the famous I-V-vi-IV (the most common progression) instantly!</p>
+                    
+                    <div class="grid grid-cols-4 gap-2 text-center bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="p-2 border border-slate-800 rounded bg-slate-900/60">
+                            <span class="block text-[10px] text-indigo-400 font-bold">I</span>
+                            <span class="text-sm font-black text-white">C</span>
+                            <span class="block text-[8px] text-slate-500">C-E-G</span>
+                        </div>
+                        <div class="p-2 border border-slate-800 rounded bg-slate-900/60">
+                            <span class="block text-[10px] text-indigo-400 font-bold">V</span>
+                            <span class="text-sm font-black text-white">G</span>
+                            <span class="block text-[8px] text-slate-500">G-B-D</span>
+                        </div>
+                        <div class="p-2 border border-slate-800 rounded bg-slate-900/60">
+                            <span class="block text-[10px] text-indigo-400 font-bold">vi</span>
+                            <span class="text-sm font-black text-white">Am</span>
+                            <span class="block text-[8px] text-slate-500">A-C-E</span>
+                        </div>
+                        <div class="p-2 border border-slate-800 rounded bg-slate-900/60">
+                            <span class="block text-[10px] text-indigo-400 font-bold">IV</span>
+                            <span class="text-sm font-black text-white">F</span>
+                            <span class="block text-[8px] text-slate-500">F-A-C</span>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-400 leading-relaxed bg-slate-950 p-3 rounded-xl border border-slate-800/60">
+                        <strong class="text-teal-300 block mb-1">Scale Knowledge:</strong>
+                        Primary chords are I, IV, and V. Secondary chords are ii, iii, and vi. A chord consists of 2 or more notes played together.
+                    </div>
+                </div>
+
+                <!-- Card 3: Form Structures -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-shapes text-pink-400"></i> Form Structures
+                    </h3>
+                    <p class="text-xs text-slate-400">Understand the pattern arrangements of different song architectures.</p>
+                    
+                    <div class="space-y-2">
+                        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs font-black text-slate-200 block">Binary Form</span>
+                                <span class="text-[10px] text-slate-500">Two contrasting sections</span>
+                            </div>
+                            <span class="px-2 py-0.5 bg-pink-500/10 text-pink-400 border border-pink-500/20 text-xs font-bold rounded">A - B</span>
+                        </div>
+                        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs font-black text-slate-200 block">Ternary Form</span>
+                                <span class="text-[10px] text-slate-500">Statement, departure, return</span>
+                            </div>
+                            <span class="px-2 py-0.5 bg-pink-500/10 text-pink-400 border border-pink-500/20 text-xs font-bold rounded">A - B - A</span>
+                        </div>
+                        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs font-black text-slate-200 block">Rondo Form</span>
+                                <span class="text-[10px] text-slate-500">Recurring Theme (A) alternating</span>
+                            </div>
+                            <span class="px-2 py-0.5 bg-pink-500/10 text-pink-400 border border-pink-500/20 text-xs font-bold rounded">A-B-A-C-A</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Stats / Meta Info -->
+    <footer class="mt-auto border-t border-slate-800 bg-slate-950/80 py-4 text-center">
+        <p class="text-xs text-slate-500">
+            © 2026 Year 7 Music Revision Tool • Created for Interactive Exam Prep
+        </p>
+    </footer>
+
+    <script>
+        let audioCtx = null;
+        let audioSource = null;
+        let analyserNode = null;
+        let localAudioElement = new Audio(); // HTML5 audio element for playing real song uploads
+        let isPlaying = false;
+        let playerMode = 'real'; // 'real' or 'yt'
+
+        // Set up Web Audio API Visualizer canvas Context
+        const canvas = document.getElementById('visualizer');
+        const canvasCtx = canvas.getContext('2d');
+        let animationFrameId = null;
+
+        // Custom revision checklist structured by Unit matching Exam Revision List 2026.pdf
+        const syllabusData = {
+            unit1: [
+                { id: 'salsa-orig', title: 'Salsa Origins', desc: 'Where it comes from (Cuba & Caribbean roots, mixed in NYC).' },
+                { id: 'clave-pat', title: 'Clave Patterns', desc: 'Salsa relies on 2:3 or 3:2 syncopated clave rhythms.' },
+                { id: 'tied-bass', title: 'Tied Bass Line', desc: 'Tied notes in the bass between beats 4 and 1 create "pushed" flow.' },
+                { id: 'salsa-inst', title: 'Salsa Instruments', desc: 'Claves, Piano, Bass, Congas, Bongos, Cowbell, Brass horns.' },
+                { id: 'syncopation', title: 'Syncopation', desc: 'Rhythms played off-beat to create dynamic tension & energy.' },
+                { id: 'samba-orig', title: 'Samba Origins', desc: 'Samba comes from Brazil, highly associated with Carnival.' },
+                { id: 'samba-inst', title: 'Samba Instruments', desc: 'Surdo (large bass), Caixa (snare), Agogo, Tamborim, Ganzá.' },
+                { id: 'andean-orig', title: 'Andean Music', desc: 'Originated in South America (Andes Mountains region).' },
+                { id: 'andean-inst', title: 'Andean Instruments', desc: 'Siku (panpipes), Quena (flute), Charango, Bombo.' },
+                { id: 'tango-orig', title: 'Tango Music', desc: 'Sultry dance music from Argentina/Uruguay (Latin America).' }
+            ],
+            unit2: [
+                { id: 'stave-basics', title: 'Stave & Treble Clef', desc: '5 lines, 4 spaces. Clef specifies pitch positions.' },
+                { id: 'lines-spaces', title: 'Lines & Spaces Notes', desc: 'Lines are E G B D F; spaces are F A C E.' },
+                { id: 'note-values', title: 'Note Durations', desc: 'Semibreve (4), Minim (2), Crotchet (1), Quaver (0.5).' },
+                { id: 'dots-ties', title: 'Dots & Ties', desc: 'Dot adds half the value. Tie joins identical note pitches.' },
+                { id: 'rests-symbols', title: 'Rests Durations', desc: 'Silent beats mirroring note durations.' },
+                { id: 'dynamics-sym', title: 'Dynamics Symbols', desc: 'p (piano/quiet), f (forte/loud), mf (medium loud).' },
+                { id: 'repeat-sign', title: 'Repeat Symbols', desc: 'Indicates you must play a section of the score again.' },
+                { id: 'fermata-sign', title: 'Fermata Pause', desc: 'Indicates the musician holds the note longer.' },
+                { id: 'time-sig-top', title: 'Time Signature Top', desc: 'How many beats in each measure.' },
+                { id: 'time-sig-bottom', title: 'Time Signature Bottom', desc: 'What note value equals one beat.' }
+            ],
+            unit3: [
+                { id: 'lyrics-rhyme', title: 'Rhyming Lyrics', desc: 'Do they need to rhyme? No, lyrics can be freeform!' },
+                { id: 'lyrics-tips', title: 'Simple Lyrics Tip', desc: 'Keep lyrics focused on one clear idea with a catchy hook.' },
+                { id: 'lyrics-rep', title: 'Repetition Use', desc: 'Helps people remember the song and creates a lasting impact.' },
+                { id: 'chord-def', title: 'What is a Chord?', desc: 'Two or more notes played together at the same time.' },
+                { id: 'chord-prog', title: '4-Chord Progression', desc: 'I - V - vi - IV is the most famous progression (e.g., C-G-Am-F).' },
+                { id: 'chord-cliche', title: 'Chord Cliché', desc: 'Highly repetitive/common pattern used across popular music.' },
+                { id: 'primary-secondary', title: 'Primary vs Secondary', desc: 'Primary: I, IV, V. Secondary: ii, iii, vi.' },
+                { id: 'melody-riff', title: 'Melody & Riff', desc: 'Melody is main line. Riff is short, catchy repeating pattern.' },
+                { id: 'song-structures', title: 'Song Structures', desc: 'Intro, Verse, Pre-Chorus, Chorus, Bridge, Instrumental, Outro.' }
+            ]
+        };
+
+        // Song details database with YouTube fallback embed URLs & custom revision questions
+        const songs = [
+            {
+                id: 'america',
+                title: "America",
+                origin: "West Side Story",
+                genre: "Musical Theatre",
+                ytId: "Qy6wo2wpT2k",
+                realFileUrl: null, // Populated dynamically via Drag-and-Drop
+                questions: [
+                    {
+                        q: "What rhythmic device is the hallmark of 'America'?",
+                        options: [
+                            "Hemiola (alternating 6/8 and 3/4 feel)",
+                            "A static 4/4 common rock beat",
+                            "Strict 2:3 Clave",
+                            "Samba break beat"
+                        ],
+                        ans: 0,
+                        exp: "Hemiola creates the exciting cross-rhythm alternation between a triple division (6/8) and duple division (3/4)."
+                    },
+                    {
+                        q: "What is the primary purpose of using a hemiola in 'America'?",
+                        options: [
+                            "It makes the piece sound slow and mournful",
+                            "It creates a sense of syncopation, excitement, and a clash of rhythms",
+                            "It simplifies the rhythm for younger performers",
+                            "It aligns the piece with traditional marching band styles"
+                        ],
+                        ans: 1,
+                        exp: "The hemiola adds syncopation and thrilling energy reflecting the tension between characters."
+                    },
+                    {
+                        q: "What is the time signature structure of the opening rhythmic pattern?",
+                        options: [
+                            "Alternating 6/8 and 3/4 measures",
+                            "Continuous 4/4 salsa meter",
+                            "5/4 asymmetric jazz rhythm",
+                            "Slow ternary 3/4 waltz"
+                        ],
+                        ans: 0,
+                        exp: "The time signatures jump between 6/8 (compound) and 3/4 (simple) to give the famous 'I like to be in A-mer-i-ca' groove."
+                    },
+                    {
+                        q: "Is 6/8 considered a simple or compound time signature?",
+                        options: [
+                            "Simple triple",
+                            "Compound duple",
+                            "Simple duple",
+                            "Asymmetric triple"
+                        ],
+                        ans: 1,
+                        exp: "6/8 is compound duple because it has two major beats in a bar, each divided into three pulses."
+                    },
+                    {
+                        q: "Who composed this masterpiece?",
+                        options: [
+                            "Manos Hadjidakis",
+                            "Leonard Bernstein",
+                            "Stan Getz",
+                            "John Williams"
+                        ],
+                        ans: 1,
+                        exp: "West Side Story's famous complex rhythms were composed by Leonard Bernstein."
+                    }
+                ]
+            },
+            {
+                id: 'never-sunday',
+                title: "Never on a Sunday",
+                origin: "Greek Recognition",
+                genre: "Greek Pop/Laïkó",
+                ytId: "Z0X8dfitjS8",
+                realFileUrl: null,
+                questions: [
+                    {
+                        q: "What unique string instrument is prominently featured in 'Never on a Sunday'?",
+                        options: [
+                            "A Greek Bouzouki",
+                            "An Andean Charango",
+                            "An American Banjo",
+                            "A Latin Acoustic Bass"
+                        ],
+                        ans: 0,
+                        exp: "The Bouzouki is a long-necked lute that gives Greek music its signature bright, tremolo-plucked sound."
+                    },
+                    {
+                        q: "What historic achievement is true of this song?",
+                        options: [
+                            "It was the first Greek song to gain worldwide recognition",
+                            "It was the first song played on American radio",
+                            "It is composed entirely in a 5-note pentatonic scale",
+                            "It has no lyrics or singer associated with it"
+                        ],
+                        ans: 0,
+                        exp: "Composer Manos Hadjidakis won an Academy Award, making it the first Greek song to achieve massive worldwide recognition."
+                    },
+                    {
+                        q: "What is the time signature and general tempo of this song?",
+                        options: [
+                            "3/4 Waltz, slow",
+                            "4/4 Time Signature, fast tempo",
+                            "6/8 Compound, slow",
+                            "Asymmetrical 7/8, fast"
+                        ],
+                        ans: 1,
+                        exp: "It features a traditional upbeat 4/4 rhythm that builds excitement as the tempo moves forward."
+                    },
+                    {
+                        q: "Who was the singer that gained international fame performing this song?",
+                        options: [
+                            "Melina Mercouri",
+                            "Maria Callas",
+                            "Celia Cruz",
+                            "Astrud Gilberto"
+                        ],
+                        ans: 0,
+                        exp: "Melina Mercouri starred in the movie 'Never on a Sunday' and sang its iconic title track."
+                    },
+                    {
+                        q: "Who is the composer of 'Never on a Sunday'?",
+                        options: [
+                            "Manos Hadjidakis",
+                            "Leonard Bernstein",
+                            "Sandro de America",
+                            "Astor Piazzolla"
+                        ],
+                        ans: 0,
+                        exp: "The melody was composed by Greek maestro Manos Hadjidakis."
+                    }
+                ]
+            },
+            {
+                id: 'toca-bonito',
+                title: "Toca Bonito",
+                origin: "Salsa Class",
+                genre: "Salsa",
+                ytId: "hK2m_uD44O0",
+                realFileUrl: null,
+                questions: [
+                    {
+                        q: "What is the main clave pattern used in 'Toca Bonito'?",
+                        options: [
+                            "3:2 Clave Pattern",
+                            "2:3 Clave Pattern",
+                            "Samba loop pattern",
+                            "Rock basic pattern"
+                        ],
+                        ans: 0,
+                        exp: "The 3:2 clave pattern sets the fundamental structural pulse of 'Toca Bonito' (3 beats in first bar, 2 in second)."
+                    },
+                    {
+                        q: "Which specific instruments are highlighted in your revision list for this song?",
+                        options: [
+                            "Claves, Piano, Bass, and Brass",
+                            "Surdo snare, Agogo bells, and Flute",
+                            "Electric guitar and Synthesizer",
+                            "Charango, Siku, and Panpipes"
+                        ],
+                        ans: 0,
+                        exp: "Your list explicitly notes: Claves (3:2), Piano (montuno), Bass, and Brass horns for 'Toca Bonito'."
+                    },
+                    {
+                        q: "Where does Salsa music originally come from?",
+                        options: [
+                            "Brazil",
+                            "Cuba / Caribbean origins",
+                            "Greece",
+                            "Spain"
+                        ],
+                        ans: 1,
+                        exp: "Salsa originated in Cuba with heavy African influences and was later stylized in New York."
+                    },
+                    {
+                        q: "What typical rhythm happens 'off-beat' to make Salsa feel exciting?",
+                        options: [
+                            "Syncopated rhythms",
+                            "Continuous drones",
+                            "Strict down-beats on beat 1",
+                            "Binary repetition patterns"
+                        ],
+                        ans: 0,
+                        exp: "Syncopation plays notes off the beat, giving Salsa its highly energetic, danceable impulse."
+                    },
+                    {
+                        q: "What occurs in the Salsa bassline between beats 4 and 1?",
+                        options: [
+                            "Tied notes that create a pushed, driving feel",
+                            "A complete silent rest",
+                            "A loud crash cymbal hit",
+                            "The tempo dramatically slows down"
+                        ],
+                        ans: 0,
+                        exp: "The bassline ties beats 4 and 1, creating a flow that gives the feeling of the music being pushed forward."
+                    }
+                ]
+            },
+            {
+                id: 'tango-argentino',
+                title: "Tango Argentino",
+                origin: "Dance Styles",
+                genre: "Tango",
+                ytId: "K8vUfC_8_60",
+                realFileUrl: null,
+                questions: [
+                    {
+                        q: "Where does Tango music come from?",
+                        options: [
+                            "Brazil",
+                            "Argentina / Latin America",
+                            "The Caribbean",
+                            "New York"
+                        ],
+                        ans: 1,
+                        exp: "Tango originated in Buenos Aires, Argentina, and Montevideo, Uruguay."
+                    },
+                    {
+                        q: "What tonality does Tango Argentino typically use?",
+                        options: [
+                            "Minor key (sounds serious, intense, or sad)",
+                            "Major key (sounds cheerful and celebratory)",
+                            "No tonality / completely silent",
+                            "Atonal scale structures"
+                        ],
+                        ans: 0,
+                        exp: "Tango's emotional tension and passion is built primarily on minor tonalities."
+                    },
+                    {
+                        q: "What is the primary artistic purpose of Tango music?",
+                        options: [
+                            "Strictly marching in parades",
+                            "For expressive partner dancing",
+                            "Meditation and relaxation",
+                            "Church services"
+                        ],
+                        ans: 1,
+                        exp: "Tango is a world-renowned social dance style known for physical alignment and emotional drama."
+                    },
+                    {
+                        q: "Which instrument combination is central to a traditional Tango?",
+                        options: [
+                            "Bouzouki and Siku",
+                            "Piano, Bandoneon/Accordion, Violin",
+                            "Surdo drum and Ganzá shaker",
+                            "Acoustic guitar and Flute"
+                        ],
+                        ans: 1,
+                        exp: "Piano, Violin, and the Bandoneon (accordion-like bellows) define the instrumental texture of Tango."
+                    },
+                    {
+                        q: "Which characteristic makes Tango rhythm dramatic?",
+                        options: [
+                            "Sudden accents, syncopation, and tempo shifts",
+                            "A continuous fast snare drum roll",
+                            "Gentle nature ambient sounds",
+                            "A slow waltz feeling"
+                        ],
+                        ans: 0,
+                        exp: "Dramatic syncopations and sharp changes in dynamic emphasis are hallmark elements of Tango music."
+                    }
+                ]
+            },
+            {
+                id: 'one-note-samba',
+                title: "One Note Samba",
+                origin: "Brazil Styles",
+                genre: "Samba/Bossa Nova",
+                ytId: "0GIn9vCgCgM",
+                realFileUrl: null,
+                questions: [
+                    {
+                        q: "Where does Samba music come from?",
+                        options: [
+                            "Cuba",
+                            "Brazil",
+                            "Greece",
+                            "Andean South America"
+                        ],
+                        ans: 1,
+                        exp: "Samba is the iconic national musical genre and dance of Brazil."
+                    },
+                    {
+                        q: "Which instruments are highlighted on your revision list for 'One Note Samba'?",
+                        options: [
+                            "Strings, Bass, Percussion, Flute",
+                            "Claves and heavy horns",
+                            "Bouzoukis and synthesizers",
+                            "Trumpets and maracas"
+                        ],
+                        ans: 0,
+                        exp: "Your Year 7 sheet outlines the following instrumentation: Strings, Bass, Percussion, and Flute."
+                    },
+                    {
+                        q: "What makes the main melody of 'One Note Samba' structurally unique?",
+                        options: [
+                            "It features a wide vocal range jumping over octaves",
+                            "It repeats a single pitch/note over shifting chords",
+                            "It has no rhythmic content",
+                            "It is composed only of silent pauses"
+                        ],
+                        ans: 1,
+                        exp: "True to its name, 'One Note Samba' uses a repeating central pitch while the harmony changes behind it!"
+                    },
+                    {
+                        q: "What massive Brazilian festival is heavily associated with Samba?",
+                        options: [
+                            "Brazilian Carnival",
+                            "Day of the Dead",
+                            "La Tomatina",
+                            "Greek Easter"
+                        ],
+                        ans: 0,
+                        exp: "Samba schools parade down the Sambadrome during the colorful, explosive Brazilian Carnival."
+                    },
+                    {
+                        q: "What is the typical time signature of Samba?",
+                        options: [
+                            "4/4 or 2/4",
+                            "3/4 Waltz",
+                            "5/8 Compound",
+                            "12/8 Orchestral"
+                        ],
+                        ans: 0,
+                        exp: "Samba operates on a fast, syncopated 2-beat or 4-beat rhythm framework."
+                    }
+                ]
+            },
+            {
+                id: 'seven-nation',
+                title: "Seven Nation Army",
+                origin: "Song Writing",
+                genre: "Rock",
+                ytId: "0J2QdDbelmY",
+                realFileUrl: null,
+                questions: [
+                    {
+                        q: "What is the short, catchy repeating pattern heard throughout 'Seven Nation Army' called?",
+                        options: [
+                            "A Riff",
+                            "A Chord progression cliché",
+                            "A Fermata",
+                            "A Ternary pattern"
+                        ],
+                        ans: 0,
+                        exp: "A short, catchy, repeating melodic/rhythmic figure in rock/pop is defined as a riff."
+                    },
+                    {
+                        q: "What instrument is actually playing the famous bass-sounding riff?",
+                        options: [
+                            "A real Electric Bass Guitar",
+                            "A semi-acoustic Double Bass",
+                            "An Electric Guitar (lowered 1 octave using a pitch pedal)",
+                            "A classical Cello"
+                        ],
+                        ans: 2,
+                        exp: "Jack White used an electric guitar through a DigiTech Whammy pedal set to an octave below to simulate a bass."
+                    },
+                    {
+                        q: "The riff's opening pattern consists of how many distinct notes?",
+                        options: [
+                            "7 notes",
+                            "Only 1 note",
+                            "Over 20 notes",
+                            "No pitches, just beats"
+                        ],
+                        ans: 0,
+                        exp: "The classic Seven Nation Army riff utilizes 7 notes: E - E - G - E - D - C - B."
+                    },
+                    {
+                        q: "What is the typical musical structure of 'Seven Nation Army'?",
+                        options: [
+                            "Intro, Verse, Chorus (Riff focus), and Outro",
+                            "Binary (A - B)",
+                            "Rondo (A-B-A-C-A-D-A)",
+                            "Through-composed without loops"
+                        ],
+                        ans: 0,
+                        exp: "It utilizes modern verse-chorus architecture centering around the core instrumental hook."
+                    },
+                    {
+                        q: "Why is repetition like the 'Seven Nation Army' riff useful in song writing?",
+                        options: [
+                            "It helps listeners remember the song and stay engaged",
+                            "It allows the singer to rest their vocal cords completely",
+                            "It makes the music sound unpredictable",
+                            "It simplifies sheet notation costs"
+                        ],
+                        ans: 0,
+                        exp: "Repetition instills familiarity, making hooks catchy and easily memorizable for audiences."
+                    }
+                ]
+            }
+        ];
+
+        function switchTab(tabId) {
+            // Hide all tab containers
+            document.querySelectorAll('section[id^="panel-"]').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            // Show selected container
+            document.getElementById(`panel-${tabId}`).classList.remove('hidden');
+
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-slate-100 hover:bg-slate-900";
+            });
+            // Activate current tab button
+            document.getElementById(`tab-${tabId}`).className = "tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md shadow-indigo-600/10";
+
+            // If switching to Clef Trainer tab, trigger canvas rendering initialization
+            if (tabId === 'stave') {
+                initClefGame();
+            }
+        }
+
+        let activeSongIndex = 0;
+        let activeQuestionIndex = 0;
+        let activeScore = 0;
+        let userHasAnswered = false;
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            renderSongsList();
+            renderConfidenceList();
+            loadQuizForSong(0);
+            drawStaveStatic();
+            setupLocalTrackerStates();
+        };
+
+        // Render the selection sidebar for exam songs
+        function renderSongsList() {
+            const container = document.getElementById('songs-list');
+            container.innerHTML = '';
+            songs.forEach((song, idx) => {
+                const isActive = idx === activeSongIndex;
+                const isLoaded = song.realFileUrl !== null;
+                const activeClasses = isActive 
+                    ? 'border-indigo-500 bg-indigo-500/10 text-white font-bold' 
+                    : 'border-slate-800 bg-slate-950/40 text-slate-300 hover:bg-slate-900';
+                
+                container.innerHTML += `
+                    <button onclick="changeActiveSong(${idx})" class="w-full text-left p-3 rounded-xl border ${activeClasses} transition flex items-center justify-between group">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2 h-2 rounded-full ${isActive ? 'bg-indigo-400' : 'bg-slate-600 group-hover:bg-slate-400'}"></span>
+                            <div>
+                                <h4 class="text-sm font-semibold">${song.title}</h4>
+                                <span class="text-[10px] text-slate-500 block">${song.genre}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${isLoaded ? '<span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold"><i class="fa-solid fa-file"></i> MP3 Ready</span>' : ''}
+                            <i class="fa-solid fa-angle-right text-xs opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                    </button>
+                `;
+            });
+        }
+
+        // Change the current selected song
+        function changeActiveSong(index) {
+            stopAudio();
+            activeSongIndex = index;
+            renderSongsList();
+            loadQuizForSong(index);
+        }
+
+        // Load the comprehension questions for the current selected song
+        function loadQuizForSong(index) {
+            activeQuestionIndex = 0;
+            activeScore = 0;
+            userHasAnswered = false;
+
+            // Reset UI View Visibility
+            document.getElementById('quiz-card').classList.remove('hidden');
+            document.getElementById('quiz-score-screen').classList.add('hidden');
+            document.getElementById('quiz-feedback').classList.remove('hidden');
+
+            const song = songs[index];
+            document.getElementById('quiz-song-title').textContent = song.title;
+            document.getElementById('quiz-song-genre').textContent = song.genre;
+            
+            // Set up Player Source depending on active tab settings
+            updatePlayerSource(song);
+
+            renderQuestion();
+        }
+
+        // Handle swapping player sources (Real Audio / Real YouTube audio)
+        function updatePlayerSource(song) {
+            const ytIframe = document.getElementById('yt-iframe');
+            ytIframe.src = `https://www.youtube.com/embed/${song.ytId}?enablejsapi=1&rel=0`;
+
+            const audioFileInfo = document.getElementById('audio-file-info');
+            const dropZone = document.getElementById('drop-zone');
+
+            if (song.realFileUrl) {
+                audioFileInfo.classList.remove('hidden');
+                dropZone.classList.add('hidden');
+                document.getElementById('audio-filename').textContent = `Loaded: ${song.fileName || "audio file"}`;
+                document.getElementById('audio-status-label').innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> Real File Loaded</span>`;
+            } else {
+                audioFileInfo.classList.add('hidden');
+                dropZone.classList.remove('hidden');
+                document.getElementById('audio-status-label').textContent = "Visualizer Active";
+            }
+        }
+
+        // Toggle player type tab view
+        function setPlayerMode(mode) {
+            stopAudio();
+            playerMode = mode;
+            
+            const realBtn = document.getElementById('player-mode-real');
+            const ytBtn = document.getElementById('player-mode-yt');
+            
+            if (mode === 'real') {
+                realBtn.className = "flex-1 py-1 text-xs font-semibold rounded bg-slate-800 text-indigo-400 border border-indigo-500/30";
+                ytBtn.className = "flex-1 py-1 text-xs font-semibold rounded text-slate-400";
+                document.getElementById('real-audio-view').classList.remove('hidden');
+                document.getElementById('yt-view').classList.add('hidden');
+            } else {
+                ytBtn.className = "flex-1 py-1 text-xs font-semibold rounded bg-slate-800 text-red-400 border border-red-500/30";
+                realBtn.className = "flex-1 py-1 text-xs font-semibold rounded text-slate-400";
+                document.getElementById('yt-view').classList.remove('hidden');
+                document.getElementById('real-audio-view').classList.add('hidden');
+            }
+        }
+
+        function triggerFileInput() {
+            document.getElementById('audio-file-input').click();
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.remove('drag-over');
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.remove('drag-over');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                loadAudioFile(e.dataTransfer.files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            if (e.target.files && e.target.files.length > 0) {
+                loadAudioFile(e.target.files[0]);
+            }
+        }
+
+        function loadAudioFile(file) {
+            if (!file.type.startsWith('audio/')) {
+                alert("Please upload a valid audio file (MP3, WAV, etc.)");
+                return;
+            }
+
+            const activeSong = songs[activeSongIndex];
+            activeSong.realFileUrl = URL.createObjectURL(file);
+            activeSong.fileName = file.name;
+
+            renderSongsList();
+            updatePlayerSource(activeSong);
+            
+            // Auto play loaded song
+            playRealAudioFile(activeSong.realFileUrl);
+        }
+
+        function removeLoadedAudio() {
+            stopAudio();
+            const activeSong = songs[activeSongIndex];
+            activeSong.realFileUrl = null;
+            activeSong.fileName = null;
+            renderSongsList();
+            updatePlayerSource(activeSong);
+        }
+
+        function initAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyserNode = audioCtx.createAnalyser();
+                analyserNode.fftSize = 256;
+                
+                // Connect HTML5 audio element
+                audioSource = audioCtx.createMediaElementSource(localAudioElement);
+                audioSource.connect(analyserNode);
+                analyserNode.connect(audioCtx.destination);
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playRealAudioFile(url) {
+            initAudioCtx();
+            localAudioElement.src = url;
+            localAudioElement.play()
+                .then(() => {
+                    isPlaying = true;
+                    document.getElementById('play-icon').className = "fa-solid fa-pause";
+                    document.getElementById('play-text').textContent = "Pause Real Audio";
+                    drawVisualizer();
+                })
+                .catch(err => {
+                    console.error("Audio Playback Error:", err);
+                });
+        }
+
+        function toggleAudio() {
+            const activeSong = songs[activeSongIndex];
+            if (!activeSong.realFileUrl) {
+                triggerFileInput();
+                return;
+            }
+
+            initAudioCtx();
+
+            if (isPlaying) {
+                localAudioElement.pause();
+                isPlaying = false;
+                document.getElementById('play-icon').className = "fa-solid fa-play";
+                document.getElementById('play-text').textContent = "Play Real Audio";
+                cancelAnimationFrame(animationFrameId);
+            } else {
+                if (localAudioElement.src !== activeSong.realFileUrl) {
+                    localAudioElement.src = activeSong.realFileUrl;
+                }
+                localAudioElement.play();
+                isPlaying = true;
+                document.getElementById('play-icon').className = "fa-solid fa-pause";
+                document.getElementById('play-text').textContent = "Pause Real Audio";
+                drawVisualizer();
+            }
+        }
+
+        function stopAudio() {
+            isPlaying = false;
+            localAudioElement.pause();
+            document.getElementById('play-icon').className = "fa-solid fa-play";
+            document.getElementById('play-text').textContent = "Play Real Audio";
+            
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            // Clear visualizer
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Dynamic Frequency Bar visualizer connected to actual music playing
+        function drawVisualizer() {
+            if (!isPlaying || !analyserNode) return;
+            animationFrameId = requestAnimationFrame(drawVisualizer);
+
+            const bufferLength = analyserNode.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyserNode.getByteFrequencyData(dataArray);
+
+            const width = canvas.width;
+            const height = canvas.height;
+            canvasCtx.clearRect(0, 0, width, height);
+
+            const barWidth = (width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i] / 2;
+
+                // Color gradient based on frequency response
+                const r = barHeight + (25 * (i / bufferLength));
+                const g = 250 * (i / bufferLength);
+                const b = 255;
+
+                canvasCtx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.8)`;
+                canvasCtx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
+
+                x += barWidth;
+            }
+        }
+
+        function renderQuestion() {
+            userHasAnswered = false;
+            const song = songs[activeSongIndex];
+            const qData = song.questions[activeQuestionIndex];
+
+            // Update Header Tracking Texts
+            document.getElementById('quiz-progress').textContent = `Question ${activeQuestionIndex + 1} of 5`;
+            const progressPct = ((activeQuestionIndex + 1) / 5) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPct}%`;
+
+            // Display question text
+            document.getElementById('quiz-question-text').textContent = qData.q;
+
+            // Construct choices buttons
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+            
+            qData.options.forEach((opt, idx) => {
+                optionsContainer.innerHTML += `
+                    <button onclick="submitAnswer(${idx})" id="opt-${idx}" class="w-full text-left p-3.5 rounded-xl border border-slate-800 bg-slate-950/50 hover:bg-slate-900 text-slate-200 text-sm font-semibold transition-all duration-150 flex justify-between items-center group">
+                        <span>${opt}</span>
+                        <div class="w-5 h-5 rounded-full border border-slate-700 group-hover:border-indigo-500 flex items-center justify-center text-[10px] text-transparent transition-all">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                    </button>
+                `;
+            });
+
+            // Reset Feedback Status Elements
+            document.getElementById('feedback-message').textContent = "Listen and test your rhythm and understanding!";
+            document.getElementById('feedback-icon-container').className = "hidden";
+            document.getElementById('next-q-btn').classList.add('hidden');
+        }
+
+        // Validate the user response to the multiple choice quiz
+        function submitAnswer(selectedIndex) {
+            if (userHasAnswered) return;
+            userHasAnswered = true;
+
+            const song = songs[activeSongIndex];
+            const qData = song.questions[activeQuestionIndex];
+            const correctIndex = qData.ans;
+
+            // Colorize options based on correctness
+            qData.options.forEach((_, idx) => {
+                const btn = document.getElementById(`opt-${idx}`);
+                btn.removeAttribute('onclick'); // Stop further clicks
+                
+                if (idx === correctIndex) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-green-500 bg-green-500/10 text-green-300 text-sm font-bold flex justify-between items-center";
+                    btn.querySelector('div').className = "w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-[10px] text-white";
+                } else if (idx === selectedIndex) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-red-500 bg-red-500/10 text-red-300 text-sm font-semibold flex justify-between items-center";
+                    btn.querySelector('div').className = "w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-[10px] text-white";
+                    btn.querySelector('i').className = "fa-solid fa-xmark";
+                } else {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-900 bg-slate-950/20 text-slate-500 text-sm flex justify-between items-center opacity-60";
+                }
+            });
+
+            // Handle scoring outcomes
+            const feedbackIcon = document.getElementById('feedback-icon-container');
+            const feedbackMsg = document.getElementById('feedback-message');
+            feedbackIcon.classList.remove('hidden');
+
+            if (selectedIndex === correctIndex) {
+                activeScore++;
+                feedbackIcon.className = "inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500/20 text-green-400";
+                feedbackIcon.innerHTML = `<i class="fa-solid fa-circle-check text-xs"></i>`;
+                feedbackMsg.innerHTML = `<span class="text-green-400 font-bold">Correct!</span> ${qData.exp}`;
+            } else {
+                feedbackIcon.className = "inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-500/20 text-red-400";
+                feedbackIcon.innerHTML = `<i class="fa-solid fa-circle-xmark text-xs"></i>`;
+                feedbackMsg.innerHTML = `<span class="text-red-400 font-bold">Incorrect!</span> ${qData.exp}`;
+            }
+
+            // Expose the Next Question control button
+            document.getElementById('next-q-btn').classList.remove('hidden');
+        }
+
+        // Advance to next quiz step or complete the active test
+        function nextQuestion() {
+            if (activeQuestionIndex < 4) {
+                activeQuestionIndex++;
+                renderQuestion();
+            } else {
+                showQuizSummary();
+            }
+        }
+
+        // Show score results screen
+        function showQuizSummary() {
+            document.getElementById('quiz-card').classList.add('hidden');
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-score-screen').classList.remove('hidden');
+
+            document.getElementById('quiz-score-text').textContent = `You scored ${activeScore} out of 5 correct!`;
+            
+            // Generate color status based on score
+            const verdict = document.getElementById('confidence-verdict');
+            if (activeScore === 5) {
+                verdict.className = "text-md font-bold mt-1 text-green-400";
+                verdict.textContent = "CONFIDENT • GREEN HIGHLIGHT";
+            } else if (activeScore >= 3) {
+                verdict.className = "text-md font-bold mt-1 text-amber-400";
+                verdict.textContent = "HESITANT • ORANGE HIGHLIGHT";
+            } else {
+                verdict.className = "text-md font-bold mt-1 text-red-400";
+                verdict.textContent = "AWARENESS REQUIRED • RED HIGHLIGHT";
+            }
+        }
+
+        // Reset and play the same song quiz again
+        function restartQuiz() {
+            loadQuizForSong(activeSongIndex);
+        }
+
+        // Automatically cycle to the next song in line
+        function nextQuizSong() {
+            const nextIdx = (activeSongIndex + 1) % songs.length;
+            changeActiveSong(nextIdx);
+        }
+
+        function renderConfidenceList() {
+            const listContainerMap = {
+                unit1: document.getElementById('unit1-items'),
+                unit2: document.getElementById('unit2-items'),
+                unit3: document.getElementById('unit3-items')
+            };
+
+            Object.keys(syllabusData).forEach(unitKey => {
+                const container = listContainerMap[unitKey];
+                container.innerHTML = '';
+
+                syllabusData[unitKey].forEach((item) => {
+                    container.innerHTML += `
+                        <div id="item-card-${item.id}" class="p-3 rounded-xl border border-slate-800 bg-slate-900/40 space-y-2 transition duration-200">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-100">${item.title}</h4>
+                                    <p class="text-[10px] text-slate-400 mt-0.5 leading-relaxed">${item.desc}</p>
+                                </div>
+                            </div>
+                            <!-- Selection Grid to change status color -->
+                            <div class="flex gap-1 pt-1.5 border-t border-slate-800/60 justify-end">
+                                <button onclick="setTopicConfidence('${item.id}', 'green')" class="px-2 py-0.5 rounded text-[9px] font-bold bg-green-500/10 text-green-400 hover:bg-green-500 hover:text-white transition">Green</button>
+                                <button onclick="setTopicConfidence('${item.id}', 'orange')" class="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white transition">Orange</button>
+                                <button onclick="setTopicConfidence('${item.id}', 'red')" class="px-2 py-0.5 rounded text-[9px] font-bold bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition">Red</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // Apply visual highlights to selected elements and cache
+        function setTopicConfidence(id, color) {
+            const card = document.getElementById(`item-card-${id}`);
+            if (!card) return;
+
+            // Reset borders and backgrounds
+            card.className = "p-3 rounded-xl border space-y-2 transition duration-200";
+
+            if (color === 'green') {
+                card.classList.add('border-green-500/60', 'bg-green-950/20');
+            } else if (color === 'orange') {
+                card.classList.add('border-amber-500/60', 'bg-amber-950/20');
+            } else if (color === 'red') {
+                card.classList.add('border-red-500/60', 'bg-red-950/20');
+            }
+
+            // Save highlight selection to localStorage
+            localStorage.setItem(`revision-conf-${id}`, color);
+        }
+
+        // Read saved local states if student previously edited list
+        function setupLocalTrackerStates() {
+            Object.keys(syllabusData).forEach(unitKey => {
+                syllabusData[unitKey].forEach((item) => {
+                    const savedColor = localStorage.getItem(`revision-conf-${item.id}`);
+                    if (savedColor) {
+                        setTopicConfidence(item.id, savedColor);
+                    }
+                });
+            });
+        }
+
+        // Clear tracker state
+        function resetConfidenceTracker() {
+            Object.keys(syllabusData).forEach(unitKey => {
+                syllabusData[unitKey].forEach((item) => {
+                    localStorage.removeItem(`revision-conf-${item.id}`);
+                    const card = document.getElementById(`item-card-${item.id}`);
+                    if (card) {
+                        card.className = "p-3 rounded-xl border border-slate-800 bg-slate-900/40 space-y-2 transition duration-200";
+                    }
+                });
+            });
+        }
+
+        const clefCanvas = document.getElementById('stave-canvas');
+        const clefCtx = clefCanvas.getContext('2d');
+        
+        // Array defining valid treble pitches, line positions, types
+        const notationNotes = [
+            { name: 'C', level: -2, type: 'ledger' }, // Ledger below: Middle C
+            { name: 'D', level: -1, type: 'space_below' }, // Space below staff
+            { name: 'E', level: 0, type: 'line' }, // 1st line (Every)
+            { name: 'F', level: 1, type: 'space' }, // 1st space (F)
+            { name: 'G', level: 2, type: 'line' }, // 2nd line (Good)
+            { name: 'A', level: 3, type: 'space' }, // 2nd space (A)
+            { name: 'B', level: 4, type: 'line' }, // 3rd line (Burger)
+            { name: 'C', level: 5, type: 'space' }, // 3rd space (C)
+            { name: 'D', level: 6, type: 'line' }, // 4th line (Deserves)
+            { name: 'E', level: 7, type: 'space' }, // 4th space (E)
+            { name: 'F', level: 8, type: 'line' }  // 5th line (Fries)
+        ];
+
+        let targetNoteIndex = 2; // Default starting pitch
+        let clefScoreCorrect = 0;
+        let clefScoreTotal = 0;
+        let clefStreak = 0;
+
+        function drawStaveStatic() {
+            const w = clefCanvas.width;
+            const h = clefCanvas.height;
+            clefCtx.clearRect(0, 0, w, h);
+
+            // Draw 5 Staff lines
+            clefCtx.strokeStyle = '#1e293b';
+            clefCtx.lineWidth = 2.5;
+            const lineSpacing = 16;
+            const startY = 60;
+
+            for (let i = 0; i < 5; i++) {
+                const y = startY + i * lineSpacing;
+                clefCtx.beginPath();
+                clefCtx.moveTo(40, y);
+                clefCtx.lineTo(w - 40, y);
+                clefCtx.stroke();
+            }
+
+            // Draw stylized emoji or simplified text symbol Treble Clef
+            clefCtx.fillStyle = '#4f46e5';
+            clefCtx.font = '72px Inter';
+            clefCtx.fillText('𝄞', 50, 114);
+        }
+
+        function initClefGame() {
+            drawStaveStatic();
+            generateNextNote();
+        }
+
+        // Draw a random note on canvas staff
+        function generateNextNote() {
+            targetNoteIndex = Math.floor(Math.random() * notationNotes.length);
+            drawStaveWithNote(notationNotes[targetNoteIndex]);
+        }
+
+        function drawStaveWithNote(note) {
+            drawStaveStatic();
+
+            const startY = 60;
+            const lineSpacing = 16;
+            const targetX = 320;
+
+            // Note Level details: Level 0 is E (1st bottom line). Each step is half of spacing
+            const noteY = (startY + 4 * lineSpacing) - (note.level * (lineSpacing / 2));
+
+            // If note level calls for ledger line underneath staff
+            if (note.type === 'ledger') {
+                clefCtx.strokeStyle = '#1e293b';
+                clefCtx.lineWidth = 2;
+                clefCtx.beginPath();
+                clefCtx.moveTo(targetX - 18, noteY);
+                clefCtx.lineTo(targetX + 18, noteY);
+                clefCtx.stroke();
+            }
+
+            // Draw note oval head
+            clefCtx.fillStyle = '#0f172a'; // Dark solid oval
+            clefCtx.beginPath();
+            clefCtx.ellipse(targetX, noteY, 11, 8, -0.2, 0, 2 * Math.PI);
+            clefCtx.fill();
+
+            // Draw clean vertical stem for note aesthetics
+            clefCtx.strokeStyle = '#0f172a';
+            clefCtx.lineWidth = 2.5;
+            clefCtx.beginPath();
+            // Draw upward or downward stem depending on height
+            if (note.level >= 4) {
+                // Downward stem
+                clefCtx.moveTo(targetX - 10, noteY);
+                clefCtx.lineTo(targetX - 10, noteY + 38);
+            } else {
+                // Upward stem
+                clefCtx.moveTo(targetX + 10, noteY);
+                clefCtx.lineTo(targetX + 10, noteY - 38);
+            }
+            clefCtx.stroke();
+        }
+
+        // Check pitch key response correctness
+        function checkClefAnswer(letter) {
+            const correctNote = notationNotes[targetNoteIndex];
+            const feedbackBox = document.getElementById('stave-feedback');
+            feedbackBox.classList.remove('hidden');
+
+            clefScoreTotal++;
+
+            if (letter === correctNote.name) {
+                clefScoreCorrect++;
+                clefStreak++;
+                
+                feedbackBox.className = "py-2.5 px-4 rounded-xl text-center font-bold text-sm bg-green-500/10 text-green-400 border border-green-500/20";
+                feedbackBox.textContent = `Correct! That note is indeed ${correctNote.name}.`;
+            } else {
+                clefStreak = 0; // Reset streak
+                feedbackBox.className = "py-2.5 px-4 rounded-xl text-center font-bold text-sm bg-red-500/10 text-red-400 border border-red-500/20";
+                feedbackBox.textContent = `Incorrect. That note was ${correctNote.name}. Try another!`;
+            }
+
+            // Update stats panels
+            document.getElementById('clef-score').textContent = `${clefScoreCorrect}/${clefScoreTotal}`;
+            document.getElementById('clef-streak').textContent = clefStreak;
+
+            // Generate next quiz stave note dynamically after timeout
+            setTimeout(() => {
+                feedbackBox.classList.add('hidden');
+                generateNextNote();
+            }, 1200);
+        }
+
+        function calculateDurations() {
+            const valFrom = parseFloat(document.getElementById('duration-from').value);
+            const valTo = parseFloat(document.getElementById('duration-to').value);
+
+            // Calculate how many times valFrom fits inside valTo
+            const result = valTo / valFrom;
+
+            const nameFrom = valFrom === 0.25 ? "Quaver note values" : (valFrom === 1 ? "Crotchet note values" : "Minim note values");
+            const nameTo = valTo === 1 ? "Crotchet" : (valTo === 2 ? "Minim" : "Semibreve");
+
+            const container = document.getElementById('duration-result');
+            container.classList.remove('hidden');
+            container.innerHTML = `There are exactly <strong class="text-white text-lg">${result}</strong> ${nameFrom} inside one <strong class="text-white">${nameTo}</strong>!`;
+        }
+    </script>
+</body>
+</html>
