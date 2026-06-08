@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RévisionPro - Ultimate French Learning App</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            950: '#090514',
+                        },
+                        dark: {
+                            bg: '#030303',
+                            card: '#0a0a0c',
+                            border: '#18181b',
+                            accent: '#1e1b4b'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-violet': '0 0 15px rgba(139, 92, 246, 0.15)',
+                        'neon-blue': '0 0 15px rgba(59, 130, 246, 0.15)',
+                        'neon-green': '0 0 15px rgba(16, 185, 129, 0.2)',
+                        'neon-red': '0 0 15px rgba(239, 68, 68, 0.2)',
+                        'glow': '0 0 30px rgba(99, 102, 241, 0.25)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom styles for Flashcard Flip Animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        .flashcard-inner {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Concentric Ring Rotation for Tab Loading Overlay */
+        @keyframes spin-clockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-counter {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-clockwise 2.2s linear infinite;
+        }
+        .animate-spin-reverse-medium {
+            animation: spin-counter 1.6s linear infinite;
+        }
+        .animate-spin-fast {
+            animation: spin-clockwise 1.1s linear infinite;
+        }
+        
+        /* Hide scrollbar for clean look but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Custom neon border glows adaptive */
+        .glow-border {
+            position: relative;
+        }
+        .glow-border::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(90deg, #002654, #ffffff, #ED2939);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0.15;
+            transition: opacity 0.3s;
+        }
+        .glow-border:hover::after {
+            opacity: 0.4;
+        }
+
+        /* Ambient light effects matching themes */
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+        }
+        .dark .bg-grid-pattern {
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+
+        /* Shimmer effect for buttons */
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+        .shimmer-btn::after {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.15) 20%,
+                rgba(255, 255, 255, 0.35) 60%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 2.5s infinite;
+            content: '';
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-dark-bg text-slate-800 dark:text-zinc-100 antialiased min-h-screen flex flex-col font-sans bg-grid-pattern overflow-x-hidden transition-colors duration-300">
+
+    <!-- TAB PREMIUM LOADER OVERLAY -->
+    <div id="tab-loader" class="fixed inset-0 z-[9998] flex flex-col items-center justify-center bg-slate-50/95 dark:bg-dark-bg/95 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 ease-out">
+        <div class="relative w-28 h-28 flex items-center justify-center">
+            <!-- French Tricolor Inspired Orbit Rings -->
+            <div class="absolute inset-0 border-2 border-transparent border-t-blue-500 rounded-full animate-spin-slow"></div>
+            <div class="absolute inset-2 border-2 border-transparent border-t-slate-350 dark:border-t-zinc-700 rounded-full animate-spin-reverse-medium"></div>
+            <div class="absolute inset-4 border-2 border-transparent border-t-red-500 rounded-full animate-spin-fast"></div>
+            
+            <!-- Glowing Inner Monogram Shield -->
+            <svg class="w-9 h-9 text-indigo-600 dark:text-indigo-500 filter drop-shadow-[0_0_8px_rgba(99,102,241,0.4)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 15L80 25V55C80 72 67 83 50 87C33 83 20 72 20 55V25L50 15Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
+            </svg>
+        </div>
+        <p id="tab-loader-text" class="text-xs tracking-[0.25em] font-heading font-black uppercase text-indigo-600 dark:text-indigo-400 mt-8 animate-pulse text-center px-4">PREPARATION DU MODULE...</p>
+        <span class="text-[9px] font-mono text-slate-400 dark:text-zinc-500 mt-2 tracking-widest uppercase">Académie RévisionPro</span>
+    </div>
+
+    <!-- STARTUP SCREEN -->
+    <div id="startup-screen" class="fixed inset-0 bg-slate-900 dark:bg-black z-[9999] flex flex-col items-center justify-center transition-all duration-1000 ease-out">
+        <!-- Abstract French Tri-Color Light Orb -->
+        <div class="relative w-44 h-44 flex items-center justify-center mb-8">
+            <div class="absolute inset-0 bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+            <!-- Beautiful Logo Shield in Startup Screen -->
+            <svg class="w-24 h-24 relative z-10 filter drop-shadow-[0_0_20px_rgba(99,102,241,0.5)] animate-bounce" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Outer Ring -->
+                <circle cx="50" cy="50" r="45" stroke="url(#logoGrad)" stroke-width="2" stroke-dasharray="8 4" />
+                <!-- Inner Shield outline -->
+                <path d="M50 18L75 28V52C75 68 64 78 50 82C36 78 25 68 25 52V28L50 18Z" stroke="#fff" stroke-width="2" stroke-linejoin="round" />
+                <!-- French Tricolor Minimal Lines inside shield -->
+                <path d="M40 35V65" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" />
+                <path d="M50 32V68" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+                <path d="M60 35V65" stroke="#ef4444" stroke-width="4" stroke-linecap="round" />
+                <defs>
+                    <linearGradient id="logoGrad" x1="0" y1="0" x2="100" y2="100">
+                        <stop offset="0%" stop-color="#4f46e5" />
+                        <stop offset="100%" stop-color="#ec4899" />
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+        
+        <!-- Startup Typography -->
+        <h1 class="text-4xl sm:text-5xl font-heading font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-400 uppercase mb-2">
+            RÉVISION<span class="text-indigo-500 font-normal">PRO</span>
+        </h1>
+        <p class="text-xs tracking-[0.4em] text-indigo-400/80 font-heading uppercase mb-12">L'ART DE LA MÉMORISATION</p>
+        
+        <!-- Sophisticated Progress bar -->
+        <div class="w-64 h-1 bg-zinc-800 dark:bg-zinc-900 rounded-full overflow-hidden relative">
+            <div id="startup-progress" class="h-full bg-gradient-to-r from-blue-500 via-white to-red-500 w-0 transition-all duration-[1500ms] ease-out"></div>
+        </div>
+        <p class="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mt-3 tracking-widest uppercase">Chargement de l'académie...</p>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white/95 dark:bg-black/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-zinc-900/60 transition-all duration-300">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Sleek Interactive Logo -->
+            <div class="flex items-center gap-3.5 group cursor-pointer" onclick="switchTab('study')">
+                <div class="relative w-11 h-11 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 group-hover:border-indigo-500/40 transition-all duration-300 shadow-sm dark:shadow-neon-violet">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <!-- Minimalist SVG Tricolor Shield Icon -->
+                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-500 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 15L80 25V55C80 72 67 83 50 87C33 83 20 72 20 55V25L50 15Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
+                        <path d="M40 38V62" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" />
+                        <path d="M50 34V66" stroke="#ffffff" stroke-width="5" stroke-linecap="round" />
+                        <path d="M60 38V62" stroke="#ef4444" stroke-width="5" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-heading font-extrabold text-slate-900 dark:text-white tracking-tight leading-none">
+                        Révision<span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-pink-500 font-medium">Pro</span>
+                    </h1>
+                    <span class="text-[10px] tracking-widest text-slate-500 dark:text-zinc-500 uppercase font-heading block mt-1">Édition Premium</span>
+                </div>
+            </div>
+
+            <!-- Stats/Theme Toggler -->
+            <div class="flex items-center gap-3">
+                <!-- Theme Switcher -->
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-850 hover:border-indigo-500/40 text-slate-700 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-white transition-all shadow-sm duration-300" title="Toggle Theme (Light / Dark)">
+                    <i id="theme-toggle-icon" class="fa-solid fa-moon text-base"></i>
+                </button>
+
+                <!-- Level Indicator -->
+                <div class="hidden sm:flex text-sm font-medium text-slate-600 dark:text-zinc-400 items-center gap-2 bg-slate-100 dark:bg-zinc-900/80 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-850">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                    </span>
+                    <i class="fa-solid fa-graduation-cap text-indigo-500 dark:text-indigo-400"></i> Niveau: <strong class="text-slate-900 dark:text-white">A1 / A2</strong>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="border-t border-slate-200 dark:border-zinc-900/40 bg-slate-50 dark:bg-zinc-950/60 backdrop-blur transition-colors duration-300">
+            <nav class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1.5 overflow-x-auto no-scrollbar py-3">
+                <button onclick="switchTab('study')" id="tab-study" class="nav-tab active flex items-center gap-2.5 px-5 py-3 rounded-xl font-heading font-semibold text-sm transition-all bg-indigo-600 text-white shadow-md dark:shadow-neon-violet whitespace-nowrap">
+                    <i class="fa-solid fa-book-open"></i> Guide d'Étude
+                </button>
+                <button onclick="switchTab('flashcards')" id="tab-flashcards" class="nav-tab flex items-center gap-2.5 px-5 py-3 rounded-xl font-heading font-semibold text-sm text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-250 dark:hover:bg-zinc-900/50 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-layer-group"></i> Flashcards
+                </button>
+                <button onclick="switchTab('sprint')" id="tab-sprint" class="nav-tab flex items-center gap-2.5 px-5 py-3 rounded-xl font-heading font-semibold text-sm text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-250 dark:hover:bg-zinc-900/50 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-bolt-lightning text-amber-500 dark:text-amber-400"></i> Chrono Recall
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-tab flex items-center gap-2.5 px-5 py-3 rounded-xl font-heading font-semibold text-sm text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-250 dark:hover:bg-zinc-900/50 transition-all whitespace-nowrap">
+                    <i class="fa-solid fa-gamepad text-indigo-500 dark:text-indigo-400"></i> Practice Quiz
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 relative">
+        
+        <!-- Decorative Ambient Light Orbs -->
+        <div class="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-900/5 dark:bg-indigo-900/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-1/4 right-1/10 w-96 h-96 bg-purple-900/5 dark:bg-purple-900/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- VIEW 1: STUDY GUIDE -->
+        <div id="view-study" class="space-y-8 transition-all duration-300">
+            
+            <!-- Contextual Intro Banner for Study Guide -->
+            <div id="intro-study" class="bg-gradient-to-r from-blue-500/10 via-white to-red-500/10 dark:from-blue-900/20 dark:via-zinc-900/30 dark:to-red-950/20 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800/80 relative transition-all duration-300">
+                <button onclick="toggleIntro('intro-study')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-600/10 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 flex-shrink-0 text-xl border border-indigo-200 dark:border-indigo-800">
+                        <i class="fa-solid fa-compass"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-heading font-extrabold text-slate-900 dark:text-white text-base">Briefing : Manuel d'Étude</h4>
+                        <p class="text-sm text-slate-600 dark:text-zinc-400 mt-1 max-w-3xl leading-relaxed">
+                            Welcome to the **Study Guide**. Use this central database to master A1/A2 French essentials. Below you will find interactive conjugation panels, reflexive verbs, near future structures, countries, and common transportation grammar points.
+                        </p>
+                        <div class="flex flex-wrap gap-2.5 mt-3">
+                            <span class="text-[11px] font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-100 dark:border-indigo-900/40">
+                                <i class="fa-solid fa-check mr-1 text-emerald-500"></i> Interactive Verb Tables
+                            </span>
+                            <span class="text-[11px] font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-100 dark:border-indigo-900/40">
+                                <i class="fa-solid fa-check mr-1 text-emerald-500"></i> Capitales & Pays
+                            </span>
+                            <span class="text-[11px] font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-100 dark:border-indigo-900/40">
+                                <i class="fa-solid fa-check mr-1 text-emerald-500"></i> Composition Guidelines
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Study Title -->
+            <div class="text-center max-w-2xl mx-auto mb-10 mt-2">
+                <span class="text-xs font-heading font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-500/10 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-500/20">MANUEL D'ÉTUDIANT</span>
+                <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-slate-900 dark:text-white mt-4 mb-3 tracking-tight">📘 French Study Guide</h2>
+                <p class="text-slate-600 dark:text-zinc-400 text-sm sm:text-base">Master your verbs, conjugations, vocabulary, and daily expressions before challenging your cognitive speed.</p>
+            </div>
+
+            <!-- Dynamically populated study containers -->
+            <div id="study-content" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Injected via JavaScript -->
+            </div>
+            
+            <!-- Static Section for Writing/Forms (Re-themed Premium Adaptive Obsidian/Slate) -->
+            <div class="bg-white dark:bg-zinc-900/40 rounded-2xl border border-slate-200 dark:border-zinc-800/80 overflow-hidden shadow-sm dark:shadow-neon-violet backdrop-blur-sm">
+                <div class="bg-slate-100/80 dark:bg-zinc-900/80 px-6 py-5 flex items-center gap-3.5 border-b border-slate-200 dark:border-zinc-800/60 transition-colors">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center text-lg text-indigo-600 dark:text-indigo-400">
+                        <i class="fa-solid fa-pen-fancy"></i>
+                    </div>
+                    <h3 class="font-heading font-extrabold text-lg text-slate-900 dark:text-white">Production Écrite & Formulaires</h3>
+                </div>
+                <div class="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 dark:bg-zinc-950/60 p-6 rounded-xl border border-slate-200 dark:border-zinc-800/60 transition-colors">
+                        <h4 class="font-heading font-bold text-slate-900 dark:text-white mb-4 text-base border-b border-slate-200 dark:border-zinc-800 pb-3 flex justify-between items-center">
+                            <span>8. Fiche d’inscription</span>
+                            <span class="text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-500/10 px-2 py-0.5 rounded">Formulaire</span>
+                        </h4>
+                        <ul class="space-y-3.5 text-slate-700 dark:text-zinc-300 text-sm">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-id-card text-indigo-500 dark:text-indigo-400 w-5"></i> <span><strong>Nom :</strong> Last Name</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-user text-indigo-500 dark:text-indigo-400 w-5"></i> <span><strong>Prénom :</strong> First Name</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-calendar text-indigo-500 dark:text-indigo-400 w-5"></i> <span><strong>Âge :</strong> Age</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-location-dot text-indigo-500 dark:text-indigo-400 w-5"></i> <span><strong>Adresse :</strong> Address</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-phone text-indigo-500 dark:text-indigo-400 w-5"></i> <span><strong>Téléphone :</strong> Phone</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-envelope text-indigo-500 dark:text-indigo-400 w-5"></i> <span><strong>Email :</strong> Email</span></li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-star text-indigo-500 dark:text-indigo-400 w-5"></i> <span><strong>Préférences :</strong> Preferences</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-indigo-50 to-slate-50 dark:from-indigo-950/40 dark:to-zinc-950/40 p-6 rounded-xl border border-indigo-100 dark:border-indigo-900/30 transition-colors">
+                        <h4 class="font-heading font-bold text-indigo-700 dark:text-indigo-300 mb-4 text-base border-b border-indigo-100 dark:border-indigo-900/40 pb-3 flex justify-between items-center">
+                            <span>9. Production Écrite</span>
+                            <span class="text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-500/25 px-2 py-0.5 rounded">Rédaction</span>
+                        </h4>
+                        <p class="text-slate-800 dark:text-zinc-200 text-sm font-semibold mb-3"><i class="fa-solid fa-pen-clip mr-2 text-indigo-500 dark:text-indigo-400"></i> Sujet: "Mon collège" (My school)</p>
+                        <p class="text-slate-600 dark:text-zinc-400 text-xs leading-relaxed mb-4">Structure your paragraph using the guidelines below to maximize assessment marks:</p>
+                        <ul class="space-y-2.5 text-xs text-slate-700 dark:text-zinc-300 list-none pl-1">
+                            <li class="flex items-start gap-2"><i class="fa-regular fa-square-check text-indigo-500 dark:text-indigo-400 mt-0.5"></i> <span>Introduce your school's name and location.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-regular fa-square-check text-indigo-500 dark:text-indigo-400 mt-0.5"></i> <span>Describe size (<span class="italic text-indigo-600 dark:text-indigo-300 font-semibold">grand/petit</span>) & amenities.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-regular fa-square-check text-indigo-500 dark:text-indigo-400 mt-0.5"></i> <span>Mention favorite subjects.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-regular fa-square-check text-indigo-500 dark:text-indigo-400 mt-0.5"></i> <span>Detail transport (e.g., <span class="italic text-indigo-600 dark:text-indigo-300 font-semibold">Je vais à l'école en bus</span>).</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: FLASHCARDS -->
+        <div id="view-flashcards" class="hidden space-y-8">
+            
+            <!-- Contextual Intro Banner for Flashcards -->
+            <div id="intro-flashcards" class="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 dark:from-indigo-950/20 dark:to-purple-950/20 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800/80 relative transition-all duration-300">
+                <button onclick="toggleIntro('intro-flashcards')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-600/10 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 flex-shrink-0 text-xl border border-purple-200 dark:border-purple-900/40">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-heading font-extrabold text-slate-900 dark:text-white text-base">Briefing : Active Recall Flashcards</h4>
+                        <p class="text-sm text-slate-600 dark:text-zinc-400 mt-1 max-w-3xl leading-relaxed">
+                            Improve visual recognition of irregular French phrases. Click the card to flip between English and French. Select specific categories below to scope your revision.
+                        </p>
+                        <div class="flex flex-wrap gap-2.5 mt-3">
+                            <span class="text-[11px] font-medium bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 px-2.5 py-1 rounded-md border border-purple-100 dark:border-purple-900/40">
+                                <i class="fa-solid fa-circle-info mr-1 text-indigo-500"></i> Tap anywhere to Flip
+                            </span>
+                            <span class="text-[11px] font-medium bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 px-2.5 py-1 rounded-md border border-purple-100 dark:border-purple-900/40">
+                                <i class="fa-solid fa-filter mr-1 text-indigo-500"></i> Dropdown Filter
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center max-w-2xl mx-auto mb-10 mt-2">
+                <span class="text-xs font-heading font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-500/10 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-500/20">MEMORISATION ACTIVE</span>
+                <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-slate-900 dark:text-white mt-4 mb-3 tracking-tight">🗂️ Interactive Flashcards</h2>
+                <p class="text-slate-600 dark:text-zinc-400 text-sm sm:text-base">Tap the obsidian card to flip. Test your subconscious vocabulary strength.</p>
+            </div>
+
+            <!-- Controls (Sleek Theme-matching Selectors) -->
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-10">
+                <div class="relative w-full sm:w-72">
+                    <select id="flashcard-category" class="w-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-850 dark:text-zinc-300 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-3.5 shadow-sm outline-none cursor-pointer appearance-none" onchange="loadFlashcards()">
+                        <option value="all">📁 All Categories</option>
+                        <option value="verbs">📝 Verbs & Conjugations</option>
+                        <option value="vocab">🌍 Vocabulary (Transport & Countries)</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-500">
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </div>
+                </div>
+                <div class="text-xs font-heading font-semibold text-slate-600 dark:text-zinc-400 bg-white dark:bg-zinc-900 px-5 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm">
+                    CARD <span id="fc-current" class="text-slate-900 dark:text-white font-extrabold text-sm">1</span> OF <span id="fc-total" class="text-indigo-600 dark:text-indigo-400 text-sm font-extrabold">10</span>
+                </div>
+            </div>
+
+            <!-- Card Container (Beautiful glowing state) -->
+            <div class="max-w-md mx-auto perspective-1000 cursor-pointer h-72 group" onclick="flipCard()">
+                <div id="flashcard-inner" class="relative w-full h-full transform-style-3d flashcard-inner shadow-md dark:shadow-glow rounded-2xl border border-slate-200 dark:border-zinc-800/80">
+                    
+                    <!-- Front (English / Prompt) -->
+                    <div class="absolute w-full h-full backface-hidden bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl flex flex-col items-center justify-center p-8 text-center transition-all duration-300 group-hover:border-indigo-500/40">
+                        <div class="absolute top-0 inset-x-0 h-1.5 rounded-t-2xl bg-gradient-to-r from-blue-500 via-white to-red-500 opacity-60"></div>
+                        <span class="text-xs font-heading font-bold tracking-[0.2em] text-indigo-600 dark:text-indigo-400 uppercase mb-4" id="fc-category-front">CATEGORY</span>
+                        <h3 class="text-2xl sm:text-3xl font-heading font-black text-slate-900 dark:text-white" id="fc-front-text">Front Text</h3>
+                        <p class="text-slate-500 dark:text-zinc-500 text-xs mt-8 absolute bottom-6 flex items-center gap-1.5"><i class="fa-solid fa-repeat text-indigo-600 dark:text-indigo-400"></i> Tap to reveal translation</p>
+                    </div>
+                    
+                    <!-- Back (French / Answer) -->
+                    <div class="absolute w-full h-full backface-hidden bg-gradient-to-b from-indigo-100 to-slate-100 dark:from-indigo-950 dark:to-zinc-950 text-slate-900 dark:text-white rounded-2xl flex flex-col items-center justify-center p-8 text-center rotate-y-180 border border-indigo-200 dark:border-indigo-500/40">
+                        <span class="text-xs font-heading font-bold tracking-[0.2em] text-indigo-700 dark:text-indigo-300 uppercase mb-4">TRADUCTION EN FRANÇAIS</span>
+                        <div class="text-5xl mb-4 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" id="fc-emoji"></div>
+                        <h3 class="text-3xl font-heading font-extrabold text-indigo-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:to-zinc-200" id="fc-back-text">Back Text</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons (Premium glass style) -->
+            <div class="flex justify-center gap-4 mt-12">
+                <button onclick="prevCard()" class="bg-white dark:bg-zinc-900 hover:bg-slate-100 dark:hover:bg-zinc-850 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm font-heading font-bold py-3.5 px-7 rounded-xl transition-all active:scale-95 flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left text-xs"></i> Précédent
+                </button>
+                <button onclick="nextCard()" class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white shadow-md dark:shadow-neon-violet font-heading font-bold py-3.5 px-7 rounded-xl transition-all active:scale-95 flex items-center gap-2 relative overflow-hidden shimmer-btn">
+                    Suivant <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 3: CHRONO RECALL (VERB SPRINT CHALLENGE) -->
+        <div id="view-sprint" class="hidden max-w-2xl mx-auto space-y-8">
+            
+            <!-- Contextual Intro Banner for Chrono Recall -->
+            <div id="intro-sprint" class="bg-gradient-to-r from-amber-500/10 to-orange-500/10 dark:from-amber-950/20 dark:to-orange-950/20 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800/80 relative transition-all duration-300">
+                <button onclick="toggleIntro('intro-sprint')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-600/10 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 flex-shrink-0 text-xl border border-amber-200 dark:border-amber-900/40">
+                        <i class="fa-solid fa-bolt-lightning"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-heading font-extrabold text-slate-900 dark:text-white text-base">Briefing : Chrono Recall Challenge</h4>
+                        <p class="text-sm text-slate-600 dark:text-zinc-400 mt-1 max-w-3xl leading-relaxed">
+                            Test your quick semantic linking. Study the displayed French verb conjugation for **60 seconds**, then complete the progressive blind challenge. Perfect score requires 100% active retention.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-2 mt-3.5 text-xs text-slate-700 dark:text-zinc-350 font-semibold">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-hourglass-start text-amber-500"></i> Phase 1: Study verb table</span>
+                            <span class="hidden sm:inline text-slate-400">•</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-eye-slash text-amber-500"></i> Phase 2: English text hidden</span>
+                            <span class="hidden sm:inline text-slate-400">•</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-mask text-amber-500"></i> Phase 3: French conjugations hidden</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center max-w-2xl mx-auto mb-8 mt-2">
+                <span class="text-xs font-heading font-bold uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-500/10 px-3.5 py-1.5 rounded-full border border-amber-200 dark:border-amber-500/20">DOUBLE MÉMORISATION</span>
+                <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-slate-900 dark:text-white mt-4 mb-2 tracking-tight">⚡ Chrono Recall Challenge</h2>
+                <p class="text-slate-600 dark:text-zinc-400 text-sm">Study any verb intensely for 60 seconds, then match conjugations with dual-directional screen cover testing!</p>
+            </div>
+
+            <!-- STEP 1: Select Verb Menu -->
+            <div id="sprint-setup" class="bg-white dark:bg-zinc-900/40 rounded-2xl shadow-sm dark:shadow-glow border border-slate-200 dark:border-zinc-800/80 p-8 sm:p-10 text-center backdrop-blur-sm transition-all">
+                <div class="w-16 h-16 bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                </div>
+                <h3 class="text-2xl font-heading font-extrabold text-slate-900 dark:text-white mb-2">Configure Your Recall</h3>
+                <p class="text-slate-600 dark:text-zinc-400 mb-8 text-sm">Select your objective. Master spelling & comprehension under clock-based pressure.</p>
+                <div class="max-w-xs mx-auto mb-8 relative">
+                    <select id="sprint-verb-select" class="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-850 text-slate-800 dark:text-zinc-300 text-base rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 block p-3.5 shadow-sm outline-none cursor-pointer appearance-none">
+                        <!-- Populated dynamically via JS -->
+                    </select>
+                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-500">
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </div>
+                </div>
+                <button onclick="startSprintMemorize()" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-heading font-bold py-4 px-10 rounded-xl shadow-md hover:shadow-orange-500/20 transition-all active:scale-95 text-base relative overflow-hidden shimmer-btn">
+                    Commencer l'Étude <i class="fa-solid fa-hourglass-start ml-2"></i>
+                </button>
+            </div>
+
+            <!-- STEP 2: Memorization Area (Visual Upgrade) -->
+            <div id="sprint-memorize-panel" class="hidden bg-white dark:bg-zinc-900/40 rounded-2xl shadow-sm dark:shadow-glow border border-slate-200 dark:border-zinc-800/80 p-6 sm:p-8 backdrop-blur-sm transition-all">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 pb-5 border-b border-slate-200 dark:border-zinc-800/60">
+                    <div>
+                        <span class="text-[10px] font-heading font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-500/10 px-2.5 py-1 rounded-md">PHASE 1: APPRENTISSAGE</span>
+                        <h4 id="sprint-verb-title" class="text-2xl font-heading font-black text-slate-900 dark:text-white mt-2">Verb Name</h4>
+                    </div>
+                    <div class="flex items-center gap-3 bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-5 py-2.5 rounded-xl border border-red-200 dark:border-red-500/20 font-mono font-bold text-xl shadow-sm">
+                        <i class="fa-regular fa-clock animate-pulse text-sm"></i>
+                        <span id="sprint-timer">01:00</span>
+                    </div>
+                </div>
+
+                <div class="mb-8 bg-slate-50 dark:bg-zinc-950/80 p-5 rounded-2xl border border-slate-250 dark:border-zinc-850">
+                    <div class="grid grid-cols-2 font-heading font-bold text-slate-500 dark:text-zinc-500 border-b border-slate-200 dark:border-zinc-850 pb-3 mb-4 px-2 text-xs uppercase tracking-wider">
+                        <span>Conjugaison (Français)</span>
+                        <span>Traduction (English)</span>
+                    </div>
+                    <div id="sprint-table-memorize" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button onclick="startSprintEnglishTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black font-heading font-bold py-4 px-8 rounded-xl shadow-md transition-all active:scale-95">
+                        J'ai mémorisé, Masquer l'anglais! <i class="fa-solid fa-eye-slash ml-2 text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3 & 4: Active Testing Board -->
+            <div id="sprint-test-panel" class="hidden bg-white dark:bg-zinc-900/40 rounded-2xl shadow-sm dark:shadow-glow border border-slate-200 dark:border-zinc-800/80 p-6 sm:p-8 backdrop-blur-sm transition-all">
+                <div class="flex justify-between items-center mb-6 pb-5 border-b border-slate-200 dark:border-zinc-800/60">
+                    <div>
+                        <span id="sprint-test-phase-badge" class="text-[10px] font-heading font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md">PHASE 2: RECUPERATION</span>
+                        <h4 id="sprint-test-verb-title" class="text-2xl font-heading font-black text-slate-900 dark:text-white mt-2">Verb Name</h4>
+                    </div>
+                    <span class="bg-slate-100 dark:bg-zinc-950 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-xl text-xs font-heading font-bold border border-slate-200 dark:border-zinc-850">
+                        PROGRESS: <span id="sprint-test-step" class="text-slate-900 dark:text-white">1</span>/12
+                    </span>
+                </div>
+
+                <!-- Dynamic Live Table -->
+                <div class="mb-8 bg-slate-50 dark:bg-zinc-950/80 p-5 rounded-2xl border border-slate-200 dark:border-zinc-850">
+                    <div class="grid grid-cols-2 font-heading font-bold text-slate-500 dark:text-zinc-500 border-b border-slate-200 dark:border-zinc-850 pb-3 mb-4 px-2 text-xs uppercase tracking-wider">
+                        <span>Français</span>
+                        <span>English</span>
+                    </div>
+                    <div id="sprint-table-testing" class="space-y-3">
+                        <!-- Populated by JS with masked values -->
+                    </div>
+                </div>
+
+                <!-- Target Prompt Card -->
+                <div class="bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-850 rounded-2xl p-6 text-center mb-6 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-indigo-500 to-blue-500"></div>
+                    <span class="text-xs font-heading font-bold text-slate-500 dark:text-zinc-500 uppercase tracking-widest block mb-2.5" id="sprint-prompt-label">Select matching English for:</span>
+                    <h5 id="sprint-prompt-target" class="text-2xl sm:text-3xl font-black font-heading text-slate-900 dark:text-white">Je parle</h5>
+                </div>
+
+                <!-- Options -->
+                <div id="sprint-test-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+                    <!-- Option buttons -->
+                </div>
+
+                <div id="sprint-test-feedback" class="hidden rounded-xl p-4.5 text-center font-bold text-sm mb-6"></div>
+                
+                <button id="sprint-test-next-btn" onclick="nextSprintStep()" class="hidden w-full bg-indigo-600 hover:bg-indigo-700 text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black font-heading font-bold py-4 rounded-xl transition-all shadow-md">
+                    Continuer <i class="fa-solid fa-chevron-right ml-2 text-xs"></i>
+                </button>
+            </div>
+
+            <!-- STEP 5: Sprint Results -->
+            <div id="sprint-results-panel" class="hidden bg-white dark:bg-zinc-900/40 rounded-2xl shadow-sm dark:shadow-glow border border-slate-200 dark:border-zinc-800/80 p-8 sm:p-10 text-center backdrop-blur-sm transition-all">
+                <div id="sprint-result-icon" class="text-6xl mb-6 filter drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">🏆</div>
+                <h3 class="text-3xl font-heading font-extrabold text-slate-900 dark:text-white mb-2">Entraînement Terminé !</h3>
+                <p class="text-slate-600 dark:text-zinc-400 text-base mb-8">Incredible job! You pushed through the limits of mental retrieval.</p>
+                
+                <div class="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-850 rounded-2xl p-6 max-w-sm mx-auto mb-8 grid grid-cols-2 gap-4 divide-x divide-slate-200 dark:divide-zinc-850 shadow-inner">
+                    <div>
+                        <span class="text-[10px] uppercase font-heading font-bold text-slate-500 dark:text-zinc-500 block mb-1">Précision</span>
+                        <span id="sprint-result-accuracy" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">100%</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase font-heading font-bold text-slate-500 dark:text-zinc-500 block mb-1">Score Total</span>
+                        <span id="sprint-result-score" class="text-2xl sm:text-3xl font-black text-indigo-600 dark:text-indigo-400">12 / 12</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center gap-4">
+                    <button onclick="switchTab('study')" class="bg-slate-100 hover:bg-slate-200 dark:bg-zinc-950 dark:hover:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-zinc-850 font-heading font-bold py-3.5 px-6 rounded-xl transition-all">
+                        Réviser à Nouveau
+                    </button>
+                    <button onclick="resetSprint()" class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-heading font-bold py-3.5 px-6 rounded-xl shadow-md transition-all">
+                        Nouveau Sprint
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 4: QUIZ -->
+        <div id="view-quiz" class="hidden max-w-2xl mx-auto space-y-8">
+            
+            <!-- Contextual Intro Banner for Practice Quiz -->
+            <div id="intro-quiz" class="bg-gradient-to-r from-indigo-500/10 via-pink-500/10 to-red-500/10 dark:from-indigo-950/20 dark:via-pink-950/10 dark:to-red-950/20 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800/80 relative transition-all duration-300">
+                <button onclick="toggleIntro('intro-quiz')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-600/10 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 flex-shrink-0 text-xl border border-indigo-200 dark:border-indigo-900/40">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-heading font-extrabold text-slate-900 dark:text-white text-base">Briefing : Dynamic Practice Quiz</h4>
+                        <p class="text-sm text-slate-600 dark:text-zinc-400 mt-1 max-w-3xl leading-relaxed">
+                            Generate adaptive multiple-choice assessments. The algorithm will sample 10 unique phrases across transport, country capital tables, reflexive grammar, and direct conjugations.
+                        </p>
+                        <div class="flex flex-wrap gap-2.5 mt-3">
+                            <span class="text-[11px] font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-100 dark:border-indigo-900/40">
+                                <i class="fa-solid fa-graduation-cap mr-1 text-indigo-500"></i> 10 Questions per Run
+                            </span>
+                            <span class="text-[11px] font-medium bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-100 dark:border-indigo-900/40">
+                                <i class="fa-solid fa-rotate-left mr-1 text-indigo-500"></i> Auto-Shuffled Distractors
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center max-w-2xl mx-auto mb-8 mt-2">
+                <span class="text-xs font-heading font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-500/10 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-500/20">EVALUATION FINALE</span>
+                <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-slate-900 dark:text-white mt-4 mb-2 tracking-tight">🏆 Knowledge Practice Quiz</h2>
+                <p class="text-slate-600 dark:text-zinc-400 text-sm">Test your core retention. We will compile 10 random translation questions spanning everything you studied.</p>
+            </div>
+            
+            <!-- Quiz Starter Portal -->
+            <div id="quiz-intro" class="bg-white dark:bg-zinc-900/40 rounded-2xl shadow-sm dark:shadow-glow border border-slate-200 dark:border-zinc-800/80 p-8 sm:p-10 text-center backdrop-blur-sm transition-all">
+                <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900 dark:text-white mb-3">Knowledge Check</h2>
+                <p class="text-slate-600 dark:text-zinc-400 mb-8 text-base leading-relaxed">Test your core retention. We will compile 10 random translation questions spanning everything you studied.</p>
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-heading font-bold py-4 px-10 rounded-xl shadow-md shadow-indigo-500/20 transition-all active:scale-95 text-base relative overflow-hidden shimmer-btn">
+                    Commencer l'Évaluation <i class="fa-solid fa-gamepad ml-2"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Running Panel -->
+            <div id="quiz-container" class="hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-xs font-heading font-bold text-slate-500 dark:text-zinc-500 uppercase tracking-widest">Question <span id="quiz-current-num" class="text-slate-900 dark:text-white text-sm font-extrabold">1</span> / 10</span>
+                    <span class="bg-white dark:bg-zinc-900 text-amber-600 dark:text-amber-400 px-4.5 py-2 rounded-xl text-xs font-heading font-bold flex items-center gap-2 border border-slate-200 dark:border-zinc-800 shadow-sm">
+                        <i class="fa-solid fa-star"></i> SCORE: <span id="quiz-score" class="text-slate-900 dark:text-white font-extrabold">0</span>
+                    </span>
+                </div>
+                
+                <div class="bg-white dark:bg-zinc-900/40 rounded-2xl shadow-sm dark:shadow-glow border border-slate-200 dark:border-zinc-800/80 p-6 sm:p-10 mb-6 relative overflow-hidden backdrop-blur-sm transition-all">
+                    <!-- Progress Bar Header Line -->
+                    <div class="absolute top-0 left-0 w-full h-1 bg-slate-200 dark:bg-zinc-950">
+                        <div id="quiz-progress" class="h-full bg-indigo-500 transition-all duration-300 shadow-[0_0_8px_#6366f1]" style="width: 10%;"></div>
+                    </div>
+                    
+                    <h3 class="text-xl sm:text-2xl font-heading font-extrabold text-slate-900 dark:text-white text-center mb-10 mt-4 leading-relaxed" id="quiz-question">Question text here?</h3>
+                    
+                    <div class="space-y-3.5" id="quiz-options">
+                        <!-- Options injected here via JS -->
+                    </div>
+                </div>
+                
+                <div id="quiz-feedback" class="hidden rounded-xl p-4.5 text-center font-bold text-sm mb-6"></div>
+                
+                <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden w-full bg-indigo-600 hover:bg-indigo-700 text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black font-heading font-bold py-4.5 rounded-xl transition-all shadow-md">
+                    Continuer <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Results -->
+            <div id="quiz-results" class="hidden bg-white dark:bg-zinc-900/40 rounded-2xl shadow-sm dark:shadow-glow border border-slate-200 dark:border-zinc-800/80 p-8 sm:p-10 text-center backdrop-blur-sm transition-all">
+                <div id="result-icon" class="text-6xl mb-6 filter drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">🏆</div>
+                <h2 class="text-3xl font-heading font-extrabold text-slate-900 dark:text-white mb-2">Examen Réussi !</h2>
+                <p class="text-slate-600 dark:text-zinc-400 mb-8 text-base">Félicitations ! You calculated and processed your test material flawlessly.</p>
+                
+                <div class="bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-850 rounded-2xl py-6 px-10 max-w-xs mx-auto mb-8 shadow-inner">
+                    <span class="text-[10px] uppercase font-heading font-bold text-slate-500 dark:text-zinc-500 block mb-1">Note Finale</span>
+                    <span id="final-score" class="font-heading font-black text-indigo-600 dark:text-indigo-400 text-4xl">0 / 10</span>
+                </div>
+                
+                <div class="flex justify-center gap-4">
+                    <button onclick="switchTab('study')" class="bg-slate-100 hover:bg-slate-200 dark:bg-zinc-950 dark:hover:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-zinc-850 font-heading font-bold py-3.5 px-6 rounded-xl transition-all">
+                        Vers le Guide
+                    </button>
+                    <button onclick="startQuiz()" class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-heading font-bold py-3.5 px-6 rounded-xl shadow-md transition-all">
+                        Retenter le Test
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- DATA SOURCE ---
+        const studyData = [
+            {
+                id: "group1",
+                category: "verbs",
+                title: "1. Verbes du 1er groupe (-ER)",
+                icon: "fa-comments",
+                color: "text-blue-600 dark:text-blue-400",
+                bgColor: "bg-blue-50 dark:bg-blue-500/10",
+                borderColor: "border-blue-200 dark:border-blue-500/20",
+                desc: "👉 Verbe parler (to speak). Rule: remove -er and add endings.",
+                items: [
+                    { fr: "Je parle", en: "I speak" },
+                    { fr: "Tu parles", en: "You speak" },
+                    { fr: "Il/Elle parle", en: "He/She speaks" },
+                    { fr: "Nous parlons", en: "We speak" },
+                    { fr: "Vous parlez", en: "You speak (formal/plural)" },
+                    { fr: "Ils/Elles parlent", en: "They speak" }
+                ]
+            },
+            {
+                id: "irregular_partir",
+                category: "verbs",
+                title: "2. Verbes irréguliers : Partir",
+                icon: "fa-person-walking",
+                color: "text-amber-600 dark:text-amber-400",
+                bgColor: "bg-amber-50 dark:bg-amber-500/10",
+                borderColor: "border-amber-200 dark:border-amber-500/20",
+                desc: "👉 Verbe partir (to leave)",
+                items: [
+                    { fr: "Je pars", en: "I leave" },
+                    { fr: "Tu pars", en: "You leave" },
+                    { fr: "Il/Elle part", en: "He/She leaves" },
+                    { fr: "Nous partons", en: "We leave" },
+                    { fr: "Vous partez", en: "You leave" },
+                    { fr: "Ils/Elles partent", en: "They leave" }
+                ]
+            },
+            {
+                id: "irregular_aller",
+                category: "verbs",
+                title: "3. Verbes irréguliers : Aller",
+                icon: "fa-compass",
+                color: "text-emerald-600 dark:text-emerald-400",
+                bgColor: "bg-emerald-50 dark:bg-emerald-500/10",
+                borderColor: "border-emerald-200 dark:border-emerald-500/20",
+                desc: "👉 Verbe aller (to go)",
+                items: [
+                    { fr: "Je vais", en: "I go" },
+                    { fr: "Tu vas", en: "You go" },
+                    { fr: "Il/Elle va", en: "He/She goes" },
+                    { fr: "Nous allons", en: "We go" },
+                    { fr: "Vous allez", en: "You go" },
+                    { fr: "Ils/Elles vont", en: "They go" }
+                ]
+            },
+            {
+                id: "etre",
+                category: "verbs",
+                title: "4. Verbes importants : Être",
+                icon: "fa-circle-dot",
+                color: "text-purple-600 dark:text-purple-400",
+                bgColor: "bg-purple-50 dark:bg-purple-500/10",
+                borderColor: "border-purple-200 dark:border-purple-500/20",
+                desc: "Être (to be)",
+                items: [
+                    { fr: "Je suis", en: "I am" },
+                    { fr: "Tu es", en: "You are" },
+                    { fr: "Il/Elle est", en: "He/She is" },
+                    { fr: "Nous sommes", en: "We are" },
+                    { fr: "Vous êtes", en: "You are" },
+                    { fr: "Ils/Elles sont", en: "They are" }
+                ]
+            },
+            {
+                id: "avoir",
+                category: "verbs",
+                title: "5. Verbes importants : Avoir",
+                icon: "fa-hand-holding-heart",
+                color: "text-rose-600 dark:text-rose-400",
+                bgColor: "bg-rose-50 dark:bg-rose-500/10",
+                borderColor: "border-rose-200 dark:border-rose-500/20",
+                desc: "Avoir (to have)",
+                items: [
+                    { fr: "J'ai", en: "I have" },
+                    { fr: "Tu as", en: "You have" },
+                    { fr: "Il/Elle a", en: "He/She has" },
+                    { fr: "Nous avons", en: "We have" },
+                    { fr: "Vous avez", en: "You have" },
+                    { fr: "Ils/Elles ont", en: "They have" }
+                ]
+            },
+            {
+                id: "reflexive",
+                category: "verbs",
+                title: "6. Verbes pronominaux",
+                icon: "fa-shower",
+                color: "text-cyan-600 dark:text-cyan-400",
+                bgColor: "bg-cyan-50 dark:bg-cyan-500/10",
+                borderColor: "border-cyan-200 dark:border-cyan-500/20",
+                desc: "Reflexive verbs. Example: se laver (to wash oneself)",
+                items: [
+                    { fr: "Je me lave", en: "I wash myself" },
+                    { fr: "Tu te laves", en: "You wash yourself" },
+                    { fr: "Il/Elle se lave", en: "He/She washes" },
+                    { fr: "Nous nous lavons", en: "We wash ourselves" },
+                    { fr: "Vous vous lavez", en: "You wash yourselves" },
+                    { fr: "Ils/Elles se lavent", en: "They wash themselves" }
+                ]
+            },
+            {
+                id: "futur_proche",
+                category: "verbs",
+                title: "7. Futur proche",
+                icon: "fa-clock-rotate-left",
+                color: "text-indigo-600 dark:text-indigo-400",
+                bgColor: "bg-indigo-50 dark:bg-indigo-500/10",
+                borderColor: "border-indigo-200 dark:border-indigo-500/20",
+                desc: "Near future. Structure: aller (present tense) + infinitive.",
+                items: [
+                    { fr: "Je vais manger", en: "I am going to eat" },
+                    { fr: "Tu vas manger", en: "You are going to eat" },
+                    { fr: "Il va manger", en: "He is going to eat" },
+                    { fr: "Elle va manger", en: "She is going to eat" },
+                    { fr: "Nous allons manger", en: "We are going to eat" },
+                    { fr: "Vous allez manger", en: "You are going to eat" },
+                    { fr: "Ils/Elles vont manger", en: "They are going to eat" }
+                ]
+            },
+            {
+                id: "countries",
+                category: "vocab",
+                title: "8. Capitales et pays",
+                icon: "fa-earth-europe",
+                color: "text-teal-600 dark:text-teal-400",
+                bgColor: "bg-teal-50 dark:bg-teal-500/10",
+                borderColor: "border-teal-200 dark:border-teal-500/20",
+                desc: "Countries and their capitals. (Ex: Paris est la capitale de la France).",
+                items: [
+                    { fr: "La France (Paris)", en: "France (Paris)", emoji: "🇫🇷" },
+                    { fr: "L'Italie (Rome)", en: "Italy (Rome)", emoji: "🇮🇹" },
+                    { fr: "L'Espagne (Madrid)", en: "Spain (Madrid)", emoji: "🇪🇸" },
+                    { fr: "L'Angleterre (Londres)", en: "England (London)", emoji: "🇬🇧" },
+                    { fr: "L'Allemagne (Berlin)", en: "Germany (Berlin)", emoji: "🇩🇪" },
+                    { fr: "Le Portugal (Lisbonne)", en: "Portugal (Lisbon)", emoji: "🇵🇹" },
+                    { fr: "L'Autriche (Vienne)", en: "Austria (Vienna)", emoji: "🇦🇹" },
+                    { fr: "La Belgique (Bruxelles)", en: "Belgium (Brussels)", emoji: "🇧🇪" },
+                    { fr: "La Grèce (Athènes)", en: "Greece (Athens)", emoji: "🇬🇷" },
+                    { fr: "La Suède (Stockholm)", en: "Sweden (Stockholm)", emoji: "🇸🇪" },
+                    { fr: "La Norvège (Oslo)", en: "Norway (Oslo)", emoji: "🇳🇴" },
+                    { fr: "La Finlande (Helsinki)", en: "Finland (Helsinki)", emoji: "🇫🇮" },
+                    { fr: "Chypre (Nicosie)", en: "Cyprus (Nicosia)", emoji: "🇨🇾" }
+                ]
+            },
+            {
+                id: "transport",
+                category: "vocab",
+                title: "9. Modes de transport",
+                icon: "fa-bus-simple",
+                color: "text-orange-600 dark:text-orange-400",
+                bgColor: "bg-orange-50 dark:bg-orange-500/10",
+                borderColor: "border-orange-200 dark:border-orange-500/20",
+                desc: "How do you travel? (Ex: Je vais à l'école en bus).",
+                items: [
+                    { fr: "À pied", en: "On foot", emoji: "🚶" },
+                    { fr: "En bus", en: "By bus", emoji: "🚌" },
+                    { fr: "En voiture", en: "By car", emoji: "🚗" },
+                    { fr: "En train", en: "By train", emoji: "🚆" },
+                    { fr: "À vélo", en: "By bike", emoji: "🚴" },
+                    { fr: "En avion", en: "By plane", emoji: "✈️" },
+                    { fr: "En métro", en: "By subway", emoji: "🚇" }
+                ]
+            }
+        ];
+
+        // --- APP STATE ---
+        let flatCards = [];
+        let currentCardIndex = 0;
+        let isFlipped = false;
+
+        let quizQuestions = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        // --- CHRONO RECALL STATE ---
+        let sprintVerb = null;
+        let sprintTimerInterval = null;
+        let sprintSecondsLeft = 60;
+        
+        let sprintPhase = 'memorize'; // 'memorize', 'test_english', 'test_french'
+        let sprintStepIndex = 0; 
+        let sprintCorrectAnswers = 0;
+        let sprintTotalQuestions = 0;
+        
+        let sprintCurrentItems = [];
+        let sprintTestingOrder = [];
+
+        // --- STREAMING_CHUNK: Managing Themes and Interactions... ---
+        // --- THEME STATE ENGINE ---
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const htmlElement = document.documentElement;
+            
+            if (savedTheme === 'light') {
+                htmlElement.classList.remove('dark');
+                updateThemeToggleIcon(false);
+            } else {
+                // Default to dark
+                htmlElement.classList.add('dark');
+                updateThemeToggleIcon(true);
+            }
+        }
+
+        function toggleTheme() {
+            const htmlElement = document.documentElement;
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                updateThemeToggleIcon(false);
+            } else {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeToggleIcon(true);
+            }
+        }
+
+        function updateThemeToggleIcon(isDark) {
+            const icon = document.getElementById('theme-toggle-icon');
+            if (isDark) {
+                icon.className = "fa-solid fa-sun text-amber-400 text-lg transition-transform rotate-0 scale-100 hover:rotate-45 duration-350";
+            } else {
+                icon.className = "fa-solid fa-moon text-indigo-600 text-lg transition-transform rotate-0 scale-100 hover:-rotate-12 duration-350";
+            }
+        }
+
+        // --- INTERACTIVE BRIEFING TABS LOGIC ---
+        function toggleIntro(introId) {
+            const el = document.getElementById(introId);
+            if (el.classList.contains('opacity-0') || el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                setTimeout(() => {
+                    el.classList.remove('opacity-0', 'scale-95', 'h-0', 'p-0');
+                }, 10);
+            } else {
+                el.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    el.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            initTheme();
+            
+            // Run Startup Animation Sequence
+            const bar = document.getElementById('startup-progress');
+            const screen = document.getElementById('startup-screen');
+            
+            // Progress Bar Animation
+            setTimeout(() => {
+                bar.style.width = '100%';
+            }, 100);
+
+            // Fade Out Intro Screen
+            setTimeout(() => {
+                screen.classList.add('opacity-0', 'pointer-events-none');
+                renderStudyGuide();
+                extractFlashcards();
+                loadFlashcards(); 
+                initSprintSelector();
+            }, 2000);
+        };
+
+        // --- STREAMING_CHUNK: Injecting Premium Module Transition Loader... ---
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tabName) {
+            const tabNamesMap = {
+                'study': "Guide d'Étude",
+                'flashcards': "Flashcards Actives",
+                'sprint': "Chrono Recall",
+                'quiz': "Practice Quiz"
+            };
+            
+            const loader = document.getElementById('tab-loader');
+            const loaderText = document.getElementById('tab-loader-text');
+            
+            // Set dynamic transition context text
+            loaderText.innerText = `Chargement de : ${tabNamesMap[tabName] || "Module"}...`;
+            
+            // Activate the premium loader
+            loader.classList.remove('opacity-0', 'pointer-events-none');
+            
+            // Allow animation to display momentarily for premium sensory appeal
+            setTimeout(() => {
+                // Update tabs styling responsive to light and dark
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.className = "nav-tab flex items-center gap-2.5 px-5 py-3 rounded-xl font-heading font-semibold text-sm text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-250 dark:hover:bg-zinc-900/50 transition-all whitespace-nowrap";
+                });
+                
+                const activeTab = document.getElementById(`tab-${tabName}`);
+                if (activeTab) {
+                    activeTab.className = "nav-tab active flex items-center gap-2.5 px-5 py-3 rounded-xl font-heading font-semibold text-sm transition-all bg-indigo-600 text-white shadow-md dark:shadow-neon-violet whitespace-nowrap";
+                }
+
+                // Hide all views
+                document.getElementById('view-study').classList.add('hidden');
+                document.getElementById('view-flashcards').classList.add('hidden');
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-sprint').classList.add('hidden');
+                
+                // Uncover active view
+                const activeView = document.getElementById(`view-${tabName}`);
+                if (activeView) {
+                    activeView.classList.remove('hidden');
+                }
+                
+                // Clear any active Sprint timer if tab changed
+                if (tabName !== 'sprint' && sprintTimerInterval) {
+                    clearInterval(sprintTimerInterval);
+                    sprintTimerInterval = null;
+                }
+                
+                // Keep the study guide and flashcard scroll aligned
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Seamlessly slide out loading element
+                setTimeout(() => {
+                    loader.classList.add('opacity-0', 'pointer-events-none');
+                }, 150);
+            }, 650);
+        }
+
+        // --- STUDY GUIDE LOGIC ---
+        function renderStudyGuide() {
+            const container = document.getElementById('study-content');
+            let html = '';
+
+            studyData.forEach(section => {
+                let rowsHtml = '';
+                section.items.forEach(item => {
+                    const extra = item.emoji ? `<span class="ml-2 filter drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]">${item.emoji}</span>` : '';
+                    rowsHtml += `
+                        <div class="flex justify-between items-center py-2.5 border-b border-slate-200/60 dark:border-zinc-800/40 last:border-0 hover:bg-slate-50 dark:hover:bg-zinc-900/20 px-3 rounded-lg transition-all duration-200">
+                            <span class="font-bold text-slate-800 dark:text-zinc-200">${item.fr} ${extra}</span>
+                            <span class="text-slate-500 dark:text-zinc-500 text-xs font-medium">${item.en}</span>
+                        </div>
+                    `;
+                });
+
+                html += `
+                    <div class="bg-white dark:bg-zinc-900/40 rounded-2xl border border-slate-200 dark:border-zinc-800/80 overflow-hidden hover:border-indigo-400 dark:hover:border-zinc-700/60 transition-all duration-300 backdrop-blur-sm shadow-sm hover:shadow-md dark:hover:shadow-neon-violet">
+                        <div class="${section.bgColor} px-5 py-4.5 border-b border-slate-200 dark:border-zinc-800/60 flex items-center gap-3.5 transition-colors">
+                            <div class="w-10 h-10 rounded-lg bg-white dark:bg-zinc-950 flex items-center justify-center ${section.color} border border-slate-200 dark:${section.borderColor}">
+                                <i class="fa-solid ${section.icon} text-base"></i>
+                            </div>
+                            <h3 class="font-heading font-extrabold text-base text-slate-900 dark:text-white">${section.title}</h3>
+                        </div>
+                        <div class="p-5 sm:p-6">
+                            <p class="text-xs text-slate-500 dark:text-zinc-400 mb-4 pb-3.5 border-b border-slate-250 dark:border-zinc-800/60 border-dashed">${section.desc}</p>
+                            <div class="flex flex-col text-sm gap-1">
+                                ${rowsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // --- FLASHCARDS LOGIC ---
+        function extractFlashcards() {
+            flatCards = [];
+            studyData.forEach(section => {
+                section.items.forEach(item => {
+                    flatCards.push({
+                        categoryType: section.category,
+                        categoryTitle: section.title,
+                        fr: item.fr,
+                        en: item.en,
+                        emoji: item.emoji || ''
+                    });
+                });
+            });
+        }
+
+        function loadFlashcards() {
+            const filter = document.getElementById('flashcard-category').value;
+            extractFlashcards();
+            
+            if (filter !== 'all') {
+                flatCards = flatCards.filter(c => c.categoryType === filter);
+            }
+            
+            flatCards.sort(() => Math.random() - 0.5);
+            currentCardIndex = 0;
+            isFlipped = false;
+            updateFlashcardUI();
+        }
+
+        function updateFlashcardUI() {
+            if (flatCards.length === 0) return;
+            const card = flatCards[currentCardIndex];
+            
+            const inner = document.getElementById('flashcard-inner');
+            if (isFlipped) {
+                inner.classList.remove('rotate-y-180');
+                isFlipped = false;
+                setTimeout(() => applyText(card), 250);
+            } else {
+                applyText(card);
+            }
+
+            document.getElementById('fc-current').innerText = currentCardIndex + 1;
+            document.getElementById('fc-total').innerText = flatCards.length;
+        }
+
+        function applyText(card) {
+            document.getElementById('fc-category-front').innerText = card.categoryTitle;
+            document.getElementById('fc-front-text').innerText = card.en;
+            document.getElementById('fc-back-text').innerText = card.fr;
+            document.getElementById('fc-emoji').innerText = card.emoji;
+        }
+
+        function flipCard() {
+            const inner = document.getElementById('flashcard-inner');
+            if (isFlipped) {
+                inner.classList.remove('rotate-y-180');
+            } else {
+                inner.classList.add('rotate-y-180');
+            }
+            isFlipped = !isFlipped;
+        }
+
+        function nextCard() {
+            if (currentCardIndex < flatCards.length - 1) {
+                currentCardIndex++;
+            } else {
+                currentCardIndex = 0;
+            }
+            updateFlashcardUI();
+        }
+
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+            } else {
+                currentCardIndex = flatCards.length - 1;
+            }
+            updateFlashcardUI();
+        }
+
+        // --- QUIZ LOGIC ---
+        function generateQuizQuestions() {
+            quizQuestions = [];
+            let allItems = [];
+            
+            studyData.forEach(section => {
+                section.items.forEach(item => {
+                    allItems.push({ ...item, sourceCategory: section.title });
+                });
+            });
+
+            allItems.sort(() => Math.random() - 0.5);
+            const selectedItems = allItems.slice(0, 10);
+
+            selectedItems.forEach(item => {
+                let options = [item.fr];
+                let attempts = 0;
+                
+                while(options.length < 4 && attempts < 50) {
+                    const randomItem = allItems[Math.floor(Math.random() * allItems.length)];
+                    if (!options.includes(randomItem.fr)) {
+                        options.push(randomItem.fr);
+                    }
+                    attempts++;
+                }
+
+                options.sort(() => Math.random() - 0.5);
+
+                quizQuestions.push({
+                    question: `How do you conjugate or translate: <strong class="text-indigo-600 dark:text-indigo-400">"${item.en}"</strong>?`,
+                    options: options,
+                    answer: item.fr,
+                    emoji: item.emoji || ''
+                });
+            });
+        }
+
+        function startQuiz() {
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            
+            generateQuizQuestions();
+            currentQuizIndex = 0;
+            quizScore = 0;
+            updateQuizUI();
+        }
+
+        function updateQuizUI() {
+            const q = quizQuestions[currentQuizIndex];
+            
+            document.getElementById('quiz-current-num').innerText = currentQuizIndex + 1;
+            document.getElementById('quiz-score').innerText = quizScore;
+            document.getElementById('quiz-progress').style.width = `${((currentQuizIndex + 1) / 10) * 100}%`;
+            
+            document.getElementById('quiz-question').innerHTML = q.question;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-4.5 rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-slate-50 dark:bg-zinc-950/60 hover:border-indigo-550/50 dark:hover:border-indigo-500/50 hover:bg-slate-100 dark:hover:bg-zinc-900/60 font-semibold text-slate-800 dark:text-zinc-300 transition-all focus:outline-none flex justify-between items-center group shadow-sm';
+                btn.innerHTML = `<span>${opt}</span> <i class="fa-regular fa-circle text-slate-400 dark:text-zinc-650 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"></i>`;
+                btn.onclick = () => checkAnswer(btn, opt, q.answer);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            const buttons = document.getElementById('quiz-options').querySelectorAll('button');
+            buttons.forEach(b => {
+                b.onclick = null;
+                b.classList.remove('hover:border-indigo-550/50', 'hover:bg-slate-100', 'dark:hover:border-indigo-500/50', 'dark:hover:bg-zinc-900/60');
+                
+                const spanText = b.querySelector('span').innerText;
+                const icon = b.querySelector('i');
+                
+                if (spanText === correct) {
+                    b.className = 'w-full text-left p-4.5 rounded-xl border border-emerald-500/30 bg-emerald-150 dark:bg-emerald-500/10 font-bold text-emerald-600 dark:text-emerald-400 transition-all flex justify-between items-center shadow-sm';
+                    icon.className = 'fa-solid fa-circle-check text-emerald-500 dark:text-emerald-400';
+                } else {
+                    b.classList.add('opacity-40');
+                }
+            });
+
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.className = 'rounded-xl p-4.5 text-center font-bold text-sm mb-6 transition-all';
+
+            if (selected === correct) {
+                quizScore++;
+                document.getElementById('quiz-score').innerText = quizScore;
+                feedback.innerHTML = '<i class="fa-solid fa-face-smile-beam mr-2"></i> Correct! Excellent travail!';
+                feedback.classList.add('bg-emerald-100/80', 'dark:bg-emerald-500/15', 'text-emerald-600', 'dark:text-emerald-400', 'border', 'border-emerald-200', 'dark:border-emerald-500/20');
+            } else {
+                btn.className = 'w-full text-left p-4.5 rounded-xl border border-rose-500/30 bg-rose-100 dark:bg-rose-500/10 font-bold text-rose-600 dark:text-rose-400 transition-all flex justify-between items-center shadow-sm';
+                const icon = btn.querySelector('i');
+                icon.className = 'fa-solid fa-circle-xmark text-rose-500 dark:text-rose-400';
+                
+                feedback.innerHTML = `<i class="fa-solid fa-circle-info mr-2"></i> Incorrect. L'expression correcte est : <b>${correct}</b>`;
+                feedback.classList.add('bg-rose-100/80', 'dark:bg-rose-500/15', 'text-rose-600', 'dark:text-rose-400', 'border', 'border-rose-200', 'dark:border-rose-500/20');
+            }
+
+            feedback.classList.remove('hidden');
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizQuestions.length) {
+                updateQuizUI();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            const results = document.getElementById('quiz-results');
+            results.classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = `${quizScore} / 10`;
+            
+            const icon = document.getElementById('result-icon');
+            if (quizScore >= 9) {
+                icon.innerText = '🥇';
+            } else if (quizScore >= 6) {
+                icon.innerText = '🥈';
+            } else {
+                icon.innerText = '📚';
+            }
+        }
+
+        // --- CHRONO RECALL LOGIC ---
+        function initSprintSelector() {
+            const select = document.getElementById('sprint-verb-select');
+            select.innerHTML = '';
+            studyData.filter(section => section.category === 'verbs').forEach(section => {
+                const opt = document.createElement('option');
+                opt.value = section.id;
+                opt.innerText = section.title.replace(/^\d+\.\s*/, '');
+                select.appendChild(opt);
+            });
+        }
+
+        function startSprintMemorize() {
+            const verbId = document.getElementById('sprint-verb-select').value;
+            sprintVerb = studyData.find(v => v.id === verbId);
+            sprintCurrentItems = sprintVerb.items;
+            
+            document.getElementById('sprint-verb-title').innerText = sprintVerb.title;
+            const container = document.getElementById('sprint-table-memorize');
+            container.innerHTML = '';
+            
+            sprintCurrentItems.forEach(item => {
+                container.innerHTML += `
+                    <div class="grid grid-cols-2 py-3.5 border-b border-slate-200 dark:border-zinc-850 last:border-0 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-900/10 transition-colors">
+                        <span class="font-bold text-slate-800 dark:text-white">${item.fr}</span>
+                        <span class="text-slate-550 dark:text-zinc-400 text-sm font-medium">${item.en}</span>
+                    </div>
+                `;
+            });
+            
+            // Panels switching
+            document.getElementById('sprint-setup').classList.add('hidden');
+            document.getElementById('sprint-memorize-panel').classList.remove('hidden');
+            document.getElementById('sprint-test-panel').classList.add('hidden');
+            document.getElementById('sprint-results-panel').classList.add('hidden');
+            
+            // Timer initiation
+            sprintSecondsLeft = 60;
+            document.getElementById('sprint-timer').innerText = "01:00";
+            if (sprintTimerInterval) clearInterval(sprintTimerInterval);
+            
+            sprintTimerInterval = setInterval(() => {
+                sprintSecondsLeft--;
+                const min = Math.floor(sprintSecondsLeft / 60);
+                const sec = sprintSecondsLeft % 60;
+                document.getElementById('sprint-timer').innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+                
+                if (sprintSecondsLeft <= 0) {
+                    clearInterval(sprintTimerInterval);
+                    startSprintEnglishTest();
+                }
+            }, 1000);
+        }
+
+        function startSprintEnglishTest() {
+            sprintPhase = 'test_english';
+            sprintStepIndex = 0;
+            sprintCorrectAnswers = 0;
+            sprintTotalQuestions = sprintCurrentItems.length * 2; // Two full rounds: English first, then French
+            
+            if (sprintTimerInterval) clearInterval(sprintTimerInterval);
+            
+            sprintTestingOrder = Array.from({length: sprintCurrentItems.length}, (_, i) => i);
+            sprintTestingOrder.sort(() => Math.random() - 0.5);
+            
+            document.getElementById('sprint-memorize-panel').classList.add('hidden');
+            document.getElementById('sprint-test-panel').classList.remove('hidden');
+            
+            const badge = document.getElementById('sprint-test-phase-badge');
+            badge.className = "text-[10px] font-heading font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-500/10 px-2.5 py-1 rounded-md";
+            badge.innerText = "PHASE 2: RECUPERATION DE L'ANGLAIS";
+            document.getElementById('sprint-test-verb-title').innerText = sprintVerb.title;
+            
+            renderSprintTestUI();
+        }
+
+        function renderSprintTestUI() {
+            document.getElementById('sprint-test-step').innerText = (sprintStepIndex + 1) + (sprintPhase === 'test_french' ? sprintCurrentItems.length : 0);
+            
+            const container = document.getElementById('sprint-table-testing');
+            container.innerHTML = '';
+            
+            const currentTestingItemIndex = sprintTestingOrder[sprintStepIndex];
+            
+            sprintCurrentItems.forEach((item, idx) => {
+                let frCell = '';
+                let enCell = '';
+                
+                const isCurrentRow = (idx === currentTestingItemIndex);
+                const isCompleted = isSprintRowCompleted(idx);
+                
+                if (sprintPhase === 'test_english') {
+                    frCell = `<span class="font-bold text-slate-800 dark:text-white">${item.fr}</span>`;
+                    
+                    if (isCompleted) {
+                        enCell = `<span class="text-emerald-600 dark:text-emerald-400 font-bold text-sm">${item.en}</span>`;
+                    } else if (isCurrentRow) {
+                        enCell = `<span class="text-indigo-600 dark:text-indigo-400 font-bold animate-pulse text-sm">Testing English...</span>`;
+                    } else {
+                        enCell = `<span class="bg-slate-200 dark:bg-zinc-850 text-slate-200 dark:text-zinc-850 select-none rounded px-3 py-0.5">••••••••</span>`;
+                    }
+                } else if (sprintPhase === 'test_french') {
+                    enCell = `<span class="text-slate-500 dark:text-zinc-400 font-semibold text-sm">${item.en}</span>`;
+                    
+                    if (isCompleted) {
+                        frCell = `<span class="text-emerald-600 dark:text-emerald-400 font-bold">${item.fr}</span>`;
+                    } else if (isCurrentRow) {
+                        frCell = `<span class="text-indigo-600 dark:text-indigo-400 font-bold animate-pulse">Traduis...</span>`;
+                    } else {
+                        frCell = `<span class="bg-slate-200 dark:bg-zinc-850 text-slate-200 dark:text-zinc-850 select-none rounded px-3 py-0.5">••••••••</span>`;
+                    }
+                }
+                
+                const rowBg = isCurrentRow 
+                    ? 'bg-indigo-50 dark:bg-indigo-950/20 border-indigo-400 dark:border-indigo-500/30 scale-[1.01]' 
+                    : 'border-slate-150 dark:border-zinc-850';
+                container.innerHTML += `
+                    <div class="grid grid-cols-2 py-3 border ${rowBg} rounded-xl px-3.5 transition-all">
+                        ${frCell}
+                        ${enCell}
+                    </div>
+                `;
+            });
+            
+            const targetItem = sprintCurrentItems[currentTestingItemIndex];
+            const promptLabel = document.getElementById('sprint-prompt-label');
+            const promptTarget = document.getElementById('sprint-prompt-target');
+            const optionsContainer = document.getElementById('sprint-test-options');
+            
+            optionsContainer.innerHTML = '';
+            document.getElementById('sprint-test-feedback').classList.add('hidden');
+            document.getElementById('sprint-test-next-btn').classList.add('hidden');
+            
+            if (sprintPhase === 'test_english') {
+                promptLabel.innerText = "Select correct English translation:";
+                promptTarget.innerText = targetItem.fr;
+                
+                let options = [targetItem.en];
+                while (options.length < Math.min(4, sprintCurrentItems.length)) {
+                    const rand = sprintCurrentItems[Math.floor(Math.random() * sprintCurrentItems.length)].en;
+                    if (!options.includes(rand)) options.push(rand);
+                }
+                options.sort(() => Math.random() - 0.5);
+                
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "sprint-opt-btn w-full text-left p-4.5 rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-slate-50 dark:bg-zinc-950/65 hover:border-indigo-550/50 dark:hover:border-indigo-500/50 hover:bg-slate-100 dark:hover:bg-zinc-900/50 font-semibold text-slate-800 dark:text-zinc-300 transition-all focus:outline-none flex justify-between items-center group shadow-sm";
+                    btn.innerHTML = `<span>${opt}</span> <i class="fa-regular fa-circle text-slate-400 dark:text-zinc-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"></i>`;
+                    btn.onclick = () => submitSprintAnswer(btn, opt, targetItem.en);
+                    optionsContainer.appendChild(btn);
+                });
+            } else if (sprintPhase === 'test_french') {
+                promptLabel.innerText = "Select correct French conjugation:";
+                promptTarget.innerText = targetItem.en;
+                
+                let options = [targetItem.fr];
+                while (options.length < Math.min(4, sprintCurrentItems.length)) {
+                    const rand = sprintCurrentItems[Math.floor(Math.random() * sprintCurrentItems.length)].fr;
+                    if (!options.includes(rand)) options.push(rand);
+                }
+                options.sort(() => Math.random() - 0.5);
+                
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "sprint-opt-btn w-full text-left p-4.5 rounded-xl border border-slate-200 dark:border-zinc-800/80 bg-slate-50 dark:bg-zinc-950/65 hover:border-indigo-550/50 dark:hover:border-indigo-500/50 hover:bg-slate-100 dark:hover:bg-zinc-900/50 font-semibold text-slate-800 dark:text-zinc-300 transition-all focus:outline-none flex justify-between items-center group shadow-sm";
+                    btn.innerHTML = `<span>${opt}</span> <i class="fa-regular fa-circle text-slate-400 dark:text-zinc-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"></i>`;
+                    btn.onclick = () => submitSprintAnswer(btn, opt, targetItem.fr);
+                    optionsContainer.appendChild(btn);
+                });
+            }
+        }
+
+        function isSprintRowCompleted(idx) {
+            const completedInCurrentPhase = sprintTestingOrder.slice(0, sprintStepIndex);
+            return completedInCurrentPhase.includes(idx);
+        }
+
+        function submitSprintAnswer(btn, selected, correct) {
+            const buttons = document.querySelectorAll('.sprint-opt-btn');
+            buttons.forEach(b => {
+                b.onclick = null;
+                b.classList.remove('hover:border-indigo-550/50', 'hover:bg-slate-100', 'dark:hover:border-indigo-500/50', 'dark:hover:bg-zinc-900/50');
+                const spanText = b.querySelector('span').innerText;
+                const icon = b.querySelector('i');
+                
+                if (spanText === correct) {
+                    b.className = "sprint-opt-btn w-full text-left p-4.5 rounded-xl border border-emerald-500/30 bg-emerald-100 dark:bg-emerald-500/10 font-bold text-emerald-600 dark:text-emerald-400 transition-all flex justify-between items-center shadow-sm";
+                    icon.className = 'fa-solid fa-circle-check text-emerald-500 dark:text-emerald-400';
+                } else {
+                    b.classList.add('opacity-40');
+                }
+            });
+            
+            const feedback = document.getElementById('sprint-test-feedback');
+            feedback.className = 'rounded-xl p-4.5 text-center font-bold text-sm mb-6 transition-all';
+            
+            if (selected === correct) {
+                sprintCorrectAnswers++;
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> Excellent ! Bonne réponse !';
+                feedback.classList.add('bg-emerald-100/80', 'dark:bg-emerald-500/15', 'text-emerald-600', 'dark:text-emerald-400', 'border', 'border-emerald-250', 'dark:border-emerald-500/20');
+            } else {
+                btn.className = "sprint-opt-btn w-full text-left p-4.5 rounded-xl border border-rose-500/30 bg-rose-100 dark:bg-rose-500/10 font-bold text-rose-600 dark:text-rose-400 transition-all flex justify-between items-center shadow-sm";
+                const icon = btn.querySelector('i');
+                icon.className = 'fa-solid fa-circle-xmark text-rose-500 dark:text-rose-400';
+                
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-2"></i> Incorrect. L'orthographe attendue est : <b>${correct}</b>`;
+                feedback.classList.add('bg-rose-100/80', 'dark:bg-rose-500/15', 'text-rose-600', 'dark:text-rose-400', 'border', 'border-rose-250', 'dark:border-rose-500/20');
+            }
+            
+            feedback.classList.remove('hidden');
+            document.getElementById('sprint-test-next-btn').classList.remove('hidden');
+        }
+
+        function nextSprintStep() {
+            sprintStepIndex++;
+            if (sprintStepIndex < sprintCurrentItems.length) {
+                renderSprintTestUI();
+            } else {
+                if (sprintPhase === 'test_english') {
+                    startSprintFrenchTest();
+                } else {
+                    endSprint();
+                }
+            }
+        }
+
+        function startSprintFrenchTest() {
+            sprintPhase = 'test_french';
+            sprintStepIndex = 0;
+            
+            sprintTestingOrder = Array.from({length: sprintCurrentItems.length}, (_, i) => i);
+            sprintTestingOrder.sort(() => Math.random() - 0.5);
+            
+            const badge = document.getElementById('sprint-test-phase-badge');
+            badge.className = "text-[10px] font-heading font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-500/10 px-2.5 py-1 rounded-md";
+            badge.innerText = "PHASE 3: RECUPERATION DU FRANÇAIS";
+            
+            renderSprintTestUI();
+        }
+
+        function endSprint() {
+            document.getElementById('sprint-test-panel').classList.add('hidden');
+            document.getElementById('sprint-results-panel').classList.remove('hidden');
+            
+            const accuracy = Math.round((sprintCorrectAnswers / sprintTotalQuestions) * 100);
+            document.getElementById('sprint-result-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('sprint-result-score').innerText = `${sprintCorrectAnswers} / ${sprintTotalQuestions}`;
+            
+            const icon = document.getElementById('sprint-result-icon');
+            if (accuracy >= 90) {
+                icon.innerText = '🥇';
+            } else if (accuracy >= 60) {
+                icon.innerText = '⚡';
+            } else {
+                icon.innerText = '🧠';
+            }
+        }
+
+        function resetSprint() {
+            document.getElementById('sprint-results-panel').classList.add('hidden');
+            document.getElementById('sprint-setup').classList.remove('hidden');
+            initSprintSelector();
+        }
+    </script>
+</body>
+</html>
